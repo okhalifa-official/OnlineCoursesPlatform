@@ -11,7 +11,9 @@ connection();
 app.use(cors());
 
 app.use(express.json());
-app.use('/products', productRouter);
+app.use('/user', userRouter);
+app.use('/educational', educationalContentRouter);
+app.use('/courses', courseRouter);
 app.get('/', (req, res) => {
   res.send('Server now runing side runing....');
 });
