@@ -15,7 +15,7 @@ app.use('/user', userRouter);
 app.use('/educationalContent', educationalContentRouter);
 app.use('/courses', courseRouter);
 app.get('/', (req, res) => {
-  res.send('Server now runing side runing....');
+  res.send('Server side now runing....');
 });
 
 

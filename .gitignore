@@ -1,7 +1,63 @@
-node_modules
-.DS_Store
-*.log
+# Dependencies
+node_modules/
+yarn.lock
+package-lock.json
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Database
 *.sqlite
 *.sqlite3
-*.env
-package-lock.json
+*.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+
+# Build & Distribution
+dist/
+build/
+coverage/
+*.tsbuildinfo
+.out/
+.yarn-cache/
+
+# Runtime
+*.pid
+.eslintcache
+.cache/
+tmp/
+temp/
+
+# Windows/Visual Studio
+*.sln
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.vspscc
+*.vssscc
+*.ncb
+*.sdf
+*.cache
+*.pdb
+*.obj
+*.dll
+*.exe
+
+# System
+.DS_Store
+Thumbs.db
+*.bak
