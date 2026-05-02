@@ -1,30 +1,26 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose")
 
-const UserSchema = new mongoose.Schema({
+// Base schema used as the discriminator root for Student, Admin, Instructor, CentreAdmin
+const UserSchema = new mongoose.Schema(
+  {
     name: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     email: {
-        type: String,
-        required: true,
-        unique: true
+      type: String,
+      required: true,
+      unique: true,
     },
     password: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
-    role: {
-        type: String,
-        required: true,
-        enum: ["admin", "user"]
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    }
-})
-
-// more fields to be added later: phone number, address, courses enrolled, etc.
+  },
+  {
+    timestamps: true,
+    discriminatorKey: "role", // "Student" | "Admin" | "Instructor" | "CentreAdmin"
+  }
+)
 
 module.exports = mongoose.model("User", UserSchema)
