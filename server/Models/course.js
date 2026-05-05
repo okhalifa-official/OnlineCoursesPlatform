@@ -1,43 +1,117 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 
-const CourseSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
+const lessonSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      default: "",
     },
-    directors: {
-        type: [String],
-        required: true,
+    type: {
+      type: String,
+      enum: ["video", "pdf", "audio", "file"],
+      default: "video",
     },
-    price: {
-        type: Number,
-        required: true
+    duration: {
+      type: String,
+      default: "00:00",
     },
-    accommodation: {
-        type: String,
-        required: true,
-        min: 1
-    },
-    startDate: {
-        type: Date,
-        required: true,
-    },
-    endDate: {
-        type: Date,
-        required: true,
-    },
-    educationalContent: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "EducationalContent",
-        required: true
-    }],
-    visibility: {
-        type: String,
-        required: true,
-        enum: ["public", "private"]
-    },
-})
+  },
+  { _id: true }
+);
 
-module.exports = mongoose.model("Course", CourseSchema)
+const moduleSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      default: "",
+    },
+    lessons: {
+      type: [lessonSchema],
+      default: [],
+    },
+  },
+  { _id: true }
+);
 
-// name, price, directors, accommodation details, start date, end date, educational content, visibility
+const courseSchema = new mongoose.Schema(
+  {
+    courseName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    courseDescription: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    coursePrice: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
+
+    publishStatus: {
+      type: String,
+      enum: ["Draft", "Published", "Archived"],
+      default: "Draft",
+    },
+
+    category: {
+      type: String,
+      default: "General",
+    },
+
+    instructor: {
+      type: String,
+      default: "Unassigned",
+    },
+
+    activeStudents: {
+      type: Number,
+      default: 0,
+    },
+
+    completionRate: {
+      type: Number,
+      default: 0,
+    },
+
+    openTickets: {
+      type: Number,
+      default: 0,
+    },
+
+    previewImage: {
+      type: String,
+      default: "",
+    },
+
+    previewVideoName: {
+      type: String,
+      default: "",
+    },
+
+    courseFilesNames: {
+      type: [String],
+      default: [],
+    },
+
+    lessonAssetsNames: {
+      type: [String],
+      default: [],
+    },
+
+    modules: {
+      type: [moduleSchema],
+      default: [],
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+module.exports = mongoose.model("Course", courseSchema);

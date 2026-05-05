@@ -1,27 +1,39 @@
-require("dotenv").config();
 const express = require("express");
-const app = express();
 const cors = require("cors");
-const connection = require("./database");
-courseRouter = require('./Routers/course');
-educationalContentRouter = require('./Routers/educationalContent');
-userRouter = require('./Routers/user');
-const port = 4000;
-connection();
-app.use(cors());
+require("dotenv").config();
 
-app.use(express.json());
-app.use('/user', userRouter);
-app.use('/educationalContent', educationalContentRouter);
-app.use('/courses', courseRouter);
-app.get('/', (req, res) => {
-  res.send('Server side now runing....');
+const connectDB = require("./database");
+
+const authRouter = require("./Routers/Auth");
+const dashboardRouter = require("./Routers/dashboard");
+const userRouter = require("./Routers/User");
+const adminRouter = require("./Routers/Admin");
+const courseRouter = require("./Routers/Course");
+const reportRouter = require("./Routers/Report");
+
+const { protectAdmin } = require("./middleware/authMiddleware");
+
+const app = express();
+
+connectDB();
+
+app.use(cors());
+app.use(express.json({ limit: "25mb" }));
+
+app.use("/api/auth", authRouter);
+
+app.use("/api/dashboard", protectAdmin, dashboardRouter);
+app.use("/api/users", protectAdmin, userRouter);
+app.use("/api/admin", adminRouter);
+app.use("/api/courses", protectAdmin, courseRouter);
+app.use("/api/reports", protectAdmin, reportRouter);
+
+app.get("/", function (req, res) {
+  res.send("Backend is running");
 });
 
+const PORT = process.env.PORT || 4000;
 
-
-app.listen(port, () => {
-  console.log('Connecting to server......');
-  console.log(`Server now listening on port ${port}`);
-  console.log(`Now you can run localhost:${port} and see a message`);
+app.listen(PORT, function () {
+  console.log(`Server running on port ${PORT}`);
 });

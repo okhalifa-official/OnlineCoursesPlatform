@@ -1,10 +1,27 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const userController = require('../Controllers/user');
 
-router.post("/signup", userController.signup);
-router.get("/login", userController.login);
-router.get("/getallusers", userController.getAllUsers);
-router.get("/getuser/:id", userController.getUserById);
+const {
+  getUsers,
+  getUserById,
+  createUser,
+  updateUser,
+  deleteUser,
+  getPendingInstructors,
+  approveInstructor,
+  rejectInstructor,
+} = require("../Controllers/User");
+
+// Special routes لازم تيجي قبل /:id
+router.get("/pending-instructors", getPendingInstructors);
+router.patch("/:id/approve-instructor", approveInstructor);
+router.patch("/:id/reject-instructor", rejectInstructor);
+
+// CRUD routes
+router.get("/", getUsers);
+router.post("/", createUser);
+router.get("/:id", getUserById);
+router.put("/:id", updateUser);
+router.delete("/:id", deleteUser);
 
 module.exports = router;

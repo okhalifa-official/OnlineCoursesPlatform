@@ -25,7 +25,7 @@ export default function Login() {
 
     try {
       setLoading(true);
-      
+
       await loginAdmin(formData.email, formData.password);
 
       navigate("/dashboard", { replace: true });

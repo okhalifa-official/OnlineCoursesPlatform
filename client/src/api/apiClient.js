@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "http://localhost:4000/api";
 
 export function getAdminToken() {
   return localStorage.getItem("adminToken");
@@ -14,10 +14,6 @@ export function clearAdminToken() {
 
 export async function apiFetch(path, options = {}) {
   const token = getAdminToken();
-
-  if (!token) {
-    saveAdminToken("dev-admin-token");
-  }
 
   const headers = {
     ...(options.headers || {}),

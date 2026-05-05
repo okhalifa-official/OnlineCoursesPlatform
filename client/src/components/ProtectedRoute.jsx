@@ -16,13 +16,6 @@ export default function ProtectedRoute({ children }) {
         return;
       }
 
-      // ✅ Dev bypass
-      if (token === "dev-admin-token") {
-        setIsAllowed(true);
-        setChecking(false);
-        return;
-      }
-
       try {
         await getLoggedInAdmin();
         setIsAllowed(true);

@@ -1,94 +1,202 @@
-const User = require('../Models/user');
+const User = require("../Models/User");
 
-const signup = async (req, res) => {
-  try {
-    if (
-      !req.body.name ||
-      !req.body.email ||
-      !req.body.password ||
-      !req.body.role
-    ) {
-      return res.status(400).send({
-        message: 'Send all required fields: name, email, password, role',
-      });
-    }
+function normalizeUserData(data) {
+  const normalized = { ...data };
 
-    const existingUser = await User.findOne({ email: req.body.email });
-    if (existingUser) {
-      return res.status(400).send({ message: 'Email already in use' });
-    }
-
-    const newUser = {
-      name: req.body.name,
-      email: req.body.email,
-      password: req.body.password,
-      role: req.body.role,
-    };
-
-    const user = await User.create(newUser);
-
-    return res.status(201).send(user);
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).send({ message: error.message });
+  if (normalized.role) {
+    normalized.role = normalized.role.toLowerCase();
   }
-};
 
-const getAllUsers = async (req, res) => {
+  if (normalized.status) {
+    normalized.status = normalized.status.toLowerCase();
+  }
+
+  return normalized;
+}
+
+const getUsers = async function (req, res) {
   try {
-    const users = await User.find({});
-
-    return res.status(200).json({
-      count: users.length,
-      data: users,
+    const users = await User.find().sort({ createdAt: -1 });
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to get users",
+      error: error.message,
     });
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).send({ message: error.message });
   }
 };
 
-const getUserById = async (req, res) => {
+const getUserById = async function (req, res) {
   try {
-    const { id } = req.params;
-
-    const user = await User.findById(id);
-
-    return res.status(200).send(user);
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).send({ message: error.message });
-  }
-};
-
-const login = async (req, res) => {
-  try {
-    if (!req.body.email || !req.body.password) {
-      return res.status(400).send({
-        message: 'Send all required fields: email, password',
-      });
-    }
-
-    const user = await User.findOne({ email: req.body.email });
+    const user = await User.findById(req.params.id);
 
     if (!user) {
-      return res.status(404).send({ message: 'User not found' });
+      return res.status(404).json({
+        message: "User not found",
+      });
     }
 
-    if (user.password !== req.body.password) {
-      return res.status(401).send({ message: 'Invalid password' });
-    }
-    
-    return res.status(200).send(user);
+    res.json(user);
   } catch (error) {
-    console.log(error.message);
-    res.status(500).send({ message: error.message });
+    res.status(500).json({
+      message: "Failed to get user",
+      error: error.message,
+    });
+  }
+};
+
+const createUser = async function (req, res) {
+  try {
+    const userData = normalizeUserData(req.body);
+
+    const user = await User.create(userData);
+
+    res.status(201).json(user);
+  } catch (error) {
+    res.status(400).json({
+      message: "Failed to create user",
+      error: error.message,
+    });
+  }
+};
+
+const updateUser = async function (req, res) {
+  try {
+    const updateData = normalizeUserData(req.body);
+
+    delete updateData._id;
+    delete updateData.createdAt;
+    delete updateData.updatedAt;
+    delete updateData.__v;
+
+    const user = await User.findByIdAndUpdate(req.params.id, updateData, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    res.json(user);
+  } catch (error) {
+    res.status(400).json({
+      message: "Failed to update user",
+      error: error.message,
+    });
+  }
+};
+
+const deleteUser = async function (req, res) {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    res.json({
+      message: "User deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to delete user",
+      error: error.message,
+    });
+  }
+};
+
+const getPendingInstructors = async function (req, res) {
+  try {
+    const instructors = await User.find({
+      role: { $in: ["instructor", "Instructor"] },
+      status: { $in: ["pending", "Pending"] },
+    }).sort({ createdAt: -1 });
+
+    res.json(instructors);
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to get pending instructors",
+      error: error.message,
+    });
+  }
+};
+
+const approveInstructor = async function (req, res) {
+  try {
+    const instructor = await User.findByIdAndUpdate(
+      req.params.id,
+      {
+        role: "instructor",
+        status: "active",
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    if (!instructor) {
+      return res.status(404).json({
+        message: "Instructor not found",
+      });
+    }
+
+    res.json({
+      message: "Instructor approved successfully",
+      instructor,
+    });
+  } catch (error) {
+    res.status(400).json({
+      message: "Failed to approve instructor",
+      error: error.message,
+    });
+  }
+};
+
+const rejectInstructor = async function (req, res) {
+  try {
+    const instructor = await User.findByIdAndUpdate(
+      req.params.id,
+      {
+        role: "instructor",
+        status: "suspended",
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    if (!instructor) {
+      return res.status(404).json({
+        message: "Instructor not found",
+      });
+    }
+
+    res.json({
+      message: "Instructor rejected successfully",
+      instructor,
+    });
+  } catch (error) {
+    res.status(400).json({
+      message: "Failed to reject instructor",
+      error: error.message,
+    });
   }
 };
 
 module.exports = {
-  signup,
-  getAllUsers,
+  getUsers,
   getUserById,
-  login,
+  createUser,
+  updateUser,
+  deleteUser,
+  getPendingInstructors,
+  approveInstructor,
+  rejectInstructor,
 };

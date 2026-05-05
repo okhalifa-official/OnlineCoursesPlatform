@@ -1,133 +1,163 @@
-const Course = require('../Models/course');
+const Course = require("../Models/Course");
 
-const createCourse = async (req, res) => {
+const getCourses = async function (req, res) {
   try {
-    if (
-      !req.body.name ||
-      !req.body.directors ||
-      !req.body.price ||
-      !req.body.accommodation ||
-      !req.body.startDate ||
-      !req.body.endDate ||
-      !req.body.educationalContent ||
-      !req.body.visibility
-    ) {
-      return res.status(400).send({
-        message:
-          'Send all required fields: name, directors, price, accommodation, startDate, endDate, educationalContent, visibility',
-      });
-    }
-
-    const newCourse = {
-      name: req.body.name,
-      directors: req.body.directors,
-      price: req.body.price,
-      accommodation: req.body.accommodation,
-      startDate: req.body.startDate,
-      endDate: req.body.endDate,
-      educationalContent: req.body.educationalContent,
-      visibility: req.body.visibility,
-    };
-
-    const course = await Course.create(newCourse);
-
-    return res.status(201).send(course);
+    const courses = await Course.find().sort({ createdAt: -1 });
+    res.json(courses);
   } catch (error) {
-    console.log(error.message);
-    res.status(500).send({ message: error.message });
+    res.status(500).json({
+      message: "Failed to get courses",
+      error: error.message,
+    });
   }
 };
 
-const getAllCourses = async (req, res) => {
+const getCourseById = async function (req, res) {
   try {
-    const courses = await Course.find({}).populate('educationalContent');
+    const course = await Course.findById(req.params.id);
 
-    return res.status(200).json({
-      count: courses.length,
-      data: courses,
+    if (!course) {
+      return res.status(404).json({
+        message: "Course not found",
+      });
+    }
+
+    res.json(course);
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to get course",
+      error: error.message,
+    });
+  }
+};
+
+const createCourse = async function (req, res) {
+  try {
+    const course = await Course.create(req.body);
+
+    res.status(201).json(course);
+  } catch (error) {
+    res.status(400).json({
+      message: "Failed to create course",
+      error: error.message,
+    });
+  }
+};
+
+const updateCourse = async function (req, res) {
+  try {
+    const updateData = { ...req.body };
+
+    delete updateData._id;
+    delete updateData.createdAt;
+    delete updateData.updatedAt;
+    delete updateData.__v;
+
+    const course = await Course.findByIdAndUpdate(req.params.id, updateData, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!course) {
+      return res.status(404).json({
+        message: "Course not found",
+      });
+    }
+
+    res.json(course);
+  } catch (error) {
+    res.status(400).json({
+      message: "Failed to update course",
+      error: error.message,
+    });
+  }
+};
+
+const deleteCourse = async function (req, res) {
+  try {
+    const course = await Course.findByIdAndDelete(req.params.id);
+
+    if (!course) {
+      return res.status(404).json({
+        message: "Course not found",
+      });
+    }
+
+    res.json({
+      message: "Course deleted successfully",
     });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).send({ message: error.message });
+    res.status(500).json({
+      message: "Failed to delete course",
+      error: error.message,
+    });
   }
 };
 
-const getCourseById = async (req, res) => {
+const archiveCourse = async function (req, res) {
   try {
-    const { id } = req.params;
+    const course = await Course.findByIdAndUpdate(
+      req.params.id,
+      { publishStatus: "Archived" },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
 
-    const course = await Course.findById(id).populate('educationalContent');
-    
-    return res.status(200).send(course);
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).send({ message: error.message });
-  }
-};
-
-const updateCourse = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    if (
-      !req.body.name ||
-      !req.body.directors ||
-      !req.body.price ||
-      !req.body.accommodation ||
-      !req.body.startDate ||
-      !req.body.endDate ||
-      !req.body.educationalContent ||
-      !req.body.visibility
-    ) {
-      return res.status(400).send({
-        message:
-          'Send all required fields: name, directors, price, accommodation, startDate, endDate, educationalContent, visibility',
+    if (!course) {
+      return res.status(404).json({
+        message: "Course not found",
       });
     }
-    
-    const updatedCourse = {
-        name: req.body.name,
-        directors: req.body.directors,
-        price: req.body.price,
-        accommodation: req.body.accommodation,
-        startDate: req.body.startDate,
-        endDate: req.body.endDate,
-        educationalContent: req.body.educationalContent,
-        visibility: req.body.visibility,
-    };
 
-    const course = await Course.findByIdAndUpdate(id, updatedCourse, { new: true });
-    if (!course) {
-      return res.status(404).send({ message: 'Course not found' });
-    }
-
-    return res.status(200).send(course);
+    res.json({
+      message: "Course archived successfully",
+      course,
+    });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).send({ message: error.message });
+    res.status(400).json({
+      message: "Failed to archive course",
+      error: error.message,
+    });
   }
 };
 
-const deleteCourse = async (req, res) => {
+const restoreCourse = async function (req, res) {
   try {
-    const { id } = req.params;
+    const course = await Course.findByIdAndUpdate(
+      req.params.id,
+      { publishStatus: "Draft" },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
 
-    const deletedCourse = await Course.findByIdAndDelete(id);
-
-    if (!deletedCourse) {
-      return res.status(404).send({ message: 'Course not found' });
+    if (!course) {
+      return res.status(404).json({
+        message: "Course not found",
+      });
     }
-    return res.status(200).send({ message: 'Course deleted successfully' });
+
+    res.json({
+      message: "Course restored successfully",
+      course,
+    });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).send({ message: error.message });
+    res.status(400).json({
+      message: "Failed to restore course",
+      error: error.message,
+    });
   }
 };
 
 module.exports = {
-  createCourse,
-  getAllCourses,
+  getCourses,
   getCourseById,
+  createCourse,
   updateCourse,
   deleteCourse,
+  archiveCourse,
+  restoreCourse,
 };
