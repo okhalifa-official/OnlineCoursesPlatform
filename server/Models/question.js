@@ -10,8 +10,8 @@ const QuestionSchema = new mongoose.Schema(
       required: true,
     },
     lectureId: {
-      // References the embedded lecture _id inside Course.lectures
       type: mongoose.Schema.Types.ObjectId,
+      ref: "Lecture",
       required: true,
     },
     content: {

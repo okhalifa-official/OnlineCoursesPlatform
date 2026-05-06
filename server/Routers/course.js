@@ -9,7 +9,7 @@ const {
   deleteCourse,
   archiveCourse,
   restoreCourse,
-} = require("../Controllers/Course");
+} = require("../Controllers/course");
 
 router.get("/", getCourses);
 router.post("/", createCourse);

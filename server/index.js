@@ -6,10 +6,12 @@ const connectDB = require("./database");
 
 const authRouter = require("./Routers/Auth");
 const dashboardRouter = require("./Routers/dashboard");
-const userRouter = require("./Routers/User");
+const userRouter = require("./Routers/user");
 const adminRouter = require("./Routers/Admin");
-const courseRouter = require("./Routers/Course");
+const courseRouter = require("./Routers/course");
 const reportRouter = require("./Routers/Report");
+const lectureRouter = require("./Routers/lecture");
+const userSideRouter = require("./Routers/userAuth");
 
 const { protectAdmin } = require("./middleware/authMiddleware");
 
@@ -27,6 +29,8 @@ app.use("/api/users", protectAdmin, userRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/courses", protectAdmin, courseRouter);
 app.use("/api/reports", protectAdmin, reportRouter);
+app.use("/api/lectures", protectAdmin, lectureRouter);
+app.use("/api/user", userSideRouter);
 
 app.get("/", function (req, res) {
   res.send("Backend is running");

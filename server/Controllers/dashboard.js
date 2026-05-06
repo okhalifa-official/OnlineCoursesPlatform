@@ -1,5 +1,5 @@
-const User = require("../Models/User");
-const Course = require("../Models/Course");
+const User = require("../Models/user");
+const Course = require("../Models/course");
 
 function normalize(value) {
   return String(value || "").toLowerCase();

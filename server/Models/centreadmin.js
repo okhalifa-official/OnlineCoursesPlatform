@@ -1,5 +1,5 @@
 const mongoose = require("mongoose")
-const User = require("./User")
+const User = require("./user")
 
 // Inheritance: CentreAdmin extends User via Mongoose discriminator
 // Aggregation: belongs to one Centre (centreId)

@@ -1,5 +1,5 @@
 const mongoose = require("mongoose")
-const User = require("./User")
+const User = require("./user")
 
 // Inheritance: Student extends User via Mongoose discriminator
 const StudentSchema = new mongoose.Schema({
