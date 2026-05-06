@@ -14,6 +14,7 @@ import {
   AddCourse,
   EditCourse,
   Reports,
+  Notifications,
   Profile,
   EditAdminProfile,
   AdminRole,
@@ -118,6 +119,15 @@ export default function App() {
         element={
           <PrivatePage>
             <Reports />
+          </PrivatePage>
+        }
+      />
+
+      <Route
+        path="/notifications"
+        element={
+          <PrivatePage>
+            <Notifications />
           </PrivatePage>
         }
       />

@@ -87,23 +87,6 @@ async function getDashboardStats() {
     return date >= previousMonthStart && date < currentMonthStart;
   }).length;
 
-  const activeUsersThisMonth = users.filter((user) => {
-    return (
-      normalize(user.status) === "active" &&
-      new Date(user.createdAt) >= currentMonthStart
-    );
-  }).length;
-
-  const activeUsersPreviousMonth = users.filter((user) => {
-    const date = new Date(user.createdAt);
-
-    return (
-      normalize(user.status) === "active" &&
-      date >= previousMonthStart &&
-      date < currentMonthStart
-    );
-  }).length;
-
   const currentMonthRevenue = courses.reduce((total, course) => {
     const date = new Date(course.createdAt);
 
@@ -135,19 +118,11 @@ async function getDashboardStats() {
           }, 0) / courses.length
         );
 
-  const courseEngagement =
-    courses.length === 0
-      ? 0
-      : Math.round(
-          courses.reduce((total, course) => {
-            const students = Number(course.activeStudents || 0);
-            const completion = Number(course.completionRate || 0);
-            return total + students * (completion / 100);
-          }, 0)
-        );
-
   const pendingInstructors = users.filter((user) => {
-    return normalize(user.role) === "instructor" && normalize(user.status) === "pending";
+    return (
+      normalize(user.role) === "instructor" &&
+      normalize(user.status) === "pending"
+    );
   }).length;
 
   const suspendedUsers = users.filter((user) => {
@@ -182,12 +157,9 @@ async function getDashboardStats() {
 
     currentMonthUsers,
     previousMonthUsers,
-    activeUsersThisMonth,
-    activeUsersPreviousMonth,
     currentMonthRevenue,
     previousMonthRevenue,
 
-    courseEngagement,
     pendingInstructors,
     suspendedUsers,
     draftCourses,
@@ -195,6 +167,77 @@ async function getDashboardStats() {
     systemErrors,
     failedPayments,
   };
+}
+
+function buildNotifications(stats) {
+  const notifications = [];
+
+  stats.users.forEach((user) => {
+    notifications.push({
+      id: `user-${user._id}`,
+      type: "user",
+      title: "New user registered",
+      description: `${user.fullName || user.name || user.email} joined as ${
+        user.role
+      }`,
+      icon: "person_add",
+      link: "/users",
+      createdAt: user.createdAt,
+    });
+  });
+
+  stats.courses.forEach((course) => {
+    notifications.push({
+      id: `course-${course._id}`,
+      type: "course",
+      title: "Course added",
+      description: `${course.courseName} was created as ${course.publishStatus}`,
+      icon: "menu_book",
+      link: "/courses",
+      createdAt: course.createdAt,
+    });
+  });
+
+  const pendingInstructors = stats.users.filter((user) => {
+    return (
+      normalize(user.role) === "instructor" &&
+      normalize(user.status) === "pending"
+    );
+  });
+
+  pendingInstructors.forEach((user) => {
+    notifications.push({
+      id: `pending-instructor-${user._id}`,
+      type: "approval",
+      title: "Instructor approval required",
+      description: `${
+        user.fullName || user.name || user.email
+      } is waiting for approval`,
+      icon: "verified",
+      link: "/approve-instructors",
+      createdAt: user.updatedAt || user.createdAt,
+    });
+  });
+
+  const draftCourses = stats.courses.filter((course) => {
+    return course.publishStatus === "Draft";
+  });
+
+  draftCourses.forEach((course) => {
+    notifications.push({
+      id: `draft-course-${course._id}`,
+      type: "draft",
+      title: "Draft course needs completion",
+      description: `${course.courseName} is still saved as draft`,
+      icon: "draft",
+      link: "/courses",
+      createdAt: course.updatedAt || course.createdAt,
+    });
+  });
+
+  return notifications.sort(function (a, b) {
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
 }
 
 const getDashboardOverview = async function (req, res) {
@@ -221,71 +264,27 @@ const getNotifications = async function (req, res) {
   try {
     const stats = await getDashboardStats();
 
-    const notifications = [];
+    const notifications = buildNotifications(stats).slice(0, 5);
 
-    if (stats.pendingInstructors > 0) {
-      notifications.push({
-        id: "pending-instructors",
-        type: "instructor",
-        title: "Instructor approval required",
-        description: `${stats.pendingInstructors} instructor account(s) waiting for approval`,
-        icon: "verified",
-        link: "/approve-instructors",
-      });
-    }
-
-    if (stats.draftCourses > 0) {
-      notifications.push({
-        id: "draft-courses",
-        type: "course",
-        title: "Draft courses need completion",
-        description: `${stats.draftCourses} draft course(s) are not published yet`,
-        icon: "draft",
-        link: "/courses",
-      });
-    }
-
-    if (stats.openTickets > 0) {
-      notifications.push({
-        id: "open-tickets",
-        type: "support",
-        title: "Open course tickets",
-        description: `${stats.openTickets} course support ticket(s) need review`,
-        icon: "warning",
-        link: "/reports",
-      });
-    }
-
-    const latestUser = stats.users[0];
-
-    if (latestUser) {
-      notifications.push({
-        id: `latest-user-${latestUser._id}`,
-        type: "user",
-        title: "New user registered",
-        description: `${latestUser.fullName || latestUser.name || latestUser.email} created an account`,
-        icon: "person_add",
-        link: "/users",
-      });
-    }
-
-    const latestCourse = stats.courses[0];
-
-    if (latestCourse) {
-      notifications.push({
-        id: `latest-course-${latestCourse._id}`,
-        type: "course",
-        title: "Latest course update",
-        description: `${latestCourse.courseName} is currently ${latestCourse.publishStatus}`,
-        icon: "menu_book",
-        link: "/courses",
-      });
-    }
-
-    res.json(notifications.slice(0, 5));
+    res.json(notifications);
   } catch (error) {
     res.status(500).json({
       message: "Failed to get notifications",
+      error: error.message,
+    });
+  }
+};
+
+const getAllNotifications = async function (req, res) {
+  try {
+    const stats = await getDashboardStats();
+
+    const notifications = buildNotifications(stats);
+
+    res.json(notifications);
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to get all notifications",
       error: error.message,
     });
   }
@@ -298,7 +297,9 @@ const getRecentActivity = async function (req, res) {
     const userActivities = stats.users.slice(0, 5).map((user) => ({
       id: `user-${user._id}`,
       title: "User registered",
-      description: `${user.fullName || user.name || user.email} joined as ${user.role}`,
+      description: `${user.fullName || user.name || user.email} joined as ${
+        user.role
+      }`,
       icon: "person",
       time: timeAgo(user.createdAt),
       color: "red",
@@ -372,6 +373,7 @@ const getPerformance = async function (req, res) {
 module.exports = {
   getDashboardOverview,
   getNotifications,
+  getAllNotifications,
   getRecentActivity,
   getAlerts,
   getPerformance,
