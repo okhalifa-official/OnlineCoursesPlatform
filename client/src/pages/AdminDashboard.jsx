@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import {
@@ -29,40 +29,55 @@ export default function AdminDashboard() {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  useEffect(function () {
-    async function fetchDashboardData() {
-      try {
-        const [
-          overviewData,
-          notificationsData,
-          activityData,
-          alertsData,
-          performanceData,
-          adminData,
-        ] = await Promise.all([
-          getDashboardOverview(),
-          getNotifications(),
-          getRecentActivity(),
-          getAlerts(),
-          getPerformance(),
-          getAdminProfile(),
-        ]);
-
-        setOverview(overviewData);
-        setNotifications(notificationsData);
-        setRecentActivity(activityData);
-        setAlerts(alertsData);
-        setPerformance(performanceData);
-        setAdmin(adminData);
-      } catch (error) {
-        console.error("Dashboard API Error:", error.message);
-      } finally {
-        setLoading(false);
+  const fetchDashboardData = useCallback(async function (showLoading = false) {
+    try {
+      if (showLoading) {
+        setLoading(true);
       }
-    }
 
-    fetchDashboardData();
+      const [
+        overviewData,
+        notificationsData,
+        activityData,
+        alertsData,
+        performanceData,
+        adminData,
+      ] = await Promise.all([
+        getDashboardOverview(),
+        getNotifications(),
+        getRecentActivity(),
+        getAlerts(),
+        getPerformance(),
+        getAdminProfile(),
+      ]);
+
+      setOverview(overviewData);
+      setNotifications(notificationsData);
+      setRecentActivity(activityData);
+      setAlerts(alertsData);
+      setPerformance(performanceData);
+      setAdmin(adminData);
+    } catch (error) {
+      console.error("Dashboard API Error:", error.message);
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(
+    function () {
+      fetchDashboardData(true);
+
+      const intervalId = setInterval(function () {
+        fetchDashboardData(false);
+      }, 5000);
+
+      return function () {
+        clearInterval(intervalId);
+      };
+    },
+    [fetchDashboardData]
+  );
 
   if (loading) {
     return (
@@ -82,13 +97,29 @@ export default function AdminDashboard() {
         </div>
 
         <nav className="space-y-2">
-          <SidebarLink to="/educational-centers" icon="home" text="Educational Centers" />
-          <SidebarLink to="/dashboard" icon="dashboard" text="Dashboard" active />
+          <SidebarLink
+            to="/educational-centers"
+            icon="home"
+            text="Educational Centers"
+          />
+
+          <SidebarLink
+            to="/dashboard"
+            icon="dashboard"
+            text="Dashboard"
+            active
+          />
+
           <SidebarLink to="/users" icon="group" text="Users" />
+
           <SidebarLink to="/courses" icon="menu_book" text="Courses" />
+
           <SidebarLink to="/payments" icon="payments" text="Payments" />
+
           <SidebarLink to="/reports" icon="bar_chart" text="Reports" />
+
           <SidebarLink to="/settings" icon="settings" text="Settings" />
+
           <SidebarLink to="/logs" icon="receipt_long" text="Log" />
         </nav>
 
@@ -146,12 +177,19 @@ export default function AdminDashboard() {
                     <h3 className="text-[16px] font-bold text-[#1A1A1A] heading-font">
                       Notifications
                     </h3>
+
                     <p className="text-[12px] text-[#666]">
                       You have {notifications.length} unread notifications
                     </p>
                   </div>
 
                   <div className="max-h-[380px] overflow-y-auto">
+                    {notifications.length === 0 && (
+                      <div className="px-5 py-8 text-center text-sm text-[#333333]/70">
+                        No notifications right now.
+                      </div>
+                    )}
+
                     {notifications.map((item) => (
                       <Link
                         to={item.link}
@@ -168,6 +206,7 @@ export default function AdminDashboard() {
                           <p className="text-sm font-semibold heading-font text-[#1A1A1A]">
                             {item.title}
                           </p>
+
                           <p className="text-xs text-[#333333]/70">
                             {item.description}
                           </p>
@@ -191,16 +230,18 @@ export default function AdminDashboard() {
             <Link to="/profile" className="flex items-center gap-3">
               <div className="text-right hidden sm:block">
                 <p className="text-sm heading-font font-semibold text-[#1A1A1A]">
-                  {admin?.firstName} {admin?.lastName}
+                  {admin?.firstName || admin?.fullName || admin?.name || "Admin"}{" "}
+                  {admin?.lastName || ""}
                 </p>
+
                 <p className="text-xs text-[#333333]">
                   {admin?.jobTitle || "System Administrator"}
                 </p>
               </div>
 
-              {admin?.image ? (
+              {admin?.image || admin?.profileImage ? (
                 <img
-                  src={admin.image}
+                  src={admin.image || admin.profileImage}
                   alt="Admin Profile"
                   className="h-12 w-12 rounded-full object-cover border border-[#E5E5E5]"
                 />
@@ -302,6 +343,12 @@ export default function AdminDashboard() {
 
               <div className="rounded-3xl bg-white shadow-card card-border overflow-hidden">
                 <div className="divide-y divide-[#3333331f]">
+                  {recentActivity.length === 0 && (
+                    <div className="px-5 py-8 text-center text-sm text-[#333333]/70">
+                      No recent activity yet.
+                    </div>
+                  )}
+
                   {recentActivity.map((item) => (
                     <div
                       key={item.id}
@@ -324,6 +371,7 @@ export default function AdminDashboard() {
                           <p className="font-semibold text-sm heading-font">
                             {item.title}
                           </p>
+
                           <p className="text-xs text-[#333333]/70">
                             {item.description}
                           </p>
@@ -355,6 +403,7 @@ export default function AdminDashboard() {
                   <h3 className="font-bold text-lg heading-font">
                     System Alerts
                   </h3>
+
                   <p className="text-sm text-white/60">
                     Items that require admin review
                   </p>
@@ -468,6 +517,7 @@ function KpiCard({ icon, label, value, badge, red }) {
       </div>
 
       <p className="text-sm text-[#333333]/70">{label}</p>
+
       <h3 className="mt-2 text-2xl font-extrabold heading-font">
         {value ?? "-"}
       </h3>
@@ -499,6 +549,7 @@ function AlertRow({ title, value, red, danger }) {
     return (
       <div className="rounded-2xl bg-red-50 border border-red-200 px-4 py-3 flex items-center justify-between">
         <span className="text-sm text-[#1A1A1A]">{title}</span>
+
         <span className="text-xs px-2 py-1 rounded-full bg-[#D62828] text-white heading-font">
           {value}
         </span>
@@ -509,6 +560,7 @@ function AlertRow({ title, value, red, danger }) {
   return (
     <div className="rounded-2xl bg-white/5 border border-white/10 px-4 py-3 flex items-center justify-between">
       <span className="text-sm">{title}</span>
+
       <span
         className={`text-xs px-2 py-1 rounded-full heading-font ${
           red ? "bg-red-50 text-[#D62828]" : "bg-[#F2F2F2] text-[#1A1A1A]"
@@ -542,6 +594,7 @@ function PerformanceCard({ icon, title, description, badge, type, red }) {
       </div>
 
       <h4 className="font-bold text-lg mb-2 heading-font">{title}</h4>
+
       <p className="text-sm text-[#333333]/70 mb-5">{description}</p>
 
       {type === "bars" && (
@@ -561,6 +614,7 @@ function PerformanceCard({ icon, title, description, badge, type, red }) {
       {type === "line" && (
         <div className="relative h-20">
           <div className="absolute inset-x-0 bottom-4 h-[2px] bg-[#3333331f]"></div>
+
           <svg viewBox="0 0 240 80" className="w-full h-full">
             <path
               d="M10 60 C40 55, 60 45, 90 48 C120 51, 135 20, 170 28 C195 34, 210 18, 230 10"

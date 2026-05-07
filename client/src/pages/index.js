@@ -12,6 +12,7 @@ export { default as AddCourse } from "./AddCourse";
 export { default as EditCourse } from "./EditCourse";
 
 export { default as Reports } from "./Reports";
+export { default as Notifications } from "./Notifications";
 
 export { default as Profile } from "./Profile";
 export { default as EditAdminProfile } from "./EditAdminProfile";

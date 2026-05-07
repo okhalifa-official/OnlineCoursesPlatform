@@ -1,21 +1,20 @@
-import { apiFetch, saveAdminToken, clearAdminToken } from "./apiClient";
+import { adminFetch, saveAdminToken, clearAdminToken } from "./apiClient";
 
-export async function loginAdmin(email, password) {
-  const data = await apiFetch("/auth/admin/login", {
+export async function loginAdmin(username, password) {
+  const data = await adminFetch("/auth/admin/login", {
     method: "POST",
     body: JSON.stringify({
-      email,
+      username,
       password,
     }),
   });
 
   saveAdminToken(data.token);
-
   return data;
 }
 
 export async function getLoggedInAdmin() {
-  return apiFetch("/auth/admin/me");
+  return adminFetch("/auth/admin/me");
 }
 
 export function logoutAdmin() {

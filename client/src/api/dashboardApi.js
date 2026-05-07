@@ -1,21 +1,21 @@
-import { apiFetch } from "./apiClient";
+import { adminFetch } from "./apiClient";
 
 export async function getDashboardOverview() {
-  return apiFetch("/dashboard/overview");
+  return adminFetch("/dashboard/overview");
 }
 
 export async function getNotifications() {
-  return apiFetch("/dashboard/notifications");
+  return adminFetch("/dashboard/notifications");
 }
 
 export async function getRecentActivity() {
-  return apiFetch("/dashboard/recent-activity");
+  return adminFetch("/dashboard/recent-activity");
 }
 
 export async function getAlerts() {
-  return apiFetch("/dashboard/alerts");
+  return adminFetch("/dashboard/alerts");
 }
 
 export async function getPerformance() {
-  return apiFetch("/dashboard/performance");
+  return adminFetch("/dashboard/performance");
 }

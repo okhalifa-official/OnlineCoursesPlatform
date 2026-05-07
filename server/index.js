@@ -13,7 +13,10 @@ const reportRouter = require("./Routers/Report");
 const lectureRouter = require("./Routers/lecture");
 const userSideRouter = require("./Routers/userAuth");
 
-const { protectAdmin } = require("./middleware/authMiddleware");
+const {
+  protect,
+  requireAdmin,
+} = require("./middleware/authMiddleware");
 
 const app = express();
 
@@ -24,19 +27,19 @@ app.use(express.json({ limit: "25mb" }));
 
 app.use("/api/auth", authRouter);
 
-app.use("/api/dashboard", protectAdmin, dashboardRouter);
-app.use("/api/users", protectAdmin, userRouter);
+app.use("/api/dashboard", protect, requireAdmin, dashboardRouter);
+app.use("/api/users", protect, requireAdmin, userRouter);
 app.use("/api/admin", adminRouter);
-app.use("/api/courses", protectAdmin, courseRouter);
-app.use("/api/reports", protectAdmin, reportRouter);
-app.use("/api/lectures", protectAdmin, lectureRouter);
+app.use("/api/courses", protect, requireAdmin, courseRouter);
+app.use("/api/reports", protect, requireAdmin, reportRouter);
+app.use("/api/lectures", protect, requireAdmin, lectureRouter);
 app.use("/api/user", userSideRouter);
 
 app.get("/", function (req, res) {
   res.send("Backend is running");
 });
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, function () {
   console.log(`Server running on port ${PORT}`);

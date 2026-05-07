@@ -6,7 +6,7 @@ export default function Login() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    email: "admin@sonoschool.com",
+    username: "",
     password: "",
   });
 
@@ -26,7 +26,7 @@ export default function Login() {
     try {
       setLoading(true);
 
-      await loginAdmin(formData.email, formData.password);
+      await loginAdmin(formData.username, formData.password);
 
       navigate("/dashboard", { replace: true });
     } catch (error) {
@@ -63,19 +63,25 @@ export default function Login() {
 
         <div className="space-y-5">
           <div>
-            <label className="block text-sm font-semibold mb-2">Email</label>
+            <label className="block text-sm font-semibold mb-2">
+              Username or Email
+            </label>
+
             <input
-              name="email"
-              value={formData.email}
+              name="username"
+              value={formData.username}
               onChange={handleChange}
-              type="email"
+              type="text"
               className="w-full rounded-xl border border-[#ddd] px-4 py-3 bg-[#F2F2F2] outline-none focus:ring-2 focus:ring-[#D62828]/20 focus:border-[#D62828]"
+              placeholder="superadmin or admin@sonoschool.com"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold mb-2">Password</label>
+            <label className="block text-sm font-semibold mb-2">
+              Password
+            </label>
 
             <div className="relative">
               <input
@@ -84,6 +90,7 @@ export default function Login() {
                 onChange={handleChange}
                 type={showPassword ? "text" : "password"}
                 className="w-full rounded-xl border border-[#ddd] px-4 py-3 pr-12 bg-[#F2F2F2] outline-none focus:ring-2 focus:ring-[#D62828]/20 focus:border-[#D62828]"
+                placeholder="Enter password"
                 required
               />
 

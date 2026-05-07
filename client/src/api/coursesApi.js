@@ -1,41 +1,41 @@
-import { apiFetch } from "./apiClient";
+import { adminFetch } from "./apiClient";
 
 export async function getCourses() {
-  return apiFetch("/courses");
+  return adminFetch("/courses");
 }
 
 export async function getCourseById(id) {
-  return apiFetch(`/courses/${id}`);
+  return adminFetch(`/courses/${id}`);
 }
 
 export async function createCourse(courseData) {
-  return apiFetch("/courses", {
+  return adminFetch("/courses", {
     method: "POST",
     body: JSON.stringify(courseData),
   });
 }
 
 export async function updateCourse(id, courseData) {
-  return apiFetch(`/courses/${id}`, {
+  return adminFetch(`/courses/${id}`, {
     method: "PUT",
     body: JSON.stringify(courseData),
   });
 }
 
 export async function deleteCourse(id) {
-  return apiFetch(`/courses/${id}`, {
+  return adminFetch(`/courses/${id}`, {
     method: "DELETE",
   });
 }
 
 export async function archiveCourse(id) {
-  return apiFetch(`/courses/${id}/archive`, {
+  return adminFetch(`/courses/${id}/archive`, {
     method: "PATCH",
   });
 }
 
 export async function restoreCourse(id) {
-  return apiFetch(`/courses/${id}/restore`, {
+  return adminFetch(`/courses/${id}/restore`, {
     method: "PATCH",
   });
 }
