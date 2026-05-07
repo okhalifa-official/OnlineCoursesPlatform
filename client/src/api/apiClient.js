@@ -1,15 +1,42 @@
-const API_BASE_URL = "http://localhost:4000/api";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:4000/api";
 
 export function getAdminToken() {
   return localStorage.getItem("adminToken");
 }
 
 export function saveAdminToken(token) {
+  localStorage.removeItem("adminToken");
+  localStorage.removeItem("adminUser");
+
   localStorage.setItem("adminToken", token);
 }
 
-export function clearAdminToken() {
+export function saveAdminUser(user) {
+  localStorage.setItem("adminUser", JSON.stringify(user));
+}
+
+export function getAdminUser() {
+  const user = localStorage.getItem("adminUser");
+
+  if (!user) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(user);
+  } catch (error) {
+    return null;
+  }
+}
+
+export function clearAdminAuth() {
   localStorage.removeItem("adminToken");
+  localStorage.removeItem("adminUser");
+}
+
+export function clearAdminToken() {
+  clearAdminAuth();
 }
 
 export async function adminFetch(path, options = {}) {
@@ -37,8 +64,12 @@ export async function adminFetch(path, options = {}) {
   });
 
   if (response.status === 401 || response.status === 403) {
-    clearAdminToken();
-    window.location.href = "/login";
+    clearAdminAuth();
+
+    if (window.location.pathname !== "/login") {
+      window.location.href = "/login";
+    }
+
     throw new Error(data?.message || "Unauthorized");
   }
 

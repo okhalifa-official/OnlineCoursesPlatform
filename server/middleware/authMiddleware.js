@@ -12,9 +12,18 @@ const protect = async function (req, res, next) {
     }
 
     const token = authHeader.split(" ")[1];
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    const user = await User.findById(decoded.userId);
+    const currentUserId = decoded.userId || decoded.id;
+
+    if (!currentUserId) {
+      return res.status(401).json({
+        message: "Invalid token payload.",
+      });
+    }
+
+    const user = await User.findById(currentUserId).select("-passwordHash");
 
     if (!user) {
       return res.status(401).json({
@@ -29,9 +38,10 @@ const protect = async function (req, res, next) {
     }
 
     req.user = user;
+
     next();
   } catch (error) {
-    res.status(401).json({
+    return res.status(401).json({
       message: "Invalid or expired token.",
       error: error.message,
     });

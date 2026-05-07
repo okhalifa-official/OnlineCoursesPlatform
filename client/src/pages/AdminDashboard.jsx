@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import {
@@ -15,11 +15,6 @@ import { getAdminProfile } from "../api/adminApi";
 export default function AdminDashboard() {
   const navigate = useNavigate();
 
-  function handleLogout() {
-    logoutAdmin();
-    navigate("/login", { replace: true });
-  }
-
   const [overview, setOverview] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [recentActivity, setRecentActivity] = useState([]);
@@ -28,6 +23,45 @@ export default function AdminDashboard() {
   const [admin, setAdmin] = useState(null);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  const adminDisplayName = useMemo(() => {
+    if (!admin) return "Admin";
+
+    return (
+      admin.fullName ||
+      admin.name ||
+      `${admin.firstName || ""} ${admin.lastName || ""}`.trim() ||
+      admin.username ||
+      admin.email ||
+      "Admin"
+    );
+  }, [admin]);
+
+  const adminJobTitle = useMemo(() => {
+    if (!admin) return "System Administrator";
+
+    if (admin.adminLevel === "super_admin") {
+      return "Super Admin";
+    }
+
+    return admin.jobTitle || "Admin";
+  }, [admin]);
+
+  const adminImage = admin?.profileImage || admin?.image || "";
+
+  function handleLogout() {
+    logoutAdmin();
+    navigate("/login", { replace: true });
+  }
+
+  const fetchAdminProfile = useCallback(async function () {
+    try {
+      const adminData = await getAdminProfile();
+      setAdmin(adminData);
+    } catch (error) {
+      console.error("Admin Profile API Error:", error.message);
+    }
+  }, []);
 
   const fetchDashboardData = useCallback(async function (showLoading = false) {
     try {
@@ -41,14 +75,12 @@ export default function AdminDashboard() {
         activityData,
         alertsData,
         performanceData,
-        adminData,
       ] = await Promise.all([
         getDashboardOverview(),
         getNotifications(),
         getRecentActivity(),
         getAlerts(),
         getPerformance(),
-        getAdminProfile(),
       ]);
 
       setOverview(overviewData);
@@ -56,7 +88,6 @@ export default function AdminDashboard() {
       setRecentActivity(activityData);
       setAlerts(alertsData);
       setPerformance(performanceData);
-      setAdmin(adminData);
     } catch (error) {
       console.error("Dashboard API Error:", error.message);
     } finally {
@@ -66,6 +97,7 @@ export default function AdminDashboard() {
 
   useEffect(
     function () {
+      fetchAdminProfile();
       fetchDashboardData(true);
 
       const intervalId = setInterval(function () {
@@ -76,7 +108,7 @@ export default function AdminDashboard() {
         clearInterval(intervalId);
       };
     },
-    [fetchDashboardData]
+    [fetchAdminProfile, fetchDashboardData]
   );
 
   if (loading) {
@@ -113,11 +145,8 @@ export default function AdminDashboard() {
           <SidebarLink to="/users" icon="group" text="Users" />
           <SidebarLink to="/admin/courses" icon="menu_book" text="Courses" />
           <SidebarLink to="/payments" icon="payments" text="Payments" />
-
           <SidebarLink to="/reports" icon="bar_chart" text="Reports" />
-
           <SidebarLink to="/settings" icon="settings" text="Settings" />
-
           <SidebarLink to="/logs" icon="receipt_long" text="Log" />
         </nav>
 
@@ -228,18 +257,15 @@ export default function AdminDashboard() {
             <Link to="/profile" className="flex items-center gap-3">
               <div className="text-right hidden sm:block">
                 <p className="text-sm heading-font font-semibold text-[#1A1A1A]">
-                  {admin?.firstName || admin?.fullName || admin?.name || "Admin"}{" "}
-                  {admin?.lastName || ""}
+                  {adminDisplayName}
                 </p>
 
-                <p className="text-xs text-[#333333]">
-                  {admin?.jobTitle || "System Administrator"}
-                </p>
+                <p className="text-xs text-[#333333]">{adminJobTitle}</p>
               </div>
 
-              {admin?.image || admin?.profileImage ? (
+              {adminImage ? (
                 <img
-                  src={admin.image || admin.profileImage}
+                  src={adminImage}
                   alt="Admin Profile"
                   className="h-12 w-12 rounded-full object-cover border border-[#E5E5E5]"
                 />
