@@ -20,7 +20,7 @@ export default function AddCourse() {
       });
 
       alert("Course created successfully");
-      navigate("/courses");
+      navigate("/admin/courses");
     } catch (error) {
       alert(error.message);
       console.error("Create course error:", error.message);

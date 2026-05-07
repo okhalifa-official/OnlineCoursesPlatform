@@ -329,7 +329,7 @@ export default function Courses() {
           />
           <SideLink to="/dashboard" icon="dashboard" text="Dashboard" />
           <SideLink to="/users" icon="group" text="Users" />
-          <SideLink to="/courses" icon="menu_book" text="Courses" active />
+          <SideLink to="/admin/courses" icon="menu_book" text="Courses" active />
           <SideLink to="/payments" icon="payments" text="Payments" />
           <SideLink to="/reports" icon="bar_chart" text="Reports" />
           <SideLink to="/settings" icon="settings" text="Settings" />
@@ -338,7 +338,7 @@ export default function Courses() {
 
         <div className="mt-auto pt-5 border-t border-white/10">
           <Link
-            to="/courses/add"
+            to="/admin/courses/add"
             className="w-full h-[58px] rounded-[22px] bg-[#D62828] text-white text-[18px] font-bold heading-font hover:bg-[#b92323] transition flex items-center justify-center"
           >
             Create Course
@@ -516,7 +516,7 @@ export default function Courses() {
 
           {!loading && (
             <Link
-              to="/courses/add"
+              to="/admin/courses/add"
               className="border-2 border-dashed border-[#d8d8d8] rounded-xl flex flex-col items-center justify-center p-12 group cursor-pointer hover:border-[#D62828] transition-all bg-white shadow-card"
             >
               <div className="w-16 h-16 rounded-full bg-[#F2F2F2] flex items-center justify-center text-[#D62828] mb-4 group-hover:scale-110 transition-transform">
@@ -548,7 +548,7 @@ export default function Courses() {
       </main>
 
       <Link
-        to="/courses/add"
+        to="/admin/courses/add"
         className="fixed bottom-8 right-8 w-14 h-14 bg-[#D62828] rounded-full shadow-soft flex items-center justify-center text-white active:scale-90 transition-transform z-50"
       >
         <span className="material-symbols-outlined text-3xl">add_task</span>
@@ -669,7 +669,7 @@ function CourseCard({ course, onDelete, onArchive, onRestore }) {
 
         <div className="absolute inset-0 bg-black/35 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
           <Link
-            to={`/courses/edit/${course._id}`}
+            to={`/admin/courses/edit/${course._id}`}
             className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#1A1A1A] hover:text-[#D62828] transition-colors"
           >
             <span className="material-symbols-outlined">visibility</span>
@@ -677,7 +677,7 @@ function CourseCard({ course, onDelete, onArchive, onRestore }) {
 
           {!isArchived && (
             <Link
-              to={`/courses/edit/${course._id}`}
+              to={`/admin/courses/edit/${course._id}`}
               className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#1A1A1A] hover:text-[#D62828] transition-colors"
             >
               <span className="material-symbols-outlined">edit</span>
