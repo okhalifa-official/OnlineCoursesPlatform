@@ -68,7 +68,7 @@ export default function UserLogin() {
       // Persist both the token and the profile so the navbar chip is populated.
       saveUserToken(data.token);
       saveUserInfo(data.user);
-      navigate("/home");
+      navigate(data.user.role === "admin" ? "/dashboard" : "/home");
     } catch (err) {
       setError(err.message);
     } finally {

@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const User = require("../Models/User");
+const User = require("../Models/user");
 
 function createToken(user) {
   return jwt.sign(

@@ -28,7 +28,7 @@ const registerUser = async (req, res) => {
     const user = await User.create({
       fullName,
       email,
-      password: hashed,
+      passwordHash: hashed,
       role: role === "instructor" ? "instructor" : "student",
       status: role === "instructor" ? "pending" : "active",
       phone: phone || "",
@@ -57,7 +57,7 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ message: "Email and password are required" });
     }
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select("+passwordHash");
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
@@ -66,7 +66,7 @@ const loginUser = async (req, res) => {
       return res.status(403).json({ message: "Account suspended" });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, user.passwordHash);
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid credentials" });
     }

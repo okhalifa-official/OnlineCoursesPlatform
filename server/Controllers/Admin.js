@@ -1,5 +1,5 @@
 const bcrypt = require("bcryptjs");
-const User = require("../Models/User");
+const User = require("../Models/user");
 const AdminRole = require("../Models/AdminRole");
 
 async function getOrCreateAdminRole() {
