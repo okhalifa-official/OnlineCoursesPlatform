@@ -54,7 +54,7 @@ export default function EditCourse() {
       await updateCourse(id, dataToSend);
 
       alert("Course updated successfully");
-      navigate("/courses");
+      navigate("/admin/courses");
     } catch (error) {
       alert(error.message);
       console.error("Update course error:", error.message);

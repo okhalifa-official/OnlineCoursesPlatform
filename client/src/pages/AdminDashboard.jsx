@@ -85,7 +85,7 @@ export default function AdminDashboard() {
           <SidebarLink to="/educational-centers" icon="home" text="Educational Centers" />
           <SidebarLink to="/dashboard" icon="dashboard" text="Dashboard" active />
           <SidebarLink to="/users" icon="group" text="Users" />
-          <SidebarLink to="/courses" icon="menu_book" text="Courses" />
+          <SidebarLink to="/admin/courses" icon="menu_book" text="Courses" />
           <SidebarLink to="/payments" icon="payments" text="Payments" />
           <SidebarLink to="/reports" icon="bar_chart" text="Reports" />
           <SidebarLink to="/settings" icon="settings" text="Settings" />
@@ -272,7 +272,7 @@ export default function AdminDashboard() {
               <ActionCard
                 icon="post_add"
                 title="Add Course"
-                link="/courses/add"
+                link="/admin/courses/add"
               />
 
               <ActionCard

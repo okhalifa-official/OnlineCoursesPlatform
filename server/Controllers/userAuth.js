@@ -8,7 +8,11 @@ function createToken(userId, role) {
 
 const registerUser = async (req, res) => {
   try {
-    const { fullName, email, password, role } = req.body;
+    const {
+      fullName, email, password, role,
+      phone, gender, dateOfBirth, city,
+      specialty, educationalCenter, department, enrollmentType,
+    } = req.body;
 
     if (!fullName || !email || !password) {
       return res.status(400).json({ message: "fullName, email and password are required" });
@@ -27,6 +31,14 @@ const registerUser = async (req, res) => {
       password: hashed,
       role: role === "instructor" ? "instructor" : "student",
       status: role === "instructor" ? "pending" : "active",
+      phone: phone || "",
+      gender: gender || "",
+      dateOfBirth: dateOfBirth || "",
+      city: city || "",
+      specialty: specialty || "",
+      educationalCenter: educationalCenter || "",
+      department: department || "",
+      enrollmentType: enrollmentType || "online",
     });
 
     const token = createToken(user._id, user.role);
