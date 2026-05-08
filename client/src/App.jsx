@@ -17,6 +17,7 @@ import {
   Profile,
   EditAdminProfile,
   AdminRole,
+  Home,
 } from "./pages";
 
 function PrivatePage({ children }) {
@@ -31,6 +32,15 @@ export default function App() {
   return (
     <Routes>
       <Route
+        path="/home"
+        element={
+          <PublicPage>
+            <Home />
+          </PublicPage>
+        }
+      />
+
+      <Route
         path="/login"
         element={
           <PublicPage>
@@ -39,7 +49,7 @@ export default function App() {
         }
       />
 
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      {/* <Route path="/dashboard" element={<Navigate to="/dashboard" replace />} /> */}
 
       <Route
         path="/dashboard"

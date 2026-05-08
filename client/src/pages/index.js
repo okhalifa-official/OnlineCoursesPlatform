@@ -16,3 +16,5 @@ export { default as Reports } from "./Reports";
 export { default as Profile } from "./Profile";
 export { default as EditAdminProfile } from "./EditAdminProfile";
 export { default as AdminRole } from "./AdminRole";
+
+export { default as Home } from "./end-user/Home";
