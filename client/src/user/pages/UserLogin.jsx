@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { loginUser, saveUserToken, saveUserInfo } from "../api/userApi";
+import { saveAdminToken, saveAdminUser } from "../../admin/api/apiClient";
 import UserLogo from "../components/UserLogo";
 
 /**
@@ -65,9 +66,12 @@ export default function UserLogin() {
     setLoading(true);
     try {
       const data = await loginUser(form);
-      // Persist both the token and the profile so the navbar chip is populated.
       saveUserToken(data.token);
       saveUserInfo(data.user);
+      if (data.user.role === "admin") {
+        saveAdminToken(data.token);
+        saveAdminUser(data.user);
+      }
       navigate(data.user.role === "admin" ? "/dashboard" : "/home");
     } catch (err) {
       setError(err.message);

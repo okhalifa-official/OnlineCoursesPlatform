@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 
-import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedRoute from "./admin/components/ProtectedRoute";
 
 import {
   Login,
@@ -18,7 +18,6 @@ import {
   Profile,
   EditAdminProfile,
   AdminRole,
-  Home,
   EducationalCenters,
   AddEducationalCenter,
   EditEducationalCenter,
@@ -31,14 +30,18 @@ import {
   Help,
   Settings,
   BulkAnnouncements,
-} from "./pages";
+} from "./admin/pages";
 
-import UserRegister from "./user/pages/UserRegister";
-import UserHome     from "./user/pages/UserHome";
-import UserProfile  from "./user/pages/UserProfile";
-import LandingPage  from "./user/pages/LandingPage";
-import CoursesPage  from "./user/pages/CoursesPage";
-import WhyUsPage    from "./user/pages/WhyUsPage";
+import {
+  UserRegister,
+  UserHome,
+  UserProfile,
+  LandingPage,
+  CoursesPage,
+  WhyUsPage,
+  UserLogin,
+} from "./user/index";
+
 
 function ScrollToTop() {
   const { pathname } = useLocation();
