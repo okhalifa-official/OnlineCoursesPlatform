@@ -1,45 +1,45 @@
-import { apiFetch } from "./apiClient";
+import { adminFetch } from "./apiClient";
 
 export async function getUsers() {
-  return apiFetch("/users");
+  return adminFetch("/users");
 }
 
 export async function getUserById(id) {
-  return apiFetch(`/users/${id}`);
+  return adminFetch(`/users/${id}`);
 }
 
 export async function createUser(userData) {
-  return apiFetch("/users", {
+  return adminFetch("/users", {
     method: "POST",
     body: JSON.stringify(userData),
   });
 }
 
 export async function updateUser(id, userData) {
-  return apiFetch(`/users/${id}`, {
+  return adminFetch(`/users/${id}`, {
     method: "PUT",
     body: JSON.stringify(userData),
   });
 }
 
 export async function deleteUser(id) {
-  return apiFetch(`/users/${id}`, {
+  return adminFetch(`/users/${id}`, {
     method: "DELETE",
   });
 }
 
 export async function getPendingInstructors() {
-  return apiFetch("/users/pending-instructors");
+  return adminFetch("/users/pending-instructors");
 }
 
 export async function approveInstructor(id) {
-  return apiFetch(`/users/${id}/approve-instructor`, {
+  return adminFetch(`/users/${id}/approve-instructor`, {
     method: "PATCH",
   });
 }
 
 export async function rejectInstructor(id) {
-  return apiFetch(`/users/${id}/reject-instructor`, {
+  return adminFetch(`/users/${id}/reject-instructor`, {
     method: "PATCH",
   });
 }

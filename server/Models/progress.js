@@ -20,15 +20,15 @@ const ProgressSchema = new mongoose.Schema(
       min: 0,
       max: 100,
     },
-    nextVideo: {
-      // Stores the _id of the next lecture sub-document in Course.lectures
+    nextLecture: {
       type: mongoose.Schema.Types.ObjectId,
+      ref: "Lecture",
       default: null,
     },
     completedLectures: [
       {
-        // Stores _ids of completed lecture sub-documents
         type: mongoose.Schema.Types.ObjectId,
+        ref: "Lecture",
       },
     ],
   },

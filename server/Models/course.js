@@ -1,38 +1,5 @@
 const mongoose = require("mongoose");
 
-const lessonSchema = new mongoose.Schema(
-  {
-    title: {
-      type: String,
-      default: "",
-    },
-    type: {
-      type: String,
-      enum: ["video", "pdf", "audio", "file"],
-      default: "video",
-    },
-    duration: {
-      type: String,
-      default: "00:00",
-    },
-  },
-  { _id: true }
-);
-
-const moduleSchema = new mongoose.Schema(
-  {
-    title: {
-      type: String,
-      default: "",
-    },
-    lessons: {
-      type: [lessonSchema],
-      default: [],
-    },
-  },
-  { _id: true }
-);
-
 const courseSchema = new mongoose.Schema(
   {
     courseName: {
@@ -104,9 +71,24 @@ const courseSchema = new mongoose.Schema(
       default: [],
     },
 
-    modules: {
-      type: [moduleSchema],
-      default: [],
+    startDate: {
+      type: Date,
+      default: null,
+    },
+
+    endDate: {
+      type: Date,
+      default: null,
+    },
+
+    visibility: {
+      type: Boolean,
+      default: true,
+    },
+
+    accommodationDetails: {
+      type: String,
+      default: "",
     },
   },
   {

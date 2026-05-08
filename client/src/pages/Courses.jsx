@@ -7,6 +7,7 @@ import {
   restoreCourse,
 } from "../api/coursesApi";
 import { getAdminProfile } from "../api/adminApi";
+import NotificationBell from "../components/NotificationBell";
 
 function getTabValue(status) {
   if (status === "Published") return "published";
@@ -43,7 +44,6 @@ export default function Courses() {
   const [admin, setAdmin] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const [notificationOpen, setNotificationOpen] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   const [activeTab, setActiveTab] = useState("all");
@@ -137,22 +137,30 @@ export default function Courses() {
     setStatusFilter("");
   }
 
-  const categories = useMemo(function () {
-    const values = courses.map((course) => course.category || "General");
-    return [...new Set(values)];
-  }, [courses]);
+  const categories = useMemo(
+    function () {
+      const values = courses.map((course) => course.category || "General");
+      return [...new Set(values)];
+    },
+    [courses]
+  );
 
-  const instructors = useMemo(function () {
-    const values = courses.map((course) => course.instructor || "Unassigned");
-    return [...new Set(values)];
-  }, [courses]);
+  const instructors = useMemo(
+    function () {
+      const values = courses.map((course) => course.instructor || "Unassigned");
+      return [...new Set(values)];
+    },
+    [courses]
+  );
 
   const filteredCourses = useMemo(
     function () {
       return courses.filter((course) => {
         const courseTab = getTabValue(course.publishStatus);
         const courseCategory = (course.category || "General").toLowerCase();
-        const courseInstructor = (course.instructor || "Unassigned").toLowerCase();
+        const courseInstructor = (
+          course.instructor || "Unassigned"
+        ).toLowerCase();
         const courseStatus = (course.publishStatus || "").toLowerCase();
 
         const searchableText = [
@@ -167,14 +175,21 @@ export default function Courses() {
           .toLowerCase();
 
         const matchTab = activeTab === "all" || courseTab === activeTab;
+
         const matchCategory =
           !categoryFilter || courseCategory === categoryFilter.toLowerCase();
+
         const matchInstructor =
-          !instructorFilter || courseInstructor === instructorFilter.toLowerCase();
+          !instructorFilter ||
+          courseInstructor === instructorFilter.toLowerCase();
+
         const matchStatus =
           !statusFilter || courseStatus === statusFilter.toLowerCase();
+
         const matchSearch =
-          !search.trim() || searchableText.includes(search.trim().toLowerCase());
+          !search.trim() ||
+          searchableText.includes(search.trim().toLowerCase());
+
         const matchPriceValue = matchPrice(course.coursePrice, priceFilter);
 
         return (
@@ -256,6 +271,7 @@ export default function Courses() {
               <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#333333]">
                 search
               </span>
+
               <input
                 type="text"
                 placeholder="Search courses, instructors, prices, tags..."
@@ -267,63 +283,26 @@ export default function Courses() {
           </div>
 
           <div className="flex items-center gap-4 shrink-0">
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => setNotificationOpen(!notificationOpen)}
-                className="w-10 h-10 rounded-full flex items-center justify-center text-[#333333] hover:bg-[#F2F2F2] transition relative"
-              >
-                <span className="material-symbols-outlined">notifications</span>
-                <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-[#D62828]"></span>
-              </button>
-
-              {notificationOpen && (
-                <div className="absolute right-0 top-12 w-[340px] bg-white rounded-2xl border border-[#DDDDDD] shadow-card overflow-hidden z-[100]">
-                  <div className="px-5 py-4 border-b border-[#DDDDDD] bg-[#fafafa]">
-                    <h3 className="text-[16px] font-bold text-[#1A1A1A] heading-font">
-                      Notifications
-                    </h3>
-                    <p className="text-[12px] text-[#666]">
-                      Course activity updates
-                    </p>
-                  </div>
-
-                  <div className="max-h-[340px] overflow-y-auto">
-                    <NotificationItem
-                      icon="menu_book"
-                      title="Course management active"
-                      text="Courses are connected to MongoDB."
-                      red
-                    />
-                    <NotificationItem
-                      icon="draft"
-                      title="Drafts available"
-                      text="Draft courses can be edited anytime."
-                    />
-                    <NotificationItem
-                      icon="archive"
-                      title="Archive enabled"
-                      text="Archived courses can be restored."
-                      red
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
+            <NotificationBell />
 
             <Link to="/profile" className="flex items-center gap-3">
               <div className="text-right hidden sm:block">
                 <p className="text-sm heading-font font-semibold text-[#1A1A1A]">
-                  {admin ? `${admin.firstName} ${admin.lastName}` : "Admin"}
+                  {admin
+                    ? `${admin.firstName || admin.fullName || admin.name || "Admin"} ${
+                        admin.lastName || ""
+                      }`
+                    : "Admin"}
                 </p>
+
                 <p className="text-xs text-[#333333]">
                   {admin?.jobTitle || "System Administrator"}
                 </p>
               </div>
 
-              {admin?.image ? (
+              {admin?.image || admin?.profileImage ? (
                 <img
-                  src={admin.image}
+                  src={admin.image || admin.profileImage}
                   alt="Admin Profile"
                   className="w-10 h-10 rounded-full object-cover border border-[#DDDDDD]"
                 />
@@ -343,10 +322,14 @@ export default function Courses() {
         </p>
 
         <nav className="flex flex-col gap-3 text-[15px]">
-          <SideLink to="/educational-centers" icon="home" text="Educational Centers" />
+          <SideLink
+            to="/educational-centers"
+            icon="home"
+            text="Educational Centers"
+          />
           <SideLink to="/dashboard" icon="dashboard" text="Dashboard" />
           <SideLink to="/users" icon="group" text="Users" />
-          <SideLink to="/courses" icon="menu_book" text="Courses" active />
+          <SideLink to="/admin/courses" icon="menu_book" text="Courses" active />
           <SideLink to="/payments" icon="payments" text="Payments" />
           <SideLink to="/reports" icon="bar_chart" text="Reports" />
           <SideLink to="/settings" icon="settings" text="Settings" />
@@ -355,7 +338,7 @@ export default function Courses() {
 
         <div className="mt-auto pt-5 border-t border-white/10">
           <Link
-            to="/courses/add"
+            to="/admin/courses/add"
             className="w-full h-[58px] rounded-[22px] bg-[#D62828] text-white text-[18px] font-bold heading-font hover:bg-[#b92323] transition flex items-center justify-center"
           >
             Create Course
@@ -369,17 +352,42 @@ export default function Courses() {
             <h1 className="heading-font text-4xl font-bold tracking-tight text-[#1A1A1A] mb-2">
               Course Management
             </h1>
+
             <p className="text-[#333333] text-sm max-w-md">
-              Orchestrate your educational offerings, track enrollment performance, and curate the learning journey.
+              Orchestrate your educational offerings, track enrollment
+              performance, and curate the learning journey.
             </p>
           </div>
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <div className="flex items-center gap-2 bg-white p-1 rounded-xl border border-[#e3e3e3] shadow-soft">
-              <TabButton label="All Courses" value="all" activeTab={activeTab} setActiveTab={setActiveTab} />
-              <TabButton label="Published" value="published" activeTab={activeTab} setActiveTab={setActiveTab} />
-              <TabButton label="Drafts" value="drafts" activeTab={activeTab} setActiveTab={setActiveTab} />
-              <TabButton label="Archived" value="archived" activeTab={activeTab} setActiveTab={setActiveTab} />
+              <TabButton
+                label="All Courses"
+                value="all"
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+              />
+
+              <TabButton
+                label="Published"
+                value="published"
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+              />
+
+              <TabButton
+                label="Drafts"
+                value="drafts"
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+              />
+
+              <TabButton
+                label="Archived"
+                value="archived"
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+              />
             </div>
 
             <button
@@ -387,7 +395,9 @@ export default function Courses() {
               onClick={() => setFiltersOpen(!filtersOpen)}
               className="px-4 py-3 bg-white border border-[#e3e3e3] rounded-xl heading-font text-sm font-bold text-[#1A1A1A] hover:bg-[#F2F2F2] transition flex items-center gap-2"
             >
-              <span className="material-symbols-outlined text-lg">filter_list</span>
+              <span className="material-symbols-outlined text-lg">
+                filter_list
+              </span>
               Filters
             </button>
           </div>
@@ -456,10 +466,32 @@ export default function Courses() {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-          <StatsCard label="Active Students" value={stats.activeStudents.toLocaleString()} note="+14% ↑" positive />
-          <StatsCard label="Total Revenue" value={`$${stats.totalRevenue.toLocaleString()}`} note="+8% ↑" positive />
-          <StatsCard label="Avg. Completion" value={`${stats.avgCompletion}%`} note="Stable —" />
-          <StatsCard label="Open Tickets" value={stats.openTickets} note="-2 ↓" danger />
+          <StatsCard
+            label="Active Students"
+            value={stats.activeStudents.toLocaleString()}
+            note="+14% ↑"
+            positive
+          />
+
+          <StatsCard
+            label="Total Revenue"
+            value={`$${stats.totalRevenue.toLocaleString()}`}
+            note="+8% ↑"
+            positive
+          />
+
+          <StatsCard
+            label="Avg. Completion"
+            value={`${stats.avgCompletion}%`}
+            note="Stable —"
+          />
+
+          <StatsCard
+            label="Open Tickets"
+            value={stats.openTickets}
+            note="-2 ↓"
+            danger
+          />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
@@ -484,15 +516,17 @@ export default function Courses() {
 
           {!loading && (
             <Link
-              to="/courses/add"
+              to="/admin/courses/add"
               className="border-2 border-dashed border-[#d8d8d8] rounded-xl flex flex-col items-center justify-center p-12 group cursor-pointer hover:border-[#D62828] transition-all bg-white shadow-card"
             >
               <div className="w-16 h-16 rounded-full bg-[#F2F2F2] flex items-center justify-center text-[#D62828] mb-4 group-hover:scale-110 transition-transform">
                 <span className="material-symbols-outlined text-3xl">add</span>
               </div>
+
               <p className="heading-font text-lg font-bold text-[#1A1A1A] group-hover:text-[#D62828] transition-colors">
                 Deploy New Course
               </p>
+
               <p className="text-[#333333] text-xs mt-2 text-center max-w-[180px]">
                 Draft, configure, and launch a new educational experience
               </p>
@@ -504,6 +538,7 @@ export default function Courses() {
               <p className="heading-font text-2xl font-bold text-[#1A1A1A] mb-2">
                 No courses found
               </p>
+
               <p className="text-[#333333] text-sm">
                 Change the filters or search term and try again.
               </p>
@@ -513,7 +548,7 @@ export default function Courses() {
       </main>
 
       <Link
-        to="/courses/add"
+        to="/admin/courses/add"
         className="fixed bottom-8 right-8 w-14 h-14 bg-[#D62828] rounded-full shadow-soft flex items-center justify-center text-white active:scale-90 transition-transform z-50"
       >
         <span className="material-symbols-outlined text-3xl">add_task</span>
@@ -535,27 +570,6 @@ function SideLink({ to, icon, text, active }) {
       <span className="material-symbols-outlined shrink-0">{icon}</span>
       <span>{text}</span>
     </Link>
-  );
-}
-
-function NotificationItem({ icon, title, text, red }) {
-  return (
-    <div className="flex gap-3 px-5 py-4 border-b border-[#DDDDDD] hover:bg-[#fafafa] transition">
-      <div
-        className={`h-10 w-10 rounded-full flex items-center justify-center shrink-0 ${
-          red ? "bg-red-50 text-[#D62828]" : "bg-[#EAF7EF] text-[#0A5E35]"
-        }`}
-      >
-        <span className="material-symbols-outlined text-[20px]">{icon}</span>
-      </div>
-
-      <div>
-        <p className="text-sm font-semibold heading-font text-[#1A1A1A]">
-          {title}
-        </p>
-        <p className="text-xs text-[#666]">{text}</p>
-      </div>
-    </div>
   );
 }
 
@@ -655,7 +669,7 @@ function CourseCard({ course, onDelete, onArchive, onRestore }) {
 
         <div className="absolute inset-0 bg-black/35 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
           <Link
-            to={`/courses/edit/${course._id}`}
+            to={`/admin/courses/edit/${course._id}`}
             className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#1A1A1A] hover:text-[#D62828] transition-colors"
           >
             <span className="material-symbols-outlined">visibility</span>
@@ -663,7 +677,7 @@ function CourseCard({ course, onDelete, onArchive, onRestore }) {
 
           {!isArchived && (
             <Link
-              to={`/courses/edit/${course._id}`}
+              to={`/admin/courses/edit/${course._id}`}
               className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#1A1A1A] hover:text-[#D62828] transition-colors"
             >
               <span className="material-symbols-outlined">edit</span>

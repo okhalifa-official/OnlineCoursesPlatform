@@ -1,5 +1,5 @@
 const bcrypt = require("bcryptjs");
-const Admin = require("../Models/Admin");
+const User = require("../Models/user");
 const AdminRole = require("../Models/AdminRole");
 
 async function getOrCreateAdminRole() {
@@ -14,7 +14,7 @@ async function getOrCreateAdminRole() {
 
 const getAdminProfile = async function (req, res) {
   try {
-    res.json(req.admin);
+    res.json(req.user);
   } catch (error) {
     res.status(500).json({
       message: "Failed to get admin profile",
@@ -32,14 +32,33 @@ const updateAdminProfile = async function (req, res) {
     delete updateData.updatedAt;
     delete updateData.__v;
     delete updateData.passwordHash;
+    delete updateData.role;
+    delete updateData.adminLevel;
+
+    if (updateData.firstName || updateData.lastName) {
+      updateData.fullName = `${updateData.firstName || ""} ${
+        updateData.lastName || ""
+      }`.trim();
+
+      updateData.name = updateData.fullName;
+    }
+
+    if (updateData.image) {
+      updateData.profileImage = updateData.image;
+    }
+
+    if (updateData.bio) {
+      updateData.notes = updateData.bio;
+    }
 
     if (updateData.password) {
       updateData.passwordHash = await bcrypt.hash(updateData.password, 12);
       delete updateData.password;
+      delete updateData.confirmPassword;
     }
 
-    const updatedAdmin = await Admin.findByIdAndUpdate(
-      req.admin._id,
+    const updatedAdmin = await User.findByIdAndUpdate(
+      req.user._id,
       updateData,
       {
         new: true,
@@ -59,7 +78,6 @@ const updateAdminProfile = async function (req, res) {
 const getAdminRole = async function (req, res) {
   try {
     const role = await getOrCreateAdminRole();
-
     res.json(role);
   } catch (error) {
     res.status(500).json({

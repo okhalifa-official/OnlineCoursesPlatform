@@ -1,41 +1,34 @@
 const jwt = require("jsonwebtoken");
-const Admin = require("../Models/Admin");
+const User = require("../Models/user");
 
-const protectAdmin = async function (req, res, next) {
+const protect = async function (req, res, next) {
   try {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({
-        message: "Access denied. Admin token required.",
+        message: "Access denied. Token required.",
       });
     }
 
     const token = authHeader.split(" ")[1];
-
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    if (!decoded || decoded.role !== "admin") {
-      return res.status(403).json({
-        message: "Access denied. Admin only.",
-      });
-    }
+    const user = await User.findById(decoded.userId);
 
-    const admin = await Admin.findById(decoded.adminId);
-
-    if (!admin) {
+    if (!user) {
       return res.status(401).json({
-        message: "Invalid admin token.",
+        message: "Invalid token.",
       });
     }
 
-    if (admin.accountStatus !== "Active") {
+    if (user.status !== "active") {
       return res.status(403).json({
-        message: "Admin account is not active.",
+        message: "Account is not active.",
       });
     }
 
-    req.admin = admin;
+    req.user = user;
     next();
   } catch (error) {
     res.status(401).json({
@@ -45,6 +38,32 @@ const protectAdmin = async function (req, res, next) {
   }
 };
 
+const requireAdmin = function (req, res, next) {
+  if (!req.user || req.user.role !== "admin") {
+    return res.status(403).json({
+      message: "Admin access only.",
+    });
+  }
+
+  next();
+};
+
+const requireSuperAdmin = function (req, res, next) {
+  if (
+    !req.user ||
+    req.user.role !== "admin" ||
+    req.user.adminLevel !== "super_admin"
+  ) {
+    return res.status(403).json({
+      message: "Super admin access only.",
+    });
+  }
+
+  next();
+};
+
 module.exports = {
-  protectAdmin,
+  protect,
+  requireAdmin,
+  requireSuperAdmin,
 };

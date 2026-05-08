@@ -10,7 +10,7 @@ const {
   getPendingInstructors,
   approveInstructor,
   rejectInstructor,
-} = require("../Controllers/User");
+} = require("../Controllers/user");
 
 // Special routes لازم تيجي قبل /:id
 router.get("/pending-instructors", getPendingInstructors);

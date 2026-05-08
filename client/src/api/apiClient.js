@@ -12,7 +12,7 @@ export function clearAdminToken() {
   localStorage.removeItem("adminToken");
 }
 
-export async function apiFetch(path, options = {}) {
+export async function adminFetch(path, options = {}) {
   const token = getAdminToken();
 
   const headers = {
