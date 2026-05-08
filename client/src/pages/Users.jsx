@@ -50,7 +50,9 @@ export default function Users() {
   }
 
   async function handleDelete(id) {
-    const confirmed = window.confirm("Are you sure you want to delete this user?");
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this user?",
+    );
 
     if (!confirmed) return;
 
@@ -129,8 +131,7 @@ export default function Users() {
         status,
       ].join(" ");
 
-      const matchSearch =
-        !searchValue || searchableText.includes(searchValue);
+      const matchSearch = !searchValue || searchableText.includes(searchValue);
 
       const matchRole = !roleValue || role === roleValue;
 
@@ -147,7 +148,7 @@ export default function Users() {
       total: users.length,
       admins: users.filter((user) => user.role === "admin").length,
       students: users.filter(
-        (user) => user.role === "user" || user.role === "student"
+        (user) => user.role === "user" || user.role === "student",
       ).length,
       active: users.filter((user) => getUserStatus(user) === "active").length,
     };
@@ -277,8 +278,7 @@ export default function Users() {
             <span className="font-bold text-charcoal">
               {filteredUsers.length}
             </span>{" "}
-            of{" "}
-            <span className="font-bold text-charcoal">{users.length}</span>{" "}
+            of <span className="font-bold text-charcoal">{users.length}</span>{" "}
             users
           </p>
 
@@ -343,9 +343,9 @@ export default function Users() {
                         getUserStatus(user) === "active"
                           ? "bg-[#EAF7EF] text-[#0A5E35]"
                           : getUserStatus(user) === "reported" ||
-                            getUserStatus(user) === "suspended"
-                          ? "bg-red-50 text-brandRed"
-                          : "bg-softGrey text-charcoal"
+                              getUserStatus(user) === "suspended"
+                            ? "bg-red-50 text-brandRed"
+                            : "bg-softGrey text-charcoal"
                       }`}
                     >
                       {getUserStatus(user)}
@@ -353,7 +353,31 @@ export default function Users() {
                   </td>
 
                   <td className="px-5 py-4 text-sm">
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 flex-wrap">
+                      {getUserRoleValue(user) === "student" && (
+                        <Link
+                          to={`/users/${user._id}/permissions`}
+                          className="rounded-lg bg-softGrey text-charcoal px-3 py-2 text-xs font-bold inline-flex items-center gap-1 hover:bg-[#e8e8e8]"
+                        >
+                          <span className="material-symbols-outlined text-[16px]">
+                            school
+                          </span>
+                          Permissions
+                        </Link>
+                      )}
+
+                      {getUserRoleValue(user) === "admin" && (
+                        <Link
+                          to={`/users/${user._id}/admin-permissions`}
+                          className="rounded-lg bg-softGrey text-charcoal px-3 py-2 text-xs font-bold inline-flex items-center gap-1 hover:bg-[#e8e8e8]"
+                        >
+                          <span className="material-symbols-outlined text-[16px]">
+                            admin_panel_settings
+                          </span>
+                          Permissions
+                        </Link>
+                      )}
+
                       <Link
                         to={`/users/edit/${user._id}`}
                         className="rounded-lg bg-softGrey px-3 py-2 text-xs font-bold"

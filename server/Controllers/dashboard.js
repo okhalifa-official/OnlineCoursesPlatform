@@ -72,6 +72,7 @@ function getIconByModule(moduleName) {
   if (moduleName === "Educational Centers") return "home";
   if (moduleName === "Reports") return "bar_chart";
   if (moduleName === "Authentication") return "lock";
+  if (moduleName === "Announcements") return "campaign";
 
   return "notifications";
 }
@@ -83,6 +84,7 @@ function getLinkByModule(moduleName) {
   if (moduleName === "Educational Centers") return "/educational-centers";
   if (moduleName === "Reports") return "/reports";
   if (moduleName === "Authentication") return "/logs";
+  if (moduleName === "Announcements") return "/bulk-announcements";
 
   return "/logs";
 }
@@ -153,10 +155,7 @@ async function getTotalRevenue() {
 
 const getDashboardOverview = async function (req, res) {
   try {
-    const {
-      startOfThisMonth,
-      startOfNextMonth,
-    } = getMonthRanges();
+    const { startOfThisMonth, startOfNextMonth } = getMonthRanges();
 
     const totalUsers = await User.countDocuments();
 
@@ -216,7 +215,20 @@ const getNotifications = async function (req, res) {
     });
   }
 };
+const getAllNotifications = async function (req, res) {
+  try {
+    const logs = await SystemLog.find().sort({
+      createdAt: -1,
+    });
 
+    return res.status(200).json(logs.map(formatLog));
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to get all notifications",
+      error: error.message,
+    });
+  }
+};
 const getRecentActivity = async function (req, res) {
   try {
     const logs = await SystemLog.find()
@@ -294,7 +306,7 @@ const getPerformance = async function (req, res) {
 
     const userGrowthValue = calculateGrowth(
       thisMonthNewUsers,
-      lastMonthNewUsers
+      lastMonthNewUsers,
     );
 
     const totalPayments = await PaymentTransaction.countDocuments();
@@ -310,17 +322,17 @@ const getPerformance = async function (req, res) {
 
     const thisMonthRevenue = await getRevenueBetween(
       startOfThisMonth,
-      startOfNextMonth
+      startOfNextMonth,
     );
 
     const lastMonthRevenue = await getRevenueBetween(
       startOfLastMonth,
-      endOfLastMonth
+      endOfLastMonth,
     );
 
     const revenueTrendValue = calculateGrowth(
       thisMonthRevenue,
-      lastMonthRevenue
+      lastMonthRevenue,
     );
 
     return res.status(200).json({
@@ -348,6 +360,7 @@ const getPerformance = async function (req, res) {
 module.exports = {
   getDashboardOverview,
   getNotifications,
+  getAllNotifications,
   getRecentActivity,
   getAlerts,
   getPerformance,

@@ -272,6 +272,101 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    studentPermissions: {
+      viewEnrolledCourses: {
+        type: Boolean,
+        default: true,
+      },
+      downloadResources: {
+        type: Boolean,
+        default: true,
+      },
+      takeQuizzes: {
+        type: Boolean,
+        default: true,
+      },
+      submitAssignments: {
+        type: Boolean,
+        default: true,
+      },
+      joinDiscussions: {
+        type: Boolean,
+        default: true,
+      },
+      viewCertificates: {
+        type: Boolean,
+        default: true,
+      },
+      accessLiveSessions: {
+        type: Boolean,
+        default: true,
+      },
+      sendMessages: {
+        type: Boolean,
+        default: false,
+      },
+      defaultAccessNote: {
+        type: String,
+        default:
+          "Students can only access the courses they are enrolled in and complete platform learning activities based on course availability.",
+      },
+    },
+    adminPermissions: {
+      accessDashboard: {
+        type: Boolean,
+        default: true,
+      },
+      manageUsers: {
+        type: Boolean,
+        default: false,
+      },
+      manageAdmins: {
+        type: Boolean,
+        default: false,
+      },
+      manageCourses: {
+        type: Boolean,
+        default: false,
+      },
+      manageEducationalCenters: {
+        type: Boolean,
+        default: false,
+      },
+      managePayments: {
+        type: Boolean,
+        default: false,
+      },
+      manageReports: {
+        type: Boolean,
+        default: false,
+      },
+      manageSettings: {
+        type: Boolean,
+        default: false,
+      },
+      manageSystemLogs: {
+        type: Boolean,
+        default: false,
+      },
+      approveInstructors: {
+        type: Boolean,
+        default: false,
+      },
+      manageSupportRequests: {
+        type: Boolean,
+        default: false,
+      },
+      permissionLevel: {
+        type: String,
+        enum: ["Basic", "Moderate", "Full Access"],
+        default: "Basic",
+      },
+      accessNote: {
+        type: String,
+        default:
+          "Admin access is limited based on assigned permissions. Only super admins can update admin permissions.",
+      },
+    },
   },
   {
     timestamps: true,

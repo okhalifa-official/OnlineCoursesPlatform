@@ -13,13 +13,14 @@ export { default as Profile } from "./Profile";
 export { default as EditAdminProfile } from "./EditAdminProfile";
 export { default as AdminRole } from "./AdminRole";
 export { default as Settings } from "./Settings";
-
+export { default as Help } from "./Help";
 export { default as EducationalCenters } from "./EducationalCenters";
 export { default as AddEducationalCenter } from "./AddEducationalCenter";
 export { default as EditEducationalCenter } from "./EditEducationalCenter";
 export { default as EducationalCenterProfile } from "./EducationalCenterProfile";
-
+export { default as StudentPermissions } from "./StudentPermissions";
 export { default as SystemLogs } from "./SystemLogs";
-
+export { default as AdminPermissions } from "./AdminPermissions";
 export { default as Payments } from "./Payments";
 export { default as PaymentSettings } from "./PaymentSettings";
+export { default as BulkAnnouncements } from "./BulkAnnouncements";

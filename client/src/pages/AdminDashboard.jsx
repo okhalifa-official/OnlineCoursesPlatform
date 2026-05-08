@@ -108,7 +108,7 @@ export default function AdminDashboard() {
         clearInterval(intervalId);
       };
     },
-    [fetchAdminProfile, fetchDashboardData]
+    [fetchAdminProfile, fetchDashboardData],
   );
 
   if (loading) {
@@ -129,19 +129,18 @@ export default function AdminDashboard() {
         </div>
 
         <nav className="space-y-2">
+          side
           <SidebarLink
             to="/educational-centers"
             icon="home"
             text="Educational Centers"
           />
-
           <SidebarLink
             to="/dashboard"
             icon="dashboard"
             text="Dashboard"
             active
           />
-
           <SidebarLink to="/users" icon="group" text="Users" />
           <SidebarLink to="/admin/courses" icon="menu_book" text="Courses" />
           <SidebarLink to="/payments" icon="payments" text="Payments" />
@@ -149,7 +148,20 @@ export default function AdminDashboard() {
           <SidebarLink to="/settings" icon="settings" text="Settings" />
           <SidebarLink to="/logs" icon="receipt_long" text="Log" />
         </nav>
-
+        <Link
+          to="/help"
+          className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-200 hover:bg-white/5 transition"
+        >
+          <span className="material-symbols-outlined">help_outline</span>
+          <span>Help</span>
+        </Link>
+        <Link
+          to="/bulk-announcements"
+          className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-200 hover:bg-white/5 transition"
+        >
+          <span className="material-symbols-outlined">campaign</span>
+          <span>Bulk Announcements</span>
+        </Link>
         <div className="mt-auto rounded-2xl bg-white/5 p-4 border border-white/10">
           <p className="text-xs text-white/60 mb-2">Switch Mode</p>
 
@@ -189,9 +201,7 @@ export default function AdminDashboard() {
                 className="relative h-12 w-12 rounded-full bg-[#F2F2F2] text-[#1A1A1A] hover:bg-[#e8e8e8] transition flex items-center justify-center"
                 type="button"
               >
-                <span className="material-symbols-outlined">
-                  notifications
-                </span>
+                <span className="material-symbols-outlined">notifications</span>
 
                 {notifications.length > 0 && (
                   <span className="absolute top-2 right-2 h-2.5 w-2.5 rounded-full bg-[#D62828] border-2 border-white"></span>
