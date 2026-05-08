@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import UserNavbar from "../components/UserNavbar";
+import { getUserToken } from "../api/userApi";
 
 // Centre nav links — shared across all public pages.
 const NAV_LINKS = [
@@ -51,6 +52,7 @@ const STATS = [
  */
 export default function LandingPage() {
   const navigate = useNavigate();
+  const isLoggedIn = !!getUserToken();
 
   return (
     <div className="min-h-screen bg-white">
@@ -251,12 +253,14 @@ export default function LandingPage() {
         <p className="text-gray-400 text-sm mb-8 max-w-md mx-auto">
           Join thousands of clinicians who've made POCUS part of their everyday practice.
         </p>
-        <button
-          onClick={() => navigate("/register")}
-          className="bg-brandRed text-white font-semibold px-8 py-3 rounded-xl hover:bg-red-700 transition"
-        >
-          Get started — it's free
-        </button>
+        {!isLoggedIn && (
+          <button
+            onClick={() => navigate("/register")}
+            className="bg-brandRed text-white font-semibold px-8 py-3 rounded-xl hover:bg-red-700 transition"
+          >
+            Get started
+          </button>
+        )}
       </section>
     </div>
   );

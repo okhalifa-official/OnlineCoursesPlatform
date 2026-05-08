@@ -103,7 +103,7 @@ const SIDEBAR_LINKS = [
   },
   {
     label: "Profile",
-    to: "/home",
+    to: "/user-profile",
     icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>,
   },
 ];
@@ -168,7 +168,7 @@ export default function UserHome() {
         />
 
         {/* Main content — offset by the sidebar width */}
-        <main className="flex-1 ml-56 flex flex-col min-h-screen">
+        <main className="flex-1 flex flex-col min-h-screen">
           {/* Breadcrumb + search bar — sticks below the universal navbar */}
           <div className="sticky top-14 z-10 bg-softGrey border-b border-gray-200 px-8 py-4 flex items-center justify-between">
             <p className="text-sm text-gray-400">

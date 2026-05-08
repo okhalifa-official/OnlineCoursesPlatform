@@ -16,9 +16,19 @@ export function saveUserToken(token) {
 }
 
 /** Persists the user object (fullName, role, etc.) so the navbar can show
- *  the user's name/initials chip without an extra API round-trip. */
+ *  the user's name/initials chip without an extra API round-trip.
+ *  Wrapped in try/catch because large profileImage base64 strings can
+ *  exceed the per-origin localStorage quota on some browsers. */
 export function saveUserInfo(user) {
-  localStorage.setItem("userInfo", JSON.stringify(user));
+  try {
+    localStorage.setItem("userInfo", JSON.stringify(user));
+  } catch (_) {
+    // Quota exceeded — store without the image so at least the name shows
+    try {
+      const { profileImage: _omit, ...rest } = user;
+      localStorage.setItem("userInfo", JSON.stringify(rest));
+    } catch (__) { /* nothing we can do */ }
+  }
 }
 
 /** Returns the stored user object, or null if not available / parse fails. */
@@ -105,4 +115,22 @@ export async function loginUser({ email, password }) {
  *  No auth required — accessible to anonymous visitors on /courses. */
 export async function getPublishedCourses() {
   return userApiFetch("/user/courses");
+}
+
+/** Fetches the authenticated user's full profile from the server. */
+export async function getUserProfile() {
+  return userApiFetch("/user/me");
+}
+
+/** Updates the authenticated user's profile fields. */
+export async function updateUserProfile(data) {
+  return userApiFetch("/user/profile", {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+}
+
+/** Fetches the authenticated user's course enrollments. */
+export async function getMyEnrollments() {
+  return userApiFetch("/user/my-enrollments");
 }
