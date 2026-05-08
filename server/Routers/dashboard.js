@@ -11,8 +11,10 @@ const {
 } = require("../Controllers/dashboard");
 
 router.get("/overview", getDashboardOverview);
-router.get("/notifications/all", getAllNotifications);
+
 router.get("/notifications", getNotifications);
+router.get("/notifications/all", getAllNotifications);
+
 router.get("/recent-activity", getRecentActivity);
 router.get("/alerts", getAlerts);
 router.get("/performance", getPerformance);

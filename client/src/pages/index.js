@@ -1,21 +1,27 @@
 export { default as Login } from "./Login";
-
 export { default as AdminDashboard } from "./AdminDashboard";
-
 export { default as Users } from "./Users";
 export { default as AddUser } from "./AddUser";
 export { default as EditUser } from "./EditUser";
 export { default as ApproveInstructors } from "./ApproveInstructors";
-
 export { default as Courses } from "./Courses";
 export { default as AddCourse } from "./AddCourse";
 export { default as EditCourse } from "./EditCourse";
-
 export { default as Reports } from "./Reports";
 export { default as Notifications } from "./Notifications";
-
 export { default as Profile } from "./Profile";
 export { default as EditAdminProfile } from "./EditAdminProfile";
 export { default as AdminRole } from "./AdminRole";
-
 export { default as Home } from "./end-user/Home";
+export { default as Settings } from "./Settings";
+export { default as Help } from "./Help";
+export { default as EducationalCenters } from "./EducationalCenters";
+export { default as AddEducationalCenter } from "./AddEducationalCenter";
+export { default as EditEducationalCenter } from "./EditEducationalCenter";
+export { default as EducationalCenterProfile } from "./EducationalCenterProfile";
+export { default as StudentPermissions } from "./StudentPermissions";
+export { default as SystemLogs } from "./SystemLogs";
+export { default as AdminPermissions } from "./AdminPermissions";
+export { default as Payments } from "./Payments";
+export { default as PaymentSettings } from "./PaymentSettings";
+export { default as BulkAnnouncements } from "./BulkAnnouncements";

@@ -8,12 +8,16 @@ const {
   updateAdminRole,
 } = require("../Controllers/Admin");
 
-const { protect, requireAdmin } = require("../middleware/authMiddleware");
+const {
+  protect,
+  requireAdmin,
+  requireSuperAdmin,
+} = require("../middleware/authMiddleware");
 
 router.get("/profile", protect, requireAdmin, getAdminProfile);
 router.put("/profile", protect, requireAdmin, updateAdminProfile);
 
-router.get("/role", protect, requireAdmin, getAdminRole);
-router.put("/role", protect, requireAdmin, updateAdminRole);
+router.get("/role", protect, requireSuperAdmin, getAdminRole);
+router.put("/role", protect, requireSuperAdmin, updateAdminRole);
 
 module.exports = router;

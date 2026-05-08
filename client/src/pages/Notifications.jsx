@@ -14,19 +14,24 @@ function formatDate(date) {
 export default function Notifications() {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
 
   async function loadNotifications() {
     try {
+      setErrorMessage("");
+
       const data = await getAllNotifications();
 
-      const sortedData = [...data].sort(function (a, b) {
+      const safeData = Array.isArray(data) ? data : [];
+
+      const sortedData = [...safeData].sort(function (a, b) {
         return new Date(b.createdAt) - new Date(a.createdAt);
       });
 
       setNotifications(sortedData);
     } catch (error) {
-      alert(error.message);
-      console.error("Notifications error:", error.message);
+      setErrorMessage(error.message || "Request failed");
+      console.error("Notifications error:", error);
     } finally {
       setLoading(false);
     }
@@ -79,6 +84,12 @@ export default function Notifications() {
         </div>
       </div>
 
+      {errorMessage && (
+        <div className="mb-5 rounded-2xl bg-red-50 border border-red-200 text-[#D62828] px-5 py-4 text-sm font-semibold">
+          {errorMessage}
+        </div>
+      )}
+
       <section className="rounded-3xl bg-white shadow-card card-border overflow-hidden">
         <div className="px-6 py-5 border-b border-[#E5E5E5]">
           <h2 className="text-xl font-bold heading-font">
@@ -97,7 +108,7 @@ export default function Notifications() {
             </div>
           )}
 
-          {!loading && notifications.length === 0 && (
+          {!loading && notifications.length === 0 && !errorMessage && (
             <div className="px-6 py-10 text-center text-[#333333]/70">
               No notifications found.
             </div>
@@ -106,28 +117,28 @@ export default function Notifications() {
           {!loading &&
             notifications.map((item) => (
               <Link
-                key={item.id}
-                to={item.link}
+                key={item._id || item.id}
+                to={item.link || "/notifications"}
                 className="flex items-center justify-between gap-5 px-6 py-5 hover:bg-[#fafafa] transition"
               >
                 <div className="flex items-center gap-4">
                   <div className="h-12 w-12 rounded-full bg-red-50 text-[#D62828] flex items-center justify-center shrink-0">
                     <span className="material-symbols-outlined text-[22px]">
-                      {item.icon}
+                      {item.icon || "notifications"}
                     </span>
                   </div>
 
                   <div>
                     <p className="text-sm font-bold heading-font">
-                      {item.title}
+                      {item.title || "Notification"}
                     </p>
 
                     <p className="text-sm text-[#333333]/70 mt-1">
-                      {item.description}
+                      {item.description || "No description available."}
                     </p>
 
                     <p className="text-xs text-[#333333]/50 mt-2 capitalize">
-                      Type: {item.type}
+                      Type: {item.type || "system"}
                     </p>
                   </div>
                 </div>

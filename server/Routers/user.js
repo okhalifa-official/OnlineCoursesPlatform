@@ -11,12 +11,21 @@ const {
   approveInstructor,
   rejectInstructor,
 } = require("../Controllers/user");
-
-// Special routes لازم تيجي قبل /:id
+const {
+  getStudentPermissions,
+  updateStudentPermissions,
+} = require("../Controllers/studentPermissions");
+const {
+  getAdminPermissions,
+  updateAdminPermissions,
+} = require("../Controllers/adminPermissions");
 router.get("/pending-instructors", getPendingInstructors);
 router.patch("/:id/approve-instructor", approveInstructor);
 router.patch("/:id/reject-instructor", rejectInstructor);
-
+router.get("/:id/permissions", getStudentPermissions);
+router.patch("/:id/permissions", updateStudentPermissions);
+router.get("/:id/admin-permissions", getAdminPermissions);
+router.patch("/:id/admin-permissions", updateAdminPermissions);
 // CRUD routes
 router.get("/", getUsers);
 router.post("/", createUser);
