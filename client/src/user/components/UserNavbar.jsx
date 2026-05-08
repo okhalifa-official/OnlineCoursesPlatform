@@ -4,15 +4,15 @@ import { getUserToken, getUserInfo, clearUserToken } from "../api/userApi";
 import UserLogo from "./UserLogo";
 
 /**
- * Universal top navigation bar — present on every user-facing page, both
- * public (landing, /courses, /why-us) and authenticated (/home).
+ * Universal top navigation bar — present on every user-facing page.
  *
- * The right side adapts at render time based on whether a userToken exists:
+ * Right side adapts to auth state:
  *   • Logged out → "Sign in" and "Get started" links
- *   • Logged in  → "My Learning" shortcut + user-chip (avatar + name) with a
- *                  dropdown menu (My Dashboard, Sign out)
+ *   • Logged in  → notification bell + user chip (avatar + name + subtitle)
+ *                  with dropdown (My Dashboard, Profile, Sign out)
  *
- * Layout: sticky top-0 z-30 h-14  — the sidebar anchors at top-14 below this.
+ * Listens for the "userInfoUpdated" custom event so that profile photo and
+ * name changes made on the Profile page are reflected without a full reload.
  *
  * Props:
  *   links  [{ label: string, to: string }]  — centre nav items
@@ -21,15 +21,21 @@ export default function UserNavbar({ links = [] }) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
-  // Read auth state synchronously from localStorage on each render.
+  // Tick counter used to re-read localStorage whenever userInfo changes.
+  const [tick, setTick] = useState(0);
+
+  useEffect(() => {
+    function onUpdate() { setTick((t) => t + 1); }
+    window.addEventListener("userInfoUpdated", onUpdate);
+    return () => window.removeEventListener("userInfoUpdated", onUpdate);
+  }, []);
+
   const isLoggedIn = !!getUserToken();
   const userInfo = getUserInfo();
 
-  // Dropdown open/close state for the user chip menu.
   const [open, setOpen] = useState(false);
   const dropRef = useRef(null);
 
-  // Close the dropdown when the user clicks outside the chip area.
   useEffect(() => {
     function onDown(e) {
       if (dropRef.current && !dropRef.current.contains(e.target)) setOpen(false);
@@ -44,22 +50,33 @@ export default function UserNavbar({ links = [] }) {
     navigate("/login");
   }
 
-  // Build initials from the stored fullName (max 2 characters, uppercase).
-  // Falls back to "?" when userInfo is unavailable.
   const initials = userInfo?.fullName
     ? userInfo.fullName.trim().split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase()
     : "?";
 
-  // First word of fullName used as the display name in the chip.
-  const firstName = userInfo?.fullName?.split(" ")[0] ?? "Account";
+  // Truncate name to "Dr. Sara A." style for the chip
+  const chipName = (() => {
+    if (!userInfo?.fullName) return "Account";
+    const parts = userInfo.fullName.trim().split(/\s+/);
+    if (parts.length === 1) return parts[0];
+    return `${parts[0]} ${parts[parts.length - 1][0]}.`;
+  })();
+
+  // Subtitle line: jobTitle · specialty or role
+  const chipSubtitle = (() => {
+    const parts = [userInfo?.jobTitle, userInfo?.specialty || userInfo?.role].filter(Boolean);
+    return parts.join(" · ");
+  })();
+
+  const profileImage = userInfo?.profileImage || "";
 
   return (
     <nav className="w-full bg-white border-b border-gray-100 sticky top-0 z-30 h-14">
       <div className="h-full px-6 flex items-center justify-between gap-6">
-        {/* Brand logo — navigates to / on click */}
+        {/* Brand logo */}
         <UserLogo />
 
-        {/* Centre links — hidden on small screens */}
+        {/* Centre links */}
         <div className="hidden md:flex items-center gap-6 flex-1">
           {links.map((link) => (
             <Link
@@ -74,10 +91,10 @@ export default function UserNavbar({ links = [] }) {
           ))}
         </div>
 
-        {/* Right side — different UI depending on auth state */}
+        {/* Right side */}
         {isLoggedIn ? (
           <div className="flex items-center gap-3 shrink-0" ref={dropRef}>
-            {/* Quick shortcut to the learning dashboard */}
+            {/* My Learning shortcut */}
             <Link
               to="/home"
               className={`hidden sm:block text-sm font-medium transition ${
@@ -87,18 +104,36 @@ export default function UserNavbar({ links = [] }) {
               My Learning
             </Link>
 
-            {/* User chip — avatar circle + first name + chevron */}
+            {/* Notification bell */}
+            <button className="relative w-9 h-9 rounded-full bg-softGrey hover:bg-gray-200 flex items-center justify-center transition shrink-0">
+              <svg className="w-5 h-5 text-charcoal" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+            </button>
+
+            {/* User chip + dropdown */}
             <div className="relative">
               <button
                 onClick={() => setOpen((v) => !v)}
-                className="flex items-center gap-2 bg-softGrey hover:bg-gray-200 rounded-full pl-1 pr-3 py-1 transition"
+                className="flex items-center gap-2 bg-softGrey hover:bg-gray-200 rounded-xl pl-1 pr-3 py-1 transition"
               >
-                {/* Red circle with the user's initials */}
-                <div className="w-7 h-7 bg-brandRed rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0">
-                  {initials}
+                {/* Avatar circle: photo or initials */}
+                <div className="w-8 h-8 rounded-full bg-brandRed flex items-center justify-center overflow-hidden shrink-0">
+                  {profileImage ? (
+                    <img src={profileImage} alt="avatar" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-xs font-bold text-white">{initials}</span>
+                  )}
                 </div>
-                <span className="text-sm font-medium text-charcoal hidden sm:block">{firstName}</span>
-                {/* Chevron rotates when the dropdown is open */}
+
+                {/* Name + subtitle */}
+                <div className="hidden sm:block text-left">
+                  <p className="text-xs font-semibold text-charcoal leading-tight">{chipName}</p>
+                  {chipSubtitle && (
+                    <p className="text-[10px] text-gray-400 leading-tight">{chipSubtitle}</p>
+                  )}
+                </div>
+
                 <svg
                   className={`w-3 h-3 text-gray-400 transition-transform ${open ? "rotate-180" : ""}`}
                   fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"
@@ -107,14 +142,25 @@ export default function UserNavbar({ links = [] }) {
                 </svg>
               </button>
 
-              {/* Dropdown — rendered below the chip, aligned to the right edge */}
+              {/* Dropdown */}
               {open && (
-                <div className="absolute right-0 top-[calc(100%+8px)] bg-white border border-gray-100 rounded-xl shadow-card py-1.5 min-w-44 z-50">
-                  {/* User identity header row */}
-                  <div className="px-4 py-2 border-b border-gray-100 mb-1">
-                    <p className="text-xs font-semibold text-charcoal truncate">{userInfo?.fullName ?? "Account"}</p>
-                    <p className="text-xs text-gray-400 truncate capitalize">{userInfo?.role ?? ""}</p>
+                <div className="absolute right-0 top-[calc(100%+8px)] bg-white border border-gray-100 rounded-xl shadow-card py-1.5 min-w-48 z-50">
+                  {/* Identity header */}
+                  <div className="px-4 py-3 border-b border-gray-100 mb-1 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-brandRed flex items-center justify-center overflow-hidden shrink-0">
+                      {profileImage ? (
+                        <img src={profileImage} alt="avatar" className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-sm font-bold text-white">{initials}</span>
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs font-semibold text-charcoal truncate">{userInfo?.fullName ?? "Account"}</p>
+                      <p className="text-[10px] text-gray-400 truncate capitalize">{chipSubtitle || userInfo?.role || ""}</p>
+                    </div>
                   </div>
+
+                  {/* My Dashboard */}
                   <Link
                     to="/home"
                     onClick={() => setOpen(false)}
@@ -125,6 +171,20 @@ export default function UserNavbar({ links = [] }) {
                     </svg>
                     My Dashboard
                   </Link>
+
+                  {/* Profile */}
+                  <Link
+                    to="/user-profile"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-2.5 px-4 py-2 text-sm text-charcoal hover:bg-softGrey transition"
+                  >
+                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    Profile
+                  </Link>
+
+                  {/* Sign out */}
                   <button
                     onClick={handleLogout}
                     className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-brandRed hover:bg-red-50 transition"
@@ -139,7 +199,6 @@ export default function UserNavbar({ links = [] }) {
             </div>
           </div>
         ) : (
-          /* Logged-out state — Sign in + Get started */
           <div className="flex items-center gap-3 shrink-0">
             <Link
               to="/login"

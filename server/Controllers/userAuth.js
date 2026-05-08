@@ -43,7 +43,18 @@ const registerUser = async (req, res) => {
 
     const token = createToken(user._id, user.role);
 
-    res.status(201).json({ token, user: { _id: user._id, fullName: user.fullName, email: user.email, role: user.role, status: user.status } });
+    res.status(201).json({
+      token,
+      user: {
+        _id: user._id, fullName: user.fullName, email: user.email,
+        role: user.role, status: user.status,
+        profileImage: user.profileImage || "",
+        specialty: user.specialty || "",
+        jobTitle: user.jobTitle || "",
+        notes: user.notes || "",
+        gradeLevel: user.gradeLevel || "",
+      },
+    });
   } catch (error) {
     res.status(500).json({ message: "Registration failed", error: error.message });
   }
@@ -73,7 +84,18 @@ const loginUser = async (req, res) => {
 
     const token = createToken(user._id, user.role);
 
-    res.json({ token, user: { _id: user._id, fullName: user.fullName, email: user.email, role: user.role, status: user.status } });
+    res.json({
+      token,
+      user: {
+        _id: user._id, fullName: user.fullName, email: user.email,
+        role: user.role, status: user.status,
+        profileImage: user.profileImage || "",
+        specialty: user.specialty || "",
+        jobTitle: user.jobTitle || "",
+        notes: user.notes || "",
+        gradeLevel: user.gradeLevel || "",
+      },
+    });
   } catch (error) {
     res.status(500).json({ message: "Login failed", error: error.message });
   }
@@ -83,4 +105,63 @@ const getMe = async (req, res) => {
   res.json(req.user);
 };
 
-module.exports = { registerUser, loginUser, getMe };
+const updateUserProfile = async (req, res) => {
+  try {
+    const {
+      firstName, lastName, phone, specialty, yearsOfPractice,
+      hospital, bio, pocusLevel, jobTitle, profileImage,
+    } = req.body;
+
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const updates = {};
+    if (firstName !== undefined) updates.firstName = firstName;
+    if (lastName !== undefined) updates.lastName = lastName;
+    if (phone !== undefined) updates.phone = phone;
+    if (specialty !== undefined) updates.specialty = specialty;
+    if (yearsOfPractice !== undefined) updates.gradeLevel = String(yearsOfPractice);
+    if (hospital !== undefined) updates.educationalCenter = hospital;
+    if (bio !== undefined) updates.bio = bio;
+    if (pocusLevel !== undefined) updates.notes = pocusLevel;
+    if (jobTitle !== undefined) updates.jobTitle = jobTitle;
+    if (profileImage !== undefined) updates.profileImage = profileImage;
+
+    if (firstName !== undefined || lastName !== undefined) {
+      const fn = firstName !== undefined ? firstName : (user.firstName || user.fullName?.split(" ")[0] || "");
+      const ln = lastName !== undefined ? lastName : (user.lastName || user.fullName?.split(" ").slice(1).join(" ") || "");
+      updates.fullName = `${fn} ${ln}`.trim();
+    }
+
+    const updated = await User.findByIdAndUpdate(req.user._id, updates, { new: true });
+    res.json(updated);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to update profile", error: error.message });
+  }
+};
+
+const changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: "Both current and new password are required." });
+    }
+    if (newPassword.length < 6) {
+      return res.status(400).json({ message: "New password must be at least 6 characters." });
+    }
+
+    const user = await User.findById(req.user._id).select("+passwordHash");
+    if (!user) return res.status(404).json({ message: "User not found." });
+
+    const isMatch = await bcrypt.compare(currentPassword, user.passwordHash);
+    if (!isMatch) return res.status(400).json({ message: "Current password is incorrect." });
+
+    const hashed = await bcrypt.hash(newPassword, 12);
+    await User.findByIdAndUpdate(req.user._id, { passwordHash: hashed });
+    res.json({ message: "Password updated successfully." });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to change password.", error: error.message });
+  }
+};
+
+module.exports = { registerUser, loginUser, getMe, updateUserProfile, changePassword };

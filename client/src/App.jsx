@@ -24,6 +24,7 @@ import {
 import UserLogin    from "./user/pages/UserLogin";
 import UserRegister from "./user/pages/UserRegister";
 import UserHome     from "./user/pages/UserHome";
+import UserProfile  from "./user/pages/UserProfile";
 import LandingPage  from "./user/pages/LandingPage";
 import CoursesPage  from "./user/pages/CoursesPage";
 import WhyUsPage    from "./user/pages/WhyUsPage";
@@ -59,7 +60,8 @@ export default function App() {
         <Route path="/why-us"  element={<UserPage><WhyUsPage   /></UserPage>} />
         <Route path="/login"   element={<UserPage><UserLogin    /></UserPage>} />
         <Route path="/register"element={<UserPage><UserRegister /></UserPage>} />
-        <Route path="/home"    element={<UserPage><UserHome     /></UserPage>} />
+        <Route path="/home"         element={<UserPage><UserHome     /></UserPage>} />
+        <Route path="/user-profile" element={<UserPage><UserProfile  /></UserPage>} />
 
         {/* ── Admin routes ── */}
         <Route path="/admin/login" element={<PublicPage><Login /></PublicPage>} />

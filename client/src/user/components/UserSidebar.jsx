@@ -4,9 +4,11 @@ import { Link } from "react-router-dom";
  * Contextual learning sidebar — visible only on authenticated pages (e.g. /home).
  *
  * Layout contract:
- *   • Fixed, left-aligned, anchored BELOW the universal UserNavbar (top-14 = 56 px).
+ *   • Sticky, left-aligned, anchored BELOW the universal UserNavbar (top-14 = 56 px).
  *   • Height fills the remaining viewport: calc(100vh - 3.5rem).
- *   • The main content area must use ml-56 to avoid being hidden underneath.
+ *   • Uses sticky (not fixed) so it works correctly inside parent elements that
+ *     have CSS transforms applied (e.g. page-enter animation wrappers).
+ *   • self-start prevents the flex item from stretching to the parent's full height.
  *   • z-20 keeps it above page content but below the navbar (z-30).
  *
  * Intentionally has NO logo — that responsibility belongs to UserNavbar,
@@ -20,7 +22,7 @@ import { Link } from "react-router-dom";
 export default function UserSidebar({ links = [], activeLink, onLogout }) {
   return (
     <aside
-      className="w-56 bg-charcoal flex flex-col fixed top-14 left-0 z-20 shrink-0"
+      className="w-56 bg-charcoal flex flex-col sticky top-14 self-start shrink-0 z-20"
       style={{ height: "calc(100vh - 3.5rem)" }}
     >
       {/* Section label — labels the nav group, not the whole sidebar */}

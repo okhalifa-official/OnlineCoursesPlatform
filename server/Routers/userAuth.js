@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const { registerUser, loginUser, getMe } = require("../Controllers/userAuth");
+const { registerUser, loginUser, getMe, updateUserProfile, changePassword } = require("../Controllers/userAuth");
 const { protectUser } = require("../middleware/userAuthMiddleware");
 const Course = require("../Models/course");
 const Lecture = require("../Models/lecture");
@@ -11,6 +11,8 @@ const Enrollment = require("../Models/enrollment");
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.get("/me", protectUser, getMe);
+router.put("/profile", protectUser, updateUserProfile);
+router.put("/change-password", protectUser, changePassword);
 
 // Courses — browse published courses
 router.get("/courses", async (req, res) => {
