@@ -19,6 +19,7 @@ import {
   Profile,
   EditAdminProfile,
   AdminRole,
+  Home,
 } from "./pages";
 
 import UserLogin    from "./user/pages/UserLogin";
