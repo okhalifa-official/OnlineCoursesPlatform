@@ -23,7 +23,6 @@ export default function AdminDashboard() {
   const [admin, setAdmin] = useState(null);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-
   const adminDisplayName = useMemo(() => {
     if (!admin) return "Admin";
 
@@ -148,24 +147,27 @@ export default function AdminDashboard() {
           <SidebarLink to="/settings" icon="settings" text="Settings" />
           <SidebarLink to="/logs" icon="receipt_long" text="Log" />
         </nav>
-        <Link
-          to="/help"
-          className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-200 hover:bg-white/5 transition"
-        >
-          <span className="material-symbols-outlined">help_outline</span>
-          <span>Help</span>
-        </Link>
-        <Link
+        <SidebarLink to="/help" icon="help_outline" text="Help" />
+
+        <SidebarLink
           to="/bulk-announcements"
-          className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-200 hover:bg-white/5 transition"
-        >
-          <span className="material-symbols-outlined">campaign</span>
-          <span>Bulk Announcements</span>
-        </Link>
+          icon="campaign"
+          text="Bulk Announcements"
+        />
+
+        <SidebarLink
+          to="/site-content"
+          icon="edit_square"
+          text="Site Content"
+        />
         <div className="mt-auto rounded-2xl bg-white/5 p-4 border border-white/10">
           <p className="text-xs text-white/60 mb-2">Switch Mode</p>
 
-          <button className="w-full rounded-xl bg-white text-[#1A1A1A] py-3 text-sm font-semibold heading-font hover:bg-[#F2F2F2] transition">
+          <button
+            type="button"
+            onClick={() => navigate("/home")}
+            className="w-full rounded-xl bg-white text-[#1A1A1A] py-3 text-sm font-semibold heading-font hover:bg-[#F2F2F2] transition"
+          >
             End User View
           </button>
 

@@ -1,7 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
-
+const pageContentRouter = require("./Routers/pageContent");
+const publicPageContentRouter = require("./Routers/publicPageContent");
 const connectDB = require("./database");
 const User = require("./Models/user");
 const announcementRouter = require("./Routers/announcement");
@@ -119,6 +120,8 @@ app.use(
 app.use("/api/courses", protect, requireAdmin, courseRouter);
 app.use("/api/payments", protect, requireAdmin, paymentRouter);
 app.use("/api/settings", protect, requireAdmin, settingRouter);
+app.use("/api/public/page-content", publicPageContentRouter);
+app.use("/api/page-content", protect, requireAdmin, pageContentRouter);
 app.use("/api/reports", protect, requireAdmin, reportRouter);
 app.use("/api/lectures", protect, requireAdmin, lectureRouter);
 app.use("/api/system-logs", protect, requireAdmin, systemLogRouter);

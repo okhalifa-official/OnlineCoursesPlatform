@@ -24,3 +24,4 @@ export { default as AdminPermissions } from "./AdminPermissions";
 export { default as Payments } from "./Payments";
 export { default as PaymentSettings } from "./PaymentSettings";
 export { default as BulkAnnouncements } from "./BulkAnnouncements";
+export { default as SiteContent } from "./SiteContent";
