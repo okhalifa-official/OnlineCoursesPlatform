@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<clinicalAdvisors>
+
+  <advisor name="Prof. James Whitfield"    title="Consultant Intensivist"           institution="Guy's and St Thomas' NHS"       specialty="Lung Ultrasound"         expertise="Critical care and point-of-care lung assessment." />
+  <advisor name="Dr. Priya Sharma"         title="Emergency Medicine Consultant"    institution="Royal London Hospital"          specialty="FAST Exam"               expertise="Trauma ultrasound and emergency department POCUS workflows." />
+  <advisor name="Dr. Carlos Rivera"        title="Professor of Cardiology"          institution="Hospital Clinic Barcelona"      specialty="Echocardiography"        expertise="Advanced echocardiography and haemodynamic monitoring." />
+  <advisor name="Dr. Fatima Al-Zahraa"     title="Consultant Anaesthesiologist"     institution="King Faisal Hospital"           specialty="Regional Anaesthesia US" expertise="Ultrasound-guided nerve blocks and procedural guidance." />
+  <advisor name="Prof. Ingrid Müller"      title="Professor of Radiology"           institution="Charité Berlin"                 specialty="MSK Ultrasound"          expertise="Musculoskeletal and interventional ultrasound." />
+  <advisor name="Dr. Takeshi Nakamura"     title="Associate Professor"              institution="University of Tokyo Hospital"   specialty="Abdominal POCUS"         expertise="Hepatic, renal and gastrointestinal ultrasound protocols." />
+  <advisor name="Dr. Amina Osei"           title="Consultant Obstetrician"          institution="Korle Bu Teaching Hospital"     specialty="Obstetric POCUS"         expertise="First-trimester and maternal POCUS in resource-limited settings." />
+  <advisor name="Dr. Lucas Andrade"        title="Emergency Physician"              institution="Hospital das Clínicas São Paulo" specialty="Trauma POCUS"            expertise="FAST and extended FAST in high-volume trauma centres." />
+
+</clinicalAdvisors>

@@ -1,15 +1,7 @@
+// not used
+
 import { useNavigate } from "react-router-dom";
 import UserNavbar from "../components/UserNavbar";
-
-// Centre nav links — identical across all public pages.
-const NAV_LINKS = [
-  { label: "Home",    to: "/" },
-  { label: "Courses", to: "/courses" },
-  { label: "Why Us",  to: "/why-us" },
-  { label: "Events",  to: "/" },
-  { label: "Verify",  to: "/" },
-  { label: "Contact", to: "/" },
-];
 
 // Four differentiating pillars — each has an accent colour for its icon bg.
 const PILLARS = [
@@ -76,7 +68,6 @@ export default function WhyUsPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <UserNavbar links={NAV_LINKS} />
 
       {/* ── 1. Hero ── */}
       <section className="max-w-6xl mx-auto px-6 pt-16 pb-16 text-center">

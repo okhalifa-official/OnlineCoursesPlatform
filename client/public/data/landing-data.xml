@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<landing>
+
+  <!-- ── Hero ── -->
+  <hero>
+    <badge>Leading Light in POCUS Education</badge>
+    <headline>Hands-on Ultrasound Training for the Real Bedside.</headline>
+    <headlineHighlight>Training</headlineHighlight>
+    <subheadline>Internationally accepted Point-of-Care Ultrasound education that empowers physicians to apply ultrasound confidently and accurately in their daily clinical practice.</subheadline>
+    <rating value="4.9" reviews="2,140" />
+    <workshopBadge>
+      <title>Live workshop · Cairo</title>
+      <subtitle>Next session — May 21 · 14 seats left</subtitle>
+    </workshopBadge>
+    <stats>
+      <stat value="12k+" label="physicians trained" />
+      <stat value="98%"  label="pass rate" />
+      <stat value="11"   label="specialised tracks" />
+    </stats>
+  </hero>
+
+  <!-- ── Trusted by ── -->
+  <trusted>
+    <institution>MedPro Medical Service Company</institution>
+    <institution>TAMARA ACADEMIA</institution>
+    <institution>ALFURSSAN</institution>
+    <institution>The Academy of Sciences</institution>
+    <institution>Advanced Vision</institution>
+    <institution>Chison Medical Technologies Co</institution>
+    <institution>EFSUMB</institution>
+  </trusted>
+
+  <!-- ── About ── -->
+  <about>
+    <eyebrow>About SonoSchool</eyebrow>
+    <headline>A modern, practical approach to bedside ultrasound.</headline>
+    <body>We deliver Point-of-Care Ultrasound education in a modern, practical, and impactful way — creating a measurable difference in patient care and taking ultrasound education beyond today's limits.</body>
+    <features>
+      <feature title="Clinically precise"  desc="Faculty-vetted modules built around real bedside scenarios." />
+      <feature title="Authoritative"       desc="Aligned with EFSUMB &amp; WINFOCUS standards." />
+      <feature title="Confidence-building" desc="Repeat until mastered drills before you scan a patient." />
+      <feature title="Approachable"        desc="Plain-language teaching from physicians, for physicians." />
+    </features>
+    <links>
+      <link label="Why us"   href="/#why-us"  />
+      <link label="Courses"  href="/courses"  />
+      <link label="Events"   href="/#events"  />
+      <link label="Verify"   href="/#verify"  />
+      <link label="Contact"  href="/#contact" />
+    </links>
+  </about>
+
+  <!-- ── Tracks ── -->
+  <tracks>
+    <track color="#1D4ED8" label="Basic POCUS"       desc="Foundations: cardiac, lung, abdomen, FAST" />
+    <track color="#D62828" label="Advanced POCUS" desc="Haemodynamic assessment in the unstable patient" />
+    <track color="#065F46" label="Simulation POCUS"     desc="Image-guided regional anaesthesia from forearm to axilla" />
+    <track color="#7C3AED" label="Basics of Critical Care ECHO"   desc="First-trimester assessment and beyond" />
+    <track color="#B45309" label="Regional Anaesthesia US"    desc="Adapted protocols for neonates and children" />
+    <track color="#374151" label="Musculoskeletal US"   desc="Train the trainer: facilitation and feedback skills" />
+    <track color="#B45309" label="Thoracic Ultrasound"    desc="Adapted protocols for neonates and children" />
+    <track color="#374151" label="Sonoschool Instructor"   desc="Train the trainer: facilitation and feedback skills" />
+  </tracks>
+
+  <!-- ── Why Us ── -->
+  <whyUs>
+    <eyebrow>Why SonoSchool</eyebrow>
+    <headline>Built by clinicians, for clinicians.</headline>
+    <body>Most ultrasound courses teach you to read images. We teach you to use ultrasound as a clinical tool — the way it's actually used at the bedside.</body>
+    <pillarsHeading>Four things that set us apart</pillarsHeading>
+    <stats>
+      <stat value="12k+" label="Physicians trained" />
+      <stat value="98%"  label="Pass rate" />
+      <stat value="4.9"  label="Average rating" />
+      <stat value="11"   label="Specialised tracks" />
+    </stats>
+    <pillars>
+      <pillar color="#D62828" title="Clinically precise"        desc="Every module is faculty-vetted and built around real bedside scenarios, not theory for its own sake. You practice the exact workflow you'll use on shift." />
+      <pillar color="#1D4ED8" title="Authoritative curriculum"  desc="Fully aligned with EFSUMB &amp; WINFOCUS international standards — meaning your certificate is recognised globally, not just locally." />
+      <pillar color="#065F46" title="Confidence-building drills" desc="Repeat-until-mastered simulation drills mean you've already scanned the scenario dozens of times before you face it on a real patient." />
+      <pillar color="#7C3AED" title="Physician-to-physician"    desc="Plain-language teaching from clinicians who still scan patients daily. No academic detachment — pure bedside knowledge transfer." />
+    </pillars>
+  </whyUs>
+
+  <!-- ── Events ── -->
+  <events>
+    <eyebrow>Upcoming</eyebrow>
+    <headline>Live workshops &amp; webinars</headline>
+    <event title="Basic POCUS Bootcamp"    date="May 21, 2026"  location="Cairo, Egypt"  seats="14" />
+    <event title="Critical Care ECHO"      date="June 4, 2026"  location="Online (Zoom)" seats="30" />
+    <event title="Nerve Block Masterclass" date="June 18, 2026" location="Dubai, UAE"    seats="8"  />
+  </events>
+
+  <!-- ── Verify ── -->
+  <verify>
+    <eyebrow>Certificates</eyebrow>
+    <headline>Verify a certificate</headline>
+    <body>Enter a certificate ID to confirm its authenticity and view the holder's details.</body>
+    <placeholder>Certificate ID (e.g. SNS-2024-00123)</placeholder>
+    <buttonLabel>Verify now</buttonLabel>
+  </verify>
+
+  <!-- ── Contact ── -->
+  <contact>
+    <eyebrow>Get in touch</eyebrow>
+    <headline>Contact us</headline>
+    <email>hello@sonoschool.com</email>
+    <phone>+20 100 000 0000</phone>
+    <location>Cairo, Egypt</location>
+  </contact>
+
+  <!-- ── Footer CTA ── -->
+  <footerCta>
+    <eyebrow>Start today</eyebrow>
+    <headline>Ready to scan with confidence?</headline>
+    <body>Join thousands of clinicians who've made POCUS part of their everyday practice.</body>
+    <buttonLabel>Get started</buttonLabel>
+  </footerCta>
+
+</landing>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menaBoard>
+
+  <member name="Dr. Omar Khalil"        title="Regional Lead — Egypt"         institution="Cairo University Hospital"       specialty="Emergency POCUS"         />
+  <member name="Dr. Rania Al-Nabulsi"   title="Regional Lead — Jordan"        institution="Jordan University Hospital"      specialty="Critical Care Echo"      />
+  <member name="Dr. Abdullah Al-Ghamdi" title="Regional Lead — KSA"           institution="King Faisal Specialist Hospital" specialty="Pulmonary POCUS"         />
+  <member name="Dr. Yasmin Al-Farsi"    title="Regional Lead — UAE"           institution="Cleveland Clinic Abu Dhabi"      specialty="Haemodynamic Assessment" />
+  <member name="Dr. Nasser Al-Mutairi"  title="Regional Lead — Kuwait"        institution="Kuwait University Hospital"      specialty="Abdominal Ultrasound"    />
+  <member name="Dr. Joelle Khoury"      title="Regional Lead — Lebanon"       institution="American University of Beirut"   specialty="Obstetric POCUS"         />
+  <member name="Dr. Haider Al-Saadi"    title="Regional Lead — Iraq"          institution="Baghdad Medical City"            specialty="Trauma POCUS"            />
+  <member name="Dr. Fatima Ben Younes"  title="Regional Lead — Libya"         institution="Tripoli University Hospital"     specialty="Basic POCUS"             />
+  <member name="Dr. Youssef Benali"     title="Regional Lead — Morocco"       institution="CHU Ibn Sina Rabat"              specialty="Vascular Ultrasound"     />
+  <member name="Dr. Amira Trabelsi"     title="Regional Lead — Tunisia"       institution="La Rabta Hospital Tunis"         specialty="MSK Ultrasound"          />
+
+</menaBoard>

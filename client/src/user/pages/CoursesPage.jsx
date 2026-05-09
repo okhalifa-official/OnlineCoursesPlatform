@@ -3,14 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { getPublishedCourses } from "../api/userApi";
 import UserNavbar from "../components/UserNavbar";
 
-// Centre nav links — identical across all public pages.
 const NAV_LINKS = [
-  { label: "Home",    to: "/" },
-  { label: "Courses", to: "/courses" },
-  { label: "Why Us",  to: "/why-us" },
-  { label: "Events",  to: "/" },
-  { label: "Verify",  to: "/" },
-  { label: "Contact", to: "/" },
+  { label: "Home",    to: "/",         section: null      },
+  { label: "Verify",  to: "/#verify",  section: "verify"  },
+  { label: "Courses", to: "/courses",  section: null      },
+  { label: "Why Us",  to: "/#why-us",  section: "why-us"  },
+  { label: "Events",  to: "/#events",  section: "events"  },
+  { label: "Contact", to: "/#contact", section: "contact" },
 ];
 
 // Gradient colour pairs keyed by a substring of the category name.

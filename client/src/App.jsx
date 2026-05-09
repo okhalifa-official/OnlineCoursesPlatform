@@ -38,17 +38,33 @@ import {
   UserProfile,
   LandingPage,
   CoursesPage,
-  WhyUsPage,
   UserLogin,
 } from "./user/index";
 
+import MissionVision      from "./user/pages/about-us/MissionVision";
+import BoardOfDirectors   from "./user/pages/about-us/BoardOfDirectors";
+import MENABoard          from "./user/pages/about-us/MENABoard";
+import ScientificCommittee from "./user/pages/about-us/ScientificCommittee";
+import ClinicalAdvisors   from "./user/pages/about-us/ClinicalAdvisors";
+import BusinessPartners   from "./user/pages/about-us/BusinessPartners";
+import ScientificPartners from "./user/pages/about-us/ScientificPartners";
+import Policies           from "./user/pages/about-us/Policies";
+
 
 function ScrollToTop() {
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
+    if (hash) {
+      // Give the page a tick to render before scrolling to the anchor.
+      const id = hash.replace("#", "");
+      setTimeout(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+      }, 50);
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, [pathname, hash]);
 
   return null;
 }
@@ -68,30 +84,22 @@ export default function App() {
 
       <Routes>
         {/* ── User-facing public routes ── */}
-        <Route path="/"        element={<UserPage><LandingPage  /></UserPage>} />
-        <Route path="/courses" element={<UserPage><CoursesPage  /></UserPage>} />
-        <Route path="/why-us"  element={<UserPage><WhyUsPage   /></UserPage>} />
-        <Route path="/login"   element={<UserPage><UserLogin    /></UserPage>} />
-        <Route path="/register"element={<UserPage><UserRegister /></UserPage>} />
+        <Route path="/"             element={<UserPage><LandingPage  /></UserPage>} />
+        <Route path="/courses"      element={<UserPage><CoursesPage  /></UserPage>} />
+        <Route path="/login"        element={<UserPage><UserLogin    /></UserPage>} />
+        <Route path="/register"     element={<UserPage><UserRegister /></UserPage>} />
         <Route path="/home"         element={<UserPage><UserHome     /></UserPage>} />
         <Route path="/user-profile" element={<UserPage><UserProfile  /></UserPage>} />
 
-        <Route
-          path="/register"
-          element={
-            <UserPage>
-              <UserRegister />
-            </UserPage>
-          }
-        />
-        <Route
-          path="/home"
-          element={
-            <UserPage>
-              <UserHome />
-            </UserPage>
-          }
-        />
+        {/* ── About-us pages ── */}
+        <Route path="/about/mission-vision"      element={<UserPage><MissionVision      /></UserPage>} />
+        <Route path="/about/board-of-directors"  element={<UserPage><BoardOfDirectors   /></UserPage>} />
+        <Route path="/about/mena-board"          element={<UserPage><MENABoard          /></UserPage>} />
+        <Route path="/about/scientific-committee" element={<UserPage><ScientificCommittee /></UserPage>} />
+        <Route path="/about/clinical-advisors"   element={<UserPage><ClinicalAdvisors   /></UserPage>} />
+        <Route path="/about/business-partners"   element={<UserPage><BusinessPartners   /></UserPage>} />
+        <Route path="/about/scientific-partners" element={<UserPage><ScientificPartners /></UserPage>} />
+        <Route path="/about/policies"            element={<UserPage><Policies           /></UserPage>} />
 
         <Route
           path="/dashboard"

@@ -5,11 +5,7 @@ import UserNavbar from "../components/UserNavbar";
 import UserSidebar from "../components/UserSidebar";
 
 // Centre nav links passed to the universal navbar.
-const NAV_LINKS = [
-  { label: "Home",    to: "/" },
-  { label: "Courses", to: "/courses" },
-  { label: "Why Us",  to: "/why-us" },
-];
+const NAV_LINKS = [];
 
 // Per-category gradient colours for course card banners.
 // Matched by substring so "Basic POCUS" hits the "pocus" key.

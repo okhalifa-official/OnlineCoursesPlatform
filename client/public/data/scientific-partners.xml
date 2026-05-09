@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scientificPartners>
+
+  <partner name="EFSUMB"   fullName="European Federation of Societies for Ultrasound in Medicine and Biology" country="Europe"       type="International Society" logo="" website="https://www.efsumb.org"    desc="Curriculum alignment and joint accreditation for all SonoSchool European-track courses." />
+  <partner name="WINFOCUS" fullName="World Interactive Network Focused On Critical Ultrasound"                country="International" type="International Society" logo="" website="https://www.winfocus.org"  desc="Co-authorship of critical care ultrasound curricula and global certification recognition." />
+  <partner name="ACEP"     fullName="American College of Emergency Physicians"                                country="USA"          type="Professional College"  logo="" website="https://www.acep.org"     desc="Endorsement of emergency POCUS modules and continuing medical education credits." />
+  <partner name="ESC"      fullName="European Society of Cardiology"                                         country="Europe"       type="Professional Society"  logo="" website="https://www.escardio.org" desc="Collaboration on point-of-care echocardiography standards and faculty certification." />
+  <partner name="ISUOG"    fullName="International Society of Ultrasound in Obstetrics and Gynecology"       country="International" type="International Society" logo="" website="https://www.isuog.org"    desc="Partnership on obstetric POCUS curriculum design and clinical guideline alignment." />
+  <partner name="ISS"      fullName="International Shock Society"                                            country="International" type="Professional Society"  logo="" website=""                          desc="Joint research and education initiatives in haemodynamic POCUS for shock management." />
+
+</scientificPartners>

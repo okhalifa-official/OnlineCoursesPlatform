@@ -13,11 +13,7 @@ import {
   userApiFetch,
 } from "../api/userApi";
 
-const NAV_LINKS = [
-  { label: "Home",    to: "/" },
-  { label: "Courses", to: "/courses" },
-  { label: "Why Us",  to: "/why-us" },
-];
+const NAV_LINKS = [];
 
 const SIDEBAR_LINKS = [
   {

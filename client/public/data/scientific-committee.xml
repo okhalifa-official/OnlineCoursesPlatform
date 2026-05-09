@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scientificCommittee>
+
+  <country name="Egypt">
+    <member name="Eng. Omar Khalifa"    title="Mr. Zalabya"   institution="Batates and Zalabya"             specialty="Chocolate Golden Balls" />
+    <member name="Prof. Ahmed Hassan"    title="Professor of Emergency Medicine"   institution="Cairo University"             specialty="Emergency POCUS" />
+    <member name="Dr. Sara El-Deeb"      title="Consultant Intensivist"             institution="Ain Shams University Hospital" specialty="Critical Care Echo" />
+    <member name="Dr. Khaled Mansour"    title="Associate Professor of Radiology"   institution="Alexandria University"        specialty="Abdominal Ultrasound" />
+    <member name="Dr. Nadia Farouk"      title="Consultant Anaesthesiologist"       institution="Kasr Al-Ainy Hospital"        specialty="Regional Anaesthesia US" />
+  </country>
+
+  <country name="Jordan">
+    <member name="Dr. Omar Al-Rashid"    title="Head of Critical Care"             institution="Jordan University Hospital"   specialty="Haemodynamic Assessment" />
+    <member name="Dr. Lina Haddad"       title="Consultant Emergency Physician"    institution="King Abdullah Medical City"   specialty="Basic POCUS" />
+    <member name="Dr. Faris Nabulsi"     title="Senior Radiologist"                institution="Hussein Medical Center"       specialty="Vascular Ultrasound" />
+  </country>
+
+  <country name="Spain">
+    <member name="Dr. Carlos Rivera"     title="Professor of Cardiology"           institution="Hospital Clinic Barcelona"    specialty="Echocardiography" />
+    <member name="Dr. Elena Morales"     title="Consultant Emergency Medicine"     institution="Hospital La Paz Madrid"       specialty="Trauma POCUS" />
+  </country>
+
+  <country name="UAE">
+    <member name="Dr. Yasmin Al-Farsi"   title="Consultant Intensivist"            institution="Cleveland Clinic Abu Dhabi"   specialty="Critical Care Echo" />
+    <member name="Dr. Tariq Bin Saeed"   title="Emergency Physician"               institution="Rashid Hospital Dubai"        specialty="Point-of-Care US" />
+    <member name="Dr. Hana Al-Mulla"     title="Associate Professor"               institution="UAE University"               specialty="Obstetric POCUS" />
+  </country>
+
+  <country name="Saudi Arabia">
+    <member name="Dr. Abdulaziz Al-Ghamdi" title="Professor of Internal Medicine"  institution="King Faisal Specialist Hospital" specialty="Pulmonary POCUS" />
+    <member name="Dr. Reem Al-Otaibi"    title="Consultant Radiologist"            institution="King Saud University"         specialty="MSK Ultrasound" />
+  </country>
+
+  <country name="UK">
+    <member name="Dr. James Whitfield"   title="Consultant Intensivist"            institution="Guy's and St Thomas' NHS"     specialty="Lung Ultrasound" />
+    <member name="Dr. Priya Sharma"      title="Emergency Medicine Consultant"     institution="Royal London Hospital"        specialty="FAST Exam" />
+  </country>
+
+</scientificCommittee>

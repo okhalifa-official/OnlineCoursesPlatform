@@ -3,6 +3,17 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { getUserToken, getUserInfo, clearUserToken } from "../api/userApi";
 import UserLogo from "./UserLogo";
 
+const ABOUT_LINKS = [
+  { label: "Mission & Vision",     href: "/about/mission-vision"      },
+  { label: "Board of Directors",   href: "/about/board-of-directors"  },
+  { label: "MENA Board",           href: "/about/mena-board"          },
+  { label: "Scientific Committee", href: "/about/scientific-committee" },
+  { label: "Clinical Advisors",    href: "/about/clinical-advisors"   },
+  { label: "Business Partners",    href: "/about/business-partners"   },
+  { label: "Scientific Partners",  href: "/about/scientific-partners" },
+  { label: "Policies",             href: "/about/policies"            },
+];
+
 /**
  * Universal top navigation bar — present on every user-facing page.
  *
@@ -36,9 +47,13 @@ export default function UserNavbar({ links = [] }) {
   const [open, setOpen] = useState(false);
   const dropRef = useRef(null);
 
+  const [aboutOpen, setAboutOpen] = useState(false);
+  const aboutRef = useRef(null);
+
   useEffect(() => {
     function onDown(e) {
       if (dropRef.current && !dropRef.current.contains(e.target)) setOpen(false);
+      if (aboutRef.current && !aboutRef.current.contains(e.target)) setAboutOpen(false);
     }
     document.addEventListener("mousedown", onDown);
     return () => document.removeEventListener("mousedown", onDown);
@@ -74,21 +89,80 @@ export default function UserNavbar({ links = [] }) {
     <nav className="w-full bg-white border-b border-gray-100 sticky top-0 z-30 h-14">
       <div className="h-full px-6 flex items-center justify-between gap-6">
         {/* Brand logo */}
-        <UserLogo />
+        <Link to="/" className="shrink-0">
+          <UserLogo />
+        </Link>
 
         {/* Centre links */}
         <div className="hidden md:flex items-center gap-6 flex-1">
-          {links.map((link) => (
-            <Link
-              key={link.label}
-              to={link.to}
-              className={`text-sm font-medium transition ${
-                pathname === link.to ? "text-brandRed" : "text-charcoal hover:text-brandRed"
+          {links.map((link) => {
+            if (link.section) {
+              return (
+                <button
+                  key={link.label}
+                  onClick={() => {
+                    if (pathname === "/") {
+                      document.getElementById(link.section)?.scrollIntoView({ behavior: "smooth" });
+                    } else {
+                      navigate(link.to);
+                    }
+                  }}
+                  className="text-sm font-medium transition text-charcoal hover:text-brandRed"
+                >
+                  {link.label}
+                </button>
+              );
+            }
+
+            return (
+              <Link
+                key={link.label}
+                to={link.to}
+                className={`text-sm font-medium transition ${
+                  pathname === link.to ? "text-brandRed" : "text-charcoal hover:text-brandRed"
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+
+          {/* About dropdown */}
+          <div className="relative" ref={aboutRef}>
+            <button
+              onClick={() => setAboutOpen((v) => !v)}
+              className={`flex items-center gap-1 text-sm font-medium transition ${
+                pathname.startsWith("/about") ? "text-brandRed" : "text-charcoal hover:text-brandRed"
               }`}
             >
-              {link.label}
-            </Link>
-          ))}
+              About
+              <svg
+                className={`w-3 h-3 transition-transform duration-200 ${aboutOpen ? "rotate-180" : ""}`}
+                fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            {aboutOpen && (
+              <div className="absolute left-0 top-[calc(100%+12px)] bg-white border border-gray-100 rounded-2xl shadow-card py-1.5 w-56 z-50">
+                {ABOUT_LINKS.map((item, i) => (
+                  <Link
+                    key={item.href}
+                    to={item.href}
+                    onClick={() => setAboutOpen(false)}
+                    className={`flex items-center justify-between px-4 py-2.5 text-sm text-charcoal hover:bg-softGrey hover:text-brandRed transition group
+                      ${i !== ABOUT_LINKS.length - 1 ? "border-b border-gray-50" : ""}`}
+                  >
+                    {item.label}
+                    <svg className="w-3 h-3 text-gray-300 group-hover:text-brandRed transition" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                    </svg>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Right side */}

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<policies>
+
+  <policy title="Privacy Policy" slug="privacy">
+    <lastUpdated>2025-01-01</lastUpdated>
+    <section heading="Data We Collect">We collect your name, email address, professional details, and usage data to provide and improve the SonoSchool platform.</section>
+    <section heading="How We Use Your Data">Your data is used to manage your account, deliver courses, issue certificates, and send service communications. We never sell personal data to third parties.</section>
+    <section heading="Data Retention">Account data is retained for as long as your account is active. You may request deletion at any time by contacting hello@sonoschool.com.</section>
+    <section heading="Cookies">We use essential cookies for authentication and analytics cookies (opt-in) to improve the platform experience.</section>
+    <section heading="Contact">For privacy enquiries contact our Data Protection Officer at privacy@sonoschool.com.</section>
+  </policy>
+
+  <policy title="Terms of Service" slug="terms">
+    <lastUpdated>2025-01-01</lastUpdated>
+    <section heading="Acceptance">By registering on SonoSchool you agree to these terms. If you do not agree, please do not use the platform.</section>
+    <section heading="Accounts">You are responsible for maintaining the confidentiality of your credentials. Sharing account access is prohibited.</section>
+    <section heading="Intellectual Property">All course content, videos, and materials are the intellectual property of SonoSchool and may not be reproduced without written permission.</section>
+    <section heading="Certificates">Certificates are issued upon successful completion of assessments. Fraudulent activity will result in revocation and account termination.</section>
+    <section heading="Limitation of Liability">SonoSchool provides educational content only. Clinical decisions remain the sole responsibility of the treating physician.</section>
+  </policy>
+
+  <policy title="Refund Policy" slug="refund">
+    <lastUpdated>2025-01-01</lastUpdated>
+    <section heading="Online Courses">Full refund within 7 days of purchase, provided less than 20% of the course has been completed.</section>
+    <section heading="Live Workshops">Cancellations made more than 14 days before the event receive a full refund. Within 14 days, a 50% refund applies. No refund within 48 hours.</section>
+    <section heading="How to Request">Email refunds@sonoschool.com with your order number and reason. Requests are processed within 5–10 business days.</section>
+  </policy>
+
+  <policy title="Accreditation Policy" slug="accreditation">
+    <lastUpdated>2025-01-01</lastUpdated>
+    <section heading="Standards">All SonoSchool programmes are designed to meet or exceed EFSUMB and WINFOCUS educational standards.</section>
+    <section heading="CME Credits">Accredited courses carry CME/CPD credits recognised in Egypt, Jordan, UAE, Saudi Arabia, and select European countries.</section>
+    <section heading="Certificate Validity">Certificates are valid for 3 years from the date of issue. Recertification courses are available on the platform.</section>
+    <section heading="Verification">Third parties may verify certificates at sonoschool.com using the certificate ID printed on the document.</section>
+  </policy>
+
+</policies>

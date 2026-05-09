@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<boardOfDirectors>
+
+  <member name="Prof. Mohamed Al-Aziz"   title="Chairman"                     institution="Cairo University"               specialty="Emergency Medicine"   bio="Founder of SonoSchool and pioneer of POCUS education in the MENA region." />
+  <member name="Dr. Sarah Thompson"      title="Vice Chair"                   institution="Royal College of Physicians"    specialty="Internal Medicine"    bio="International lead for WINFOCUS curriculum development and accreditation." />
+  <member name="Dr. Karim Hisham"        title="Executive Director"           institution="Ain Shams University"          specialty="Critical Care"        bio="Oversees day-to-day operations and strategic partnerships across the region." />
+  <member name="Dr. Layla Al-Mansouri"   title="Director of Education"        institution="King Abdullah Medical City"    specialty="Medical Education"    bio="Leads curriculum design, faculty training, and quality assurance." />
+  <member name="Prof. Ricardo Fernandez" title="Director of Accreditation"    institution="Hospital Clinic Barcelona"     specialty="Cardiology"           bio="Ensures all SonoSchool programmes meet EFSUMB and WINFOCUS standards." />
+  <member name="Dr. Hana Petersen"       title="Director of Technology"       institution="Charité Berlin"                specialty="Radiology"            bio="Drives the digital learning platform and simulation technology roadmap." />
+
+</boardOfDirectors>

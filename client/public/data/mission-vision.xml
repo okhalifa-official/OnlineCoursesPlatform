@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<missionVision>
+
+  <mission>
+    <eyebrow>Our Mission</eyebrow>
+    <body>To empower physicians worldwide with practical, internationally accredited Point-of-Care Ultrasound education that directly improves patient outcomes at the bedside.</body>
+  </mission>
+
+  <vision>
+    <eyebrow>Our Vision</eyebrow>
+    <body>A world where every clinician can confidently use ultrasound as a daily clinical tool — making POCUS the standard of care across all specialties and regions.</body>
+  </vision>
+
+  <values>
+    <value title="Excellence"     desc="We hold every module to the highest clinical and educational standards." />
+    <value title="Accessibility"  desc="World-class POCUS education should be available to any physician, anywhere." />
+    <value title="Impact"         desc="Every course is designed to create a measurable difference at the bedside." />
+    <value title="Innovation"     desc="We continuously evolve our teaching methods with the latest evidence." />
+  </values>
+
+</missionVision>

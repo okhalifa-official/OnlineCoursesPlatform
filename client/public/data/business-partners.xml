@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<businessPartners>
+
+  <partner name="Chison Medical Technologies" country="China"        type="Equipment"      logo="" website="https://www.chison.com"      desc="Leading ultrasound device manufacturer — supplies simulation and clinical machines for SonoSchool hands-on workshops." />
+  <partner name="MedPro Medical Services"     country="Egypt"        type="Distribution"   logo="" website=""                             desc="Primary regional distributor supporting event logistics and equipment supply across North Africa." />
+  <partner name="TAMARA ACADEMIA"             country="Saudi Arabia" type="Education"      logo="" website=""                             desc="Strategic education partner delivering SonoSchool-accredited courses throughout the Gulf." />
+  <partner name="ALFURSSAN"                   country="Saudi Arabia" type="Healthcare"     logo="" website=""                             desc="Healthcare group hosting SonoSchool simulation centres and live workshop venues." />
+  <partner name="Advanced Vision"             country="Egypt"        type="Technology"     logo="" website=""                             desc="EdTech partner powering the digital learning platform and virtual simulation modules." />
+  <partner name="The Academy of Sciences"     country="Jordan"       type="Education"      logo="" website=""                             desc="Academic partner providing CME accreditation and faculty development programmes in Jordan." />
+
+</businessPartners>
