@@ -5,3 +5,4 @@ export { default as UserProfile } from "./pages/UserProfile";
 export { default as LandingPage } from "./pages/LandingPage";
 export { default as CoursesPage } from "./pages/CoursesPage";
 export { default as WhyUsPage } from "./pages/WhyUsPage";
+export { default as PaymentPage } from "./pages/PaymentPage"; 

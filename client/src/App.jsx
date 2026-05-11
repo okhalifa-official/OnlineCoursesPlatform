@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
-
+ 
 import ProtectedRoute from "./admin/components/ProtectedRoute";
-
+ 
 import {
   Login,
   AdminDashboard,
@@ -31,7 +31,7 @@ import {
   Settings,
   BulkAnnouncements,
 } from "./admin/pages";
-
+ 
 import {
   UserRegister,
   UserHome,
@@ -40,32 +40,33 @@ import {
   CoursesPage,
   WhyUsPage,
   UserLogin,
+  PaymentPage,
 } from "./user/index";
-
-
+ 
+ 
 function ScrollToTop() {
   const { pathname } = useLocation();
-
+ 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
-
+ 
   return null;
 }
-
+ 
 function UserPage({ children }) {
   return <div className="page-enter">{children}</div>;
 }
-
+ 
 function PrivatePage({ children }) {
   return <ProtectedRoute>{children}</ProtectedRoute>;
 }
-
+ 
 export default function App() {
   return (
     <>
       <ScrollToTop />
-
+ 
       <Routes>
         {/* ── User-facing public routes ── */}
         <Route path="/"        element={<UserPage><LandingPage  /></UserPage>} />
@@ -75,7 +76,8 @@ export default function App() {
         <Route path="/register"element={<UserPage><UserRegister /></UserPage>} />
         <Route path="/home"         element={<UserPage><UserHome     /></UserPage>} />
         <Route path="/user-profile" element={<UserPage><UserProfile  /></UserPage>} />
-
+        <Route path="/payment"      element={<UserPage><PaymentPage  /></UserPage>} />
+ 
         <Route
           path="/register"
           element={
@@ -92,7 +94,7 @@ export default function App() {
             </UserPage>
           }
         />
-
+ 
         <Route
           path="/dashboard"
           element={
@@ -101,7 +103,7 @@ export default function App() {
             </PrivatePage>
           }
         />
-
+ 
         <Route
           path="/educational-centers"
           element={
@@ -134,7 +136,7 @@ export default function App() {
             </PrivatePage>
           }
         />
-
+ 
         <Route
           path="/users"
           element={
@@ -199,7 +201,7 @@ export default function App() {
             </PrivatePage>
           }
         />
-
+ 
         <Route
           path="/payments"
           element={
@@ -216,7 +218,7 @@ export default function App() {
             </PrivatePage>
           }
         />
-
+ 
         <Route
           path="/settings"
           element={
@@ -289,9 +291,10 @@ export default function App() {
             </PrivatePage>
           }
         />
-
+ 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>
   );
 }
+ 
