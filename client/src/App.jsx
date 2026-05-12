@@ -13,6 +13,7 @@ import {
   Courses,
   AddCourse,
   EditCourse,
+  CourseStudents,
   Reports,
   Notifications,
   Profile,
@@ -38,6 +39,11 @@ import {
   UserProfile,
   LandingPage,
   CoursesPage,
+  CourseDetail,
+  CourseView,
+  LectureView,
+  MyCourses,
+  ExamView,
   UserLogin,
 } from "./user/index";
 
@@ -86,9 +92,15 @@ export default function App() {
         {/* ── User-facing public routes ── */}
         <Route path="/"             element={<UserPage><LandingPage  /></UserPage>} />
         <Route path="/courses"      element={<UserPage><CoursesPage  /></UserPage>} />
+        <Route path="/courses/:id"  element={<UserPage><CourseDetail /></UserPage>} />
+        <Route path="/learn/:id"    element={<UserPage><CourseView   /></UserPage>} />
+        <Route path="/learn/:id/lecture/:mi/:li" element={<UserPage><LectureView /></UserPage>} />
+        <Route path="/learn/:id/exam" element={<UserPage><ExamView /></UserPage>} />
+        <Route path="/learn/:id/exam/review" element={<UserPage><ExamView /></UserPage>} />
         <Route path="/login"        element={<UserPage><UserLogin    /></UserPage>} />
         <Route path="/register"     element={<UserPage><UserRegister /></UserPage>} />
         <Route path="/home"         element={<UserPage><UserHome     /></UserPage>} />
+        <Route path="/my-courses"   element={<UserPage><MyCourses    /></UserPage>} />
         <Route path="/user-profile" element={<UserPage><UserProfile  /></UserPage>} />
 
         {/* ── About-us pages ── */}
@@ -204,6 +216,14 @@ export default function App() {
           element={
             <PrivatePage>
               <EditCourse />
+            </PrivatePage>
+          }
+        />
+        <Route
+          path="/admin/courses/:id/students"
+          element={
+            <PrivatePage>
+              <CourseStudents />
             </PrivatePage>
           }
         />

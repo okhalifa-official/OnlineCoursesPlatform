@@ -17,9 +17,18 @@ export default function EditCourse() {
         try {
           const data = await getCourseById(id);
 
+          // Deep-merge nested fields so older courses (saved before the exam
+          // sub-schema existed) don't show up with `exam` undefined and crash
+          // ExamSection. Same idea for instructors / faqs / modules — they're
+          // always treated as arrays.
           setFormData({
             ...emptyCourse,
             ...data,
+            instructors: Array.isArray(data.instructors) ? data.instructors : [],
+            faqs: Array.isArray(data.faqs) ? data.faqs : [],
+            modules: Array.isArray(data.modules) ? data.modules : [],
+            materials: Array.isArray(data.materials) ? data.materials : [],
+            exam: { ...emptyCourse.exam, ...(data.exam || {}) },
             coursePrice: String(data.coursePrice),
           });
         } catch (error) {
