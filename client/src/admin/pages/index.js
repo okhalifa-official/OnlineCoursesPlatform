@@ -7,6 +7,7 @@ export { default as ApproveInstructors } from "./ApproveInstructors";
 export { default as Courses } from "./Courses";
 export { default as AddCourse } from "./AddCourse";
 export { default as EditCourse } from "./EditCourse";
+export { default as CourseStudents } from "./CourseStudents";
 export { default as Reports } from "./Reports";
 export { default as Notifications } from "./Notifications";
 export { default as Profile } from "./Profile";

@@ -8,6 +8,11 @@ import {
 } from "../api/coursesApi";
 import { getAdminProfile } from "../api/adminApi";
 import NotificationBell from "../components/NotificationBell";
+import {
+  listInstructors,
+  formatInstructorList,
+  stripHtmlToText,
+} from "../../user/components/CourseBar";
 
 function getTabValue(status) {
   if (status === "Published") return "published";
@@ -625,6 +630,10 @@ function StatsCard({ label, value, note, positive, danger }) {
 function CourseCard({ course, onDelete, onArchive, onRestore }) {
   const category = course.category || "General";
   const isArchived = course.publishStatus === "Archived";
+  // Pull the real instructor list off the new instructors[] array, falling
+  // back to "Unassigned" only when no usable names exist.
+  const instructorLabel =
+    formatInstructorList(listInstructors(course)) || "Unassigned";
 
   return (
     <div className="bg-white rounded-xl overflow-hidden border border-[#e5e5e5] shadow-card group transition-all duration-300 hover:-translate-y-1">
@@ -679,8 +688,19 @@ function CourseCard({ course, onDelete, onArchive, onRestore }) {
             <Link
               to={`/admin/courses/edit/${course._id}`}
               className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#1A1A1A] hover:text-[#D62828] transition-colors"
+              title="Edit course"
             >
               <span className="material-symbols-outlined">edit</span>
+            </Link>
+          )}
+
+          {!isArchived && (
+            <Link
+              to={`/admin/courses/${course._id}/students`}
+              className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#1A1A1A] hover:text-[#D62828] transition-colors"
+              title="Manage students"
+            >
+              <span className="material-symbols-outlined">group</span>
             </Link>
           )}
 
@@ -722,12 +742,12 @@ function CourseCard({ course, onDelete, onArchive, onRestore }) {
         <p className="text-[#333333] text-sm mb-4">
           Instructor:{" "}
           <span className="text-[#1A1A1A] font-semibold">
-            {course.instructor || "Unassigned"}
+            {instructorLabel}
           </span>
         </p>
 
         <p className="text-[#333333] text-xs mb-4 h-10 overflow-hidden">
-          {course.courseDescription}
+          {stripHtmlToText(course.courseDescription)}
         </p>
 
         <div className="flex items-center justify-between mt-auto">
@@ -752,7 +772,10 @@ function CourseCard({ course, onDelete, onArchive, onRestore }) {
           ) : (
             <div className="flex items-center gap-1 text-[10px] text-[#333333] uppercase">
               <span className="material-symbols-outlined text-xs">groups</span>
-              <span>{course.activeStudents || 0} students</span>
+              <span>
+                {(course.studentsCount ?? course.activeStudents ?? 0)} student
+                {(course.studentsCount ?? course.activeStudents ?? 0) === 1 ? "" : "s"}
+              </span>
             </div>
           )}
         </div>

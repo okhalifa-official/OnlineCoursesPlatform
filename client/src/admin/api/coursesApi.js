@@ -39,3 +39,20 @@ export async function restoreCourse(id) {
     method: "PATCH",
   });
 }
+
+export async function getCourseStudents(id) {
+  return adminFetch(`/courses/${id}/students`);
+}
+
+export async function resetExamAttempts(courseId, enrollmentId) {
+  return adminFetch(
+    `/courses/${courseId}/students/${enrollmentId}/reset-attempts`,
+    { method: "PATCH" }
+  );
+}
+
+export async function unenrollStudent(courseId, enrollmentId) {
+  return adminFetch(`/courses/${courseId}/students/${enrollmentId}`, {
+    method: "DELETE",
+  });
+}

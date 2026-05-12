@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { getPublishedCourses } from "../api/userApi";
+import { Link, useNavigate } from "react-router-dom";
+import { getPublishedCourses, getMyCourseIds, getUserToken } from "../api/userApi";
 import UserNavbar from "../components/UserNavbar";
+import { listInstructors, formatInstructorList, stripHtmlToText } from "../components/CourseBar";
 
 const NAV_LINKS = [
   { label: "Home",    to: "/",         section: null      },
@@ -37,41 +38,69 @@ function getCategoryGradient(category) {
  * Handles both a populated instructor object and a plain string field.
  * Price: 0 / falsy → "Free" in green; any positive value → "$X" in brandRed.
  */
-function CourseCard({ course }) {
+function CourseCard({ course, enrolled }) {
   const { from, to } = getCategoryGradient(course.category);
-  const instructorName =
-    typeof course.instructor === "object"
-      ? course.instructor?.fullName
-      : course.instructor;
+  // Hide "Unassigned" and empty values, dedupe, and surface every instructor
+  // (cards used to drop the second one).
+  const instructorNames = listInstructors(course);
+  const instructorLabel = formatInstructorList(instructorNames);
+
+  const target = enrolled ? `/learn/${course._id}` : `/courses/${course._id}`;
 
   return (
-    <div className="bg-white rounded-2xl shadow-card overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col">
-      {/* Colour-coded banner derived from the course category */}
+    <Link
+      to={target}
+      className="bg-white rounded-2xl shadow-card overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col"
+    >
+      {/* Banner: shows the uploaded preview image when present, otherwise a category gradient */}
       <div
-        className="h-32 flex flex-col justify-end p-5"
-        style={{ background: `linear-gradient(135deg, ${from} 0%, ${to} 100%)` }}
+        className="relative h-32 flex flex-col justify-end p-5 overflow-hidden"
+        style={
+          course.previewImage
+            ? undefined
+            : { background: `linear-gradient(135deg, ${from} 0%, ${to} 100%)` }
+        }
       >
-        {course.category && (
-          <span className="text-white/60 text-[10px] font-semibold uppercase tracking-widest mb-1">
-            {course.category}
+        {course.previewImage && (
+          <>
+            <img
+              src={course.previewImage}
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent" />
+          </>
+        )}
+
+        {enrolled && (
+          <span className="absolute top-3 right-3 z-10 bg-emerald-500 text-white text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded">
+            Enrolled
           </span>
         )}
-        <h3 className="font-heading font-bold text-white text-lg leading-snug line-clamp-2">
-          {course.courseName}
-        </h3>
+
+        <div className="relative z-10">
+          {course.category && (
+            <span className="text-white/70 text-[10px] font-semibold uppercase tracking-widest mb-1 block">
+              {course.category}
+            </span>
+          )}
+          <h3 className="font-heading font-bold text-white text-lg leading-snug line-clamp-2">
+            {course.courseName}
+          </h3>
+        </div>
       </div>
 
       {/* Card body */}
       <div className="p-5 flex flex-col flex-1">
         {course.courseDescription && (
           <p className="text-gray-400 text-sm leading-relaxed line-clamp-3 mb-4 flex-1">
-            {course.courseDescription}
+            {stripHtmlToText(course.courseDescription)}
           </p>
         )}
         <div className="flex items-center justify-between mt-auto pt-3 border-t border-gray-100">
-          {instructorName ? (
+          {instructorLabel ? (
             <p className="text-xs text-gray-400">
-              by <span className="text-charcoal font-medium">{instructorName}</span>
+              by <span className="text-charcoal font-medium">{instructorLabel}</span>
             </p>
           ) : <span />}
           <span className={`font-bold text-base ${!course.coursePrice || Number(course.coursePrice) === 0 ? "text-emerald-600" : "text-brandRed"}`}>
@@ -79,7 +108,7 @@ function CourseCard({ course }) {
           </span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
 
@@ -98,15 +127,30 @@ function CourseCard({ course }) {
 export default function CoursesPage() {
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
+  const [enrolledIds, setEnrolledIds] = useState(new Set());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
 
-  // Fetch the full catalogue once on mount — no auth token needed.
+  // Fetch the full catalogue once on mount. The catalogue itself needs no auth,
+  // but if the visitor IS logged in we also fetch their enrolled IDs so cards
+  // can link directly into /learn/:id instead of the public preview.
   useEffect(() => {
-    getPublishedCourses()
-      .then((data) => setCourses(Array.isArray(data) ? data : []))
-      .catch((err) => setError(err.message))
+    const enrolledPromise = getUserToken()
+      ? getMyCourseIds().catch(() => [])
+      : Promise.resolve([]);
+
+    Promise.all([
+      getPublishedCourses().catch((err) => {
+        setError(err.message);
+        return [];
+      }),
+      enrolledPromise,
+    ])
+      .then(([list, ids]) => {
+        setCourses(Array.isArray(list) ? list : []);
+        setEnrolledIds(new Set(Array.isArray(ids) ? ids : []));
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -195,7 +239,11 @@ export default function CoursesPage() {
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filtered.map((course) => (
-                <CourseCard key={course._id} course={course} />
+                <CourseCard
+                  key={course._id}
+                  course={course}
+                  enrolled={enrolledIds.has(String(course._id))}
+                />
               ))}
             </div>
           </>

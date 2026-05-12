@@ -1,9 +1,29 @@
 const Course = require("../Models/course");
+const Enrollment = require("../Models/enrollment");
 
 const getCourses = async function (req, res) {
   try {
-    const courses = await Course.find().sort({ createdAt: -1 });
-    res.json(courses);
+    // Run the two queries in parallel and merge a live `studentsCount` onto
+    // each course doc. Using Enrollment.aggregate (instead of Course.$lookup)
+    // means we go through Mongoose's own model → collection mapping, which
+    // is more reliable than guessing the collection name.
+    const [courses, enrollmentCounts] = await Promise.all([
+      Course.find({}).sort({ createdAt: -1 }).lean(),
+      Enrollment.aggregate([
+        { $group: { _id: "$courseId", count: { $sum: 1 } } },
+      ]),
+    ]);
+
+    const countsByCourse = new Map(
+      enrollmentCounts.map((row) => [String(row._id), row.count])
+    );
+
+    const enriched = courses.map((course) => ({
+      ...course,
+      studentsCount: countsByCourse.get(String(course._id)) || 0,
+    }));
+
+    res.json(enriched);
   } catch (error) {
     res.status(500).json({
       message: "Failed to get courses",

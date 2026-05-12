@@ -117,6 +117,16 @@ export async function getPublishedCourses() {
   return userApiFetch("/user/courses");
 }
 
+/** Fetches a single course by id for the public detail page. */
+export async function getPublishedCourseById(id) {
+  return userApiFetch(`/user/courses/${id}`);
+}
+
+/** Enrolls the authenticated user in a course. */
+export async function enrollInCourse(id) {
+  return userApiFetch(`/user/courses/${id}/enroll`, { method: "POST" });
+}
+
 /** Fetches the authenticated user's full profile from the server. */
 export async function getUserProfile() {
   return userApiFetch("/user/me");
@@ -134,3 +144,58 @@ export async function updateUserProfile(data) {
 export async function getMyEnrollments() {
   return userApiFetch("/user/my-enrollments");
 }
+
+/** Fetches the IDs of courses the authenticated user is enrolled in.
+ *  Used by listing pages so cards can link to the right destination
+ *  (/learn/:id for enrolled courses vs /courses/:id for previews). */
+export async function getMyCourseIds() {
+  return userApiFetch("/user/my-course-ids");
+}
+
+/** Fetches a course's full content for an enrolled student
+ *  (including modules and lessons). 403 if not enrolled. */
+export async function getEnrolledCourse(id) {
+  return userApiFetch(`/user/courses/${id}/learn`);
+}
+
+/** Returns the user's enrollment record (attempts used, best score, etc.). */
+export async function getCourseEnrollment(id) {
+  return userApiFetch(`/user/courses/${id}/enrollment`);
+}
+
+/** Records an exam attempt server-side. Returns the updated enrollment.
+ *  `reason` is one of "submitted" | "timeout" | "disqualified" so the
+ *  course page can render an honest result chip. */
+export async function submitExamAttempt(id, score, reason = "submitted") {
+  return userApiFetch(`/user/courses/${id}/exam-attempt`, {
+    method: "POST",
+    body: JSON.stringify({ score, reason }),
+  });
+}
+
+/** Persists per-lesson completion state for the admin Manage Students page. */
+export async function setLessonProgress(id, lessonId, done) {
+  return userApiFetch(`/user/courses/${id}/progress`, {
+    method: "PUT",
+    body: JSON.stringify({ lessonId, done }),
+  });
+}
+
+/** Fetches the public review list + average rating for a course. */
+export async function getCourseReviews(id) {
+  return userApiFetch(`/user/courses/${id}/reviews`);
+}
+
+/** Submits or updates the caller's review (only enrolled students). */
+export async function postCourseReview(id, rating, comment) {
+  return userApiFetch(`/user/courses/${id}/reviews`, {
+    method: "POST",
+    body: JSON.stringify({ rating, comment }),
+  });
+}
+
+/** Deletes the caller's own review. */
+export async function deleteCourseReview(id) {
+  return userApiFetch(`/user/courses/${id}/reviews`, { method: "DELETE" });
+}
+
