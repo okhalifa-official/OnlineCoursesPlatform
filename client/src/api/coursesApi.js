@@ -39,3 +39,33 @@ export async function restoreCourse(id) {
     method: "PATCH",
   });
 }
+
+export async function getCourseStudents(id) {
+  return adminFetch(`/courses/${id}/students`);
+}
+
+export async function resetExamAttempts(courseId, enrollmentId) {
+  return adminFetch(
+    `/courses/${courseId}/students/${enrollmentId}/reset-attempts`,
+    { method: "PATCH" }
+  );
+}
+
+export async function unenrollStudent(courseId, enrollmentId) {
+  return adminFetch(`/courses/${courseId}/students/${enrollmentId}`, {
+    method: "DELETE",
+  });
+}
+
+export async function uploadStudentCertificate(courseId, enrollmentId, { name, mimeType, data }) {
+  return adminFetch(`/courses/${courseId}/students/${enrollmentId}/certificate`, {
+    method: "POST",
+    body: JSON.stringify({ name, mimeType, data }),
+  });
+}
+
+export async function removeStudentCertificate(courseId, enrollmentId) {
+  return adminFetch(`/courses/${courseId}/students/${enrollmentId}/certificate`, {
+    method: "DELETE",
+  });
+}

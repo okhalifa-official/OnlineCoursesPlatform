@@ -1,0 +1,14 @@
+export { default as UserLogin } from "./pages/UserLogin";
+export { default as UserRegister } from "./pages/UserRegister";
+export { default as UserHome } from "./pages/UserHome";
+export { default as UserProfile } from "./pages/UserProfile";
+export { default as LandingPage } from "./pages/LandingPage";
+export { default as CoursesPage } from "./pages/CoursesPage";
+export { default as CourseDetail } from "./pages/CourseDetail";
+export { default as CourseView } from "./pages/CourseView";
+export { default as MyCourses } from "./pages/MyCourses";
+export { default as ExamView } from "./pages/ExamView";
+export { default as LectureView } from "./pages/LectureView";
+export { default as WhyUsPage } from "./pages/WhyUsPage";
+export { default as Certificates } from "./pages/Certificates";
+export { default as VerifyCertificate } from "./pages/VerifyCertificate";

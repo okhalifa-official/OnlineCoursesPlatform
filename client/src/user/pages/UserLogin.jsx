@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { loginUser, saveUserToken, saveUserInfo } from "../api/userApi";
 import UserLogo from "../components/UserLogo";
+import usePageTitle from "../hooks/usePageTitle";
 
 /**
  * Reusable social-login button (Google / Apple).
@@ -48,6 +49,7 @@ const AppleIcon = (
  * dismissable "coming soon" notice instead of an unresponsive button.
  */
 export default function UserLogin() {
+  usePageTitle("Sign In");
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
