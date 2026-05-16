@@ -61,6 +61,8 @@ router.get("/:id/students", async (req, res) => {
         examMaxAttempts: Math.max(1, Number(course.exam?.attempts) || 1),
         examBestScore: e.examBestScore || 0,
         examPassed: !!e.examPassed,
+        hasCertificate: !!(e.certificate?.data),
+        certificateUploadedAt: e.certificate?.uploadedAt || null,
       };
     });
 
@@ -89,6 +91,44 @@ router.patch("/:id/students/:enrollmentId/reset-attempts", async (req, res) => {
     );
     if (!enrollment) return res.status(404).json({ message: "Enrollment not found" });
     res.json(enrollment);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Admin: upload a certificate file for a specific student.
+// Accepts JSON body: { name, mimeType, data } where data is base64.
+router.post("/:id/students/:enrollmentId/certificate", async (req, res) => {
+  try {
+    const { name, mimeType, data } = req.body || {};
+    if (!name || !mimeType || !data) {
+      return res.status(400).json({ message: "name, mimeType, and data are required" });
+    }
+    const uploadedAt = new Date();
+    const year = uploadedAt.getFullYear();
+    const code = `SS-${year}-${req.params.enrollmentId.slice(-6).toUpperCase()}`;
+    const enrollment = await Enrollment.findOneAndUpdate(
+      { _id: req.params.enrollmentId, courseId: req.params.id },
+      { $set: { certificate: { name, mimeType, data, uploadedAt }, certificateCode: code } },
+      { new: true }
+    );
+    if (!enrollment) return res.status(404).json({ message: "Enrollment not found" });
+    res.json({ ok: true, uploadedAt: enrollment.certificate.uploadedAt, certificateCode: code });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Admin: remove a previously uploaded certificate.
+router.delete("/:id/students/:enrollmentId/certificate", async (req, res) => {
+  try {
+    const enrollment = await Enrollment.findOneAndUpdate(
+      { _id: req.params.enrollmentId, courseId: req.params.id },
+      { $set: { certificate: { data: null, mimeType: null, name: null, uploadedAt: null }, certificateCode: null } },
+      { new: true }
+    );
+    if (!enrollment) return res.status(404).json({ message: "Enrollment not found" });
+    res.json({ ok: true });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

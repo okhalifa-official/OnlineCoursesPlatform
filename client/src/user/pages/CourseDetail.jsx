@@ -6,6 +6,7 @@ import {
   getUserToken,
 } from "../api/userApi";
 import UserNavbar from "../components/UserNavbar";
+import usePageTitle from "../hooks/usePageTitle";
 import { listInstructors, useCourseRating } from "../components/CourseBar";
 import RichText from "../components/RichText";
 
@@ -60,6 +61,8 @@ export default function CourseDetail() {
   const [error, setError] = useState("");
   const [enrolling, setEnrolling] = useState(false);
   const [playingPreview, setPlayingPreview] = useState(false);
+
+  usePageTitle(course?.title || "Course");
 
   useEffect(() => {
     setLoading(true);

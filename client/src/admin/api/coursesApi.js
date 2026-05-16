@@ -56,3 +56,16 @@ export async function unenrollStudent(courseId, enrollmentId) {
     method: "DELETE",
   });
 }
+
+export async function uploadStudentCertificate(courseId, enrollmentId, { name, mimeType, data }) {
+  return adminFetch(`/courses/${courseId}/students/${enrollmentId}/certificate`, {
+    method: "POST",
+    body: JSON.stringify({ name, mimeType, data }),
+  });
+}
+
+export async function removeStudentCertificate(courseId, enrollmentId) {
+  return adminFetch(`/courses/${courseId}/students/${enrollmentId}/certificate`, {
+    method: "DELETE",
+  });
+}

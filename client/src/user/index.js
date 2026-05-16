@@ -10,3 +10,5 @@ export { default as MyCourses } from "./pages/MyCourses";
 export { default as ExamView } from "./pages/ExamView";
 export { default as LectureView } from "./pages/LectureView";
 export { default as WhyUsPage } from "./pages/WhyUsPage";
+export { default as Certificates } from "./pages/Certificates";
+export { default as VerifyCertificate } from "./pages/VerifyCertificate";

@@ -7,6 +7,7 @@ import {
 } from "../api/userApi";
 import UserNavbar from "../components/UserNavbar";
 import UserSidebar from "../components/UserSidebar";
+import usePageTitle from "../hooks/usePageTitle";
 import { listInstructors, formatInstructorList, stripHtmlToText } from "../components/CourseBar";
 
 const NAV_LINKS = [
@@ -28,7 +29,7 @@ const SIDEBAR_LINKS = [
   },
   {
     label: "Certificates",
-    to: "/home",
+    to: "/certificates",
     icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg>,
   },
   {
@@ -55,19 +56,59 @@ function getCategoryGradient(category) {
   return CATEGORY_COLORS[key] || CATEGORY_COLORS.default;
 }
 
+function useCourseProgress(courseId, modules) {
+  const lectureCount = Array.isArray(modules)
+    ? modules.reduce((sum, m) =>
+        sum + (m.lessons || []).filter((l) => l.type !== "pdf").length, 0)
+    : 0;
+
+  let completedCount = 0;
+  try {
+    const saved = JSON.parse(localStorage.getItem(`course-progress:${courseId}`)) || {};
+    completedCount = Object.values(saved).filter(Boolean).length;
+  } catch { /* empty */ }
+
+  const percent = lectureCount === 0 ? 100 : Math.min(100, Math.round((completedCount / lectureCount) * 100));
+  return { lectureCount, completedCount, percent };
+}
+
+function ProgressBar({ percent }) {
+  const done = percent === 100;
+  const started = percent > 0;
+
+  return (
+    <div className="mb-4">
+      <div className="flex items-center justify-between mb-1.5">
+        <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+          {done ? "Completed" : started ? "In progress" : "Not started"}
+        </span>
+        <span className={`text-xs font-bold tabular-nums ${done ? "text-emerald-600" : started ? "text-brandRed" : "text-gray-300"}`}>
+          {percent}%
+        </span>
+      </div>
+      <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+        <div
+          className={`h-full rounded-full transition-all duration-500 ${done ? "bg-emerald-500" : "bg-brandRed"}`}
+          style={{ width: `${percent}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+
 function EnrolledCard({ course }) {
   const { from, to } = getCategoryGradient(course.category);
   const moduleCount = Array.isArray(course.modules) ? course.modules.length : 0;
-  const lectureCount = Array.isArray(course.modules)
-    ? course.modules.reduce((sum, m) => sum + (m.lessons?.length || 0), 0)
-    : 0;
   const instructorLabel = formatInstructorList(listInstructors(course));
+  const { lectureCount, percent } = useCourseProgress(course._id, course.modules);
+  const done = percent === 100;
 
   return (
     <Link
       to={`/learn/${course._id}`}
       className="bg-white rounded-2xl shadow-card overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col"
     >
+      {/* Banner */}
       <div
         className="relative h-32 flex flex-col justify-end p-5 overflow-hidden"
         style={
@@ -78,18 +119,24 @@ function EnrolledCard({ course }) {
       >
         {course.previewImage && (
           <>
-            <img
-              src={course.previewImage}
-              alt=""
-              className="absolute inset-0 w-full h-full object-cover"
-            />
+            <img src={course.previewImage} alt="" className="absolute inset-0 w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent" />
           </>
         )}
 
-        <span className="absolute top-3 right-3 z-10 bg-emerald-500 text-white text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded">
+        {/* Status badge */}
+        <span className={`absolute top-3 right-3 z-10 text-white text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded
+          ${done ? "bg-emerald-500" : "bg-emerald-500"}`}>
           Enrolled
         </span>
+
+        {/* Percent pill over the image */}
+        <div className="absolute top-3 left-3 z-10">
+          <span className={`text-[10px] font-bold px-2 py-1 rounded-md
+            ${done ? "bg-emerald-500/90 text-white" : percent > 0 ? "bg-brandRed/90 text-white" : "bg-black/40 text-white/80"}`}>
+            {done ? "✓ Done" : `${percent}%`}
+          </span>
+        </div>
 
         <div className="relative z-10">
           {course.category && (
@@ -103,12 +150,16 @@ function EnrolledCard({ course }) {
         </div>
       </div>
 
+      {/* Card body */}
       <div className="p-5 flex flex-col flex-1">
         {course.courseDescription && (
           <p className="text-gray-400 text-sm leading-relaxed line-clamp-2 mb-4">
             {stripHtmlToText(course.courseDescription)}
           </p>
         )}
+
+        {/* Progress bar */}
+        <ProgressBar percent={percent} />
 
         <div className="flex items-center gap-3 text-[11px] text-gray-400 mb-3">
           <span>{moduleCount} module{moduleCount === 1 ? "" : "s"}</span>
@@ -121,11 +172,10 @@ function EnrolledCard({ course }) {
             <p className="text-xs text-gray-400">
               by <span className="text-charcoal font-medium">{instructorLabel}</span>
             </p>
-          ) : (
-            <span />
-          )}
-          <span className="text-xs font-bold text-brandRed inline-flex items-center gap-1">
-            Continue
+          ) : <span />}
+
+          <span className={`text-xs font-bold inline-flex items-center gap-1 ${done ? "text-emerald-600" : "text-brandRed"}`}>
+            {done ? "Review" : percent > 0 ? "Continue" : "Start"}
             <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
@@ -143,6 +193,7 @@ function EnrolledCard({ course }) {
  * one card per enrollment. Cards link directly into /learn/:id.
  */
 export default function MyCourses() {
+  usePageTitle("My Courses");
   const navigate = useNavigate();
 
   const [enrollments, setEnrollments] = useState([]);

@@ -59,6 +59,40 @@ export default function UserNavbar({ links = [] }) {
     return () => document.removeEventListener("mousedown", onDown);
   }, []);
 
+  // ── Scroll-spy: track which section is currently in the viewport ──────────
+  const [activeSection, setActiveSection] = useState(null);
+
+  useEffect(() => {
+    const sectionIds = links.filter((l) => l.section).map((l) => l.section);
+    if (sectionIds.length === 0) return;
+
+    // Reset to "home" when the user scrolls back to the very top
+    function onScroll() {
+      if (window.scrollY < 80) setActiveSection(null);
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    // Highlight whichever section occupies the middle band of the viewport
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActiveSection(entry.target.id);
+        });
+      },
+      { rootMargin: "-35% 0px -35% 0px", threshold: 0 }
+    );
+
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      observer.disconnect();
+    };
+  }, [links]);
+
   function handleLogout() {
     clearUserToken();
     setOpen(false);
@@ -97,29 +131,40 @@ export default function UserNavbar({ links = [] }) {
         <div className="hidden md:flex items-center gap-6 flex-1">
           {links.map((link) => {
             if (link.section) {
+              const isActive = activeSection === link.section;
               return (
                 <button
                   key={link.label}
                   onClick={() => {
+                    setActiveSection(link.section);
                     if (pathname === "/") {
                       document.getElementById(link.section)?.scrollIntoView({ behavior: "smooth" });
                     } else {
                       navigate(link.to);
                     }
                   }}
-                  className="text-sm font-medium transition text-charcoal hover:text-brandRed"
+                  className={`text-sm font-medium transition ${
+                    isActive ? "text-brandRed" : "text-charcoal hover:text-brandRed"
+                  }`}
                 >
                   {link.label}
                 </button>
               );
             }
 
+            // Non-section link: active when pathname matches AND no section is
+            // currently highlighted (prevents "Home" staying red while a section is active)
+            const isActive =
+              pathname === link.to &&
+              !(link.to === "/" && activeSection !== null);
+
             return (
               <Link
                 key={link.label}
                 to={link.to}
+                onClick={() => setActiveSection(null)}
                 className={`text-sm font-medium transition ${
-                  pathname === link.to ? "text-brandRed" : "text-charcoal hover:text-brandRed"
+                  isActive ? "text-brandRed" : "text-charcoal hover:text-brandRed"
                 }`}
               >
                 {link.label}

@@ -46,6 +46,8 @@ import {
   MyCourses,
   ExamView,
   UserLogin,
+  Certificates,
+  VerifyCertificate,
 } from "./user/index";
 
 import MissionVision from "./user/pages/about-us/MissionVision";
@@ -101,6 +103,8 @@ export default function App() {
         <Route path="/register"     element={<UserPage><UserRegister /></UserPage>} />
         <Route path="/home"         element={<UserPage><UserHome     /></UserPage>} />
         <Route path="/my-courses"   element={<UserPage><MyCourses    /></UserPage>} />
+        <Route path="/certificates" element={<UserPage><Certificates /></UserPage>} />
+        <Route path="/verify"       element={<UserPage><VerifyCertificate /></UserPage>} />
         <Route path="/user-profile" element={<UserPage><UserProfile  /></UserPage>} />
 
         {/* ── About-us pages ── */}

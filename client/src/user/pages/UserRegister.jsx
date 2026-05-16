@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { registerUser, saveUserToken, saveUserInfo } from "../api/userApi";
 import UserLogo from "../components/UserLogo";
+import usePageTitle from "../hooks/usePageTitle";
 
 // Labels shown in the progress indicator for each step.
 const STEP_LABELS = ["Your Details", "Professional Info", "Confirm"];
@@ -412,6 +413,7 @@ function StepConfirm({ form, onBack, onSubmit, loading, error }) {
  * read values from previous steps (needed for the step-3 summary).
  */
 export default function UserRegister() {
+  usePageTitle("Create Account");
   const navigate = useNavigate();
   // Current wizard step (1 | 2 | 3).
   const [step, setStep] = useState(1);

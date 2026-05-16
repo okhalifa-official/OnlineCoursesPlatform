@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   getCourseById,
   getCourseStudents,
   resetExamAttempts,
   unenrollStudent,
+  uploadStudentCertificate,
+  removeStudentCertificate,
 } from "../api/coursesApi";
 
 export default function CourseStudents() {
@@ -17,6 +19,9 @@ export default function CourseStudents() {
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [busyId, setBusyId] = useState(null);
+  const [certBusyId, setCertBusyId] = useState(null);
+  const fileInputRef = useRef(null);
+  const pendingEnrollmentRef = useRef(null);
 
   function load() {
     setLoading(true);
@@ -54,6 +59,63 @@ export default function CourseStudents() {
     }
   }
 
+  function openCertUpload(enrollmentId) {
+    pendingEnrollmentRef.current = enrollmentId;
+    fileInputRef.current.value = "";
+    fileInputRef.current.click();
+  }
+
+  async function handleCertFileChange(e) {
+    const file = e.target.files?.[0];
+    if (!file || !pendingEnrollmentRef.current) return;
+    const enrollmentId = pendingEnrollmentRef.current;
+    pendingEnrollmentRef.current = null;
+
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        setCertBusyId(enrollmentId);
+        const base64 = reader.result.split(",")[1];
+        await uploadStudentCertificate(id, enrollmentId, {
+          name: file.name,
+          mimeType: file.type,
+          data: base64,
+        });
+        setStudents((list) =>
+          list.map((s) =>
+            s._id === enrollmentId
+              ? { ...s, hasCertificate: true, certificateUploadedAt: new Date().toISOString() }
+              : s
+          )
+        );
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        setCertBusyId(null);
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  async function handleRemoveCert(enrollmentId) {
+    if (!window.confirm("Remove the uploaded certificate for this student?")) return;
+    try {
+      setCertBusyId(enrollmentId);
+      await removeStudentCertificate(id, enrollmentId);
+      setStudents((list) =>
+        list.map((s) =>
+          s._id === enrollmentId
+            ? { ...s, hasCertificate: false, certificateUploadedAt: null }
+            : s
+        )
+      );
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setCertBusyId(null);
+    }
+  }
+
   async function handleUnenroll(enrollmentId) {
     if (
       !window.confirm(
@@ -81,6 +143,14 @@ export default function CourseStudents() {
 
   return (
     <main className="min-h-screen bg-[#F2F2F2] text-[#1A1A1A] pt-10 pb-16 px-6">
+      {/* Hidden file input for certificate uploads */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="application/pdf,image/*"
+        className="hidden"
+        onChange={handleCertFileChange}
+      />
       <div className="max-w-6xl mx-auto">
         <Link
           to="/admin/courses"
@@ -182,6 +252,7 @@ export default function CourseStudents() {
                     <th className="px-5 py-3 text-left">Progress</th>
                     <th className="px-5 py-3 text-left">Exam attempts</th>
                     <th className="px-5 py-3 text-left">Best score</th>
+                    <th className="px-5 py-3 text-left">Certificate</th>
                     <th className="px-5 py-3 text-right">Actions</th>
                   </tr>
                 </thead>
@@ -276,6 +347,18 @@ export default function CourseStudents() {
                           )}
                         </td>
 
+                        {/* Certificate column */}
+                        <td className="px-5 py-4">
+                          {s.hasCertificate ? (
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-bold bg-[#EAF7EF] text-[#0A5E35]">
+                              <span className="material-symbols-outlined text-sm">verified</span>
+                              Issued
+                            </span>
+                          ) : (
+                            <span className="text-xs text-[#999]">— None</span>
+                          )}
+                        </td>
+
                         <td className="px-5 py-4 text-right">
                           <div className="inline-flex items-center gap-2">
                             <button
@@ -291,6 +374,25 @@ export default function CourseStudents() {
                             >
                               Reset attempts
                             </button>
+                            {s.hasCertificate ? (
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveCert(s._id)}
+                                disabled={certBusyId === s._id}
+                                className="px-3 py-1.5 rounded-lg text-xs font-bold text-[#D62828] hover:bg-[#FFE6E6] transition disabled:opacity-40"
+                              >
+                                {certBusyId === s._id ? "Removing…" : "Remove cert"}
+                              </button>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => openCertUpload(s._id)}
+                                disabled={certBusyId === s._id}
+                                className="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#FAFAFA] border border-[#E4E4E4] hover:border-[#0A5E35] hover:text-[#0A5E35] transition disabled:opacity-40"
+                              >
+                                {certBusyId === s._id ? "Uploading…" : "Upload cert"}
+                              </button>
+                            )}
                             <button
                               type="button"
                               onClick={() => handleUnenroll(s._id)}

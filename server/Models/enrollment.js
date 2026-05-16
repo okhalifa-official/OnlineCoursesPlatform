@@ -81,6 +81,22 @@ const EnrollmentSchema = new mongoose.Schema(
       of: Boolean,
       default: () => ({}),
     },
+    // Unique human-readable code generated when a certificate is uploaded.
+    // Format: SS-{year}-{last6ofEnrollmentId}. Indexed for O(1) verify lookups.
+    certificateCode: {
+      type: String,
+      default: null,
+      index: true,
+    },
+
+    // Admin-uploaded certificate file. Populated when an admin explicitly
+    // issues a certificate for this student from the Manage Students page.
+    certificate: {
+      data:       { type: String, default: null }, // base64 file content
+      mimeType:   { type: String, default: null },
+      name:       { type: String, default: null }, // original filename
+      uploadedAt: { type: Date,   default: null },
+    },
   },
   {
     timestamps: true,

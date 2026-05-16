@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import StudentShell, { StudentTopBar } from "../components/StudentShell";
+import usePageTitle from "../hooks/usePageTitle";
 import SecurePdfViewer from "../components/SecurePdfViewer";
 import { useCourseRating, listInstructors, formatInstructorList } from "../components/CourseBar";
 import RichText from "../components/RichText";
@@ -55,6 +56,8 @@ export default function CourseView() {
   const [enrollment, setEnrollment] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  usePageTitle(course?.title || "My Course");
   const [activeTab, setActiveTab] = useState("Lectures");
   const [progress, setProgress] = useState({});
   const [openMaterial, setOpenMaterial] = useState(null);
@@ -164,8 +167,22 @@ export default function CourseView() {
       return s + (progress[lessonId(mi, li)] ? 1 : 0);
     }, 0);
   }, 0);
-  const percent = lectureCount === 0 ? 0 : Math.round((completedCount / lectureCount) * 100);
   const exam = course.exam;
+
+  // Read the last exam result from localStorage (saved by ExamView on submit).
+  const lastExamResult = (() => {
+    try { return JSON.parse(localStorage.getItem(`exam-last:${id}`)) || null; }
+    catch { return null; }
+  })();
+  const examPassed = lastExamResult?.passed === true;
+
+  // For exam-only courses (0 video lectures):
+  //   • no exam configured  → treat as 100% (nothing to complete)
+  //   • exam configured, passed → 100%
+  //   • exam configured, not yet passed → 0%
+  const percent = lectureCount === 0
+    ? (!exam?.enabled || examPassed ? 100 : 0)
+    : Math.round((completedCount / lectureCount) * 100);
 
   const breadcrumb = (
     <p>
@@ -409,14 +426,18 @@ export default function CourseView() {
                     {percent}% complete
                   </p>
                   <p className="text-xs text-gray-400">
-                    {completedCount} of {lectureCount} lecture
-                    {lectureCount === 1 ? "" : "s"}
+                    {lectureCount === 0
+                      ? (exam?.enabled
+                          ? (examPassed ? "Exam passed ✓" : "Take the exam to complete")
+                          : "No lectures")
+                      : `${completedCount} of ${lectureCount} lecture${lectureCount === 1 ? "" : "s"}`
+                    }
                   </p>
                 </div>
               </div>
               <div className="w-full h-1.5 rounded-full bg-gray-100 overflow-hidden">
                 <div
-                  className="h-full bg-brandRed transition-all"
+                  className={`h-full transition-all ${percent === 100 ? "bg-emerald-500" : "bg-brandRed"}`}
                   style={{ width: `${percent}%` }}
                 />
               </div>
@@ -498,25 +519,23 @@ function ProgressRing({ percent }) {
   const radius = 22;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (percent / 100) * circumference;
+  const done = percent === 100;
   return (
     <div className="relative w-14 h-14 shrink-0">
       <svg className="w-14 h-14 -rotate-90" viewBox="0 0 56 56">
         <circle cx="28" cy="28" r={radius} stroke="#F2F2F2" strokeWidth="5" fill="none" />
         <circle
-          cx="28"
-          cy="28"
-          r={radius}
-          stroke="#D62828"
-          strokeWidth="5"
-          fill="none"
+          cx="28" cy="28" r={radius}
+          stroke={done ? "#22c55e" : "#D62828"}
+          strokeWidth="5" fill="none"
           strokeDasharray={circumference}
           strokeDashoffset={offset}
           strokeLinecap="round"
           className="transition-all duration-300"
         />
       </svg>
-      <span className="absolute inset-0 flex items-center justify-center text-[11px] font-bold text-charcoal">
-        {percent}%
+      <span className={`absolute inset-0 flex items-center justify-center text-[11px] font-bold ${done ? "text-emerald-600" : "text-charcoal"}`}>
+        {done ? "✓" : `${percent}%`}
       </span>
     </div>
   );

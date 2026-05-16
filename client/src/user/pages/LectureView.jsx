@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import StudentShell from "../components/StudentShell";
+import usePageTitle from "../hooks/usePageTitle";
 import SecurePdfViewer from "../components/SecurePdfViewer";
 import {
   getEnrolledCourse,
@@ -69,6 +70,9 @@ export default function LectureView() {
 
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const lesson = course?.modules?.[moduleIndex]?.lessons?.[lessonIndex];
+  usePageTitle(lesson?.title || course?.title || "Lecture");
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("Overview");
   const [progress, setProgress] = useState({});

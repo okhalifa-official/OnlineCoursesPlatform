@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import confetti from "canvas-confetti";
 import StudentShell from "../components/StudentShell";
+import usePageTitle from "../hooks/usePageTitle";
 import {
   getCourseEnrollment,
   getEnrolledCourse,
@@ -47,6 +49,7 @@ function readLastResult(courseId) {
  *     never) — when granted the student sees their answer + the correct one.
  */
 export default function ExamView() {
+  usePageTitle("Exam");
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
@@ -130,7 +133,7 @@ export default function ExamView() {
       );
       return {
         lectureCount, completedCount,
-        courseComplete: lectureCount > 0 && completedCount >= lectureCount,
+        courseComplete: lectureCount === 0 || completedCount >= lectureCount,
         attemptsLeft: Math.max(0, maxAttempts - attemptsUsed),
         maxAttempts, totalMarks,
       };
@@ -339,8 +342,8 @@ export default function ExamView() {
               <RuleRow ok text={`${questions.length} question${questions.length === 1 ? "" : "s"} · ${exam.durationMinutes} minutes · pass mark ${exam.passingScore}%${totalMarks ? ` · ${totalMarks} total marks` : ""}`} />
               <RuleRow ok={courseComplete}
                 text={courseComplete
-                  ? "Course completed."
-                  : `Course must be 100% complete — ${completedCount}/${lectureCount} lectures done.`} />
+                  ? "Ready to attempt."
+                  : `Complete every lecture first — ${completedCount}/${lectureCount} done.`} />
               <RuleRow ok={attemptsLeft > 0}
                 text={attemptsLeft > 0
                   ? `${attemptsLeft} of ${maxAttempts} attempt${maxAttempts === 1 ? "" : "s"} remaining.`
@@ -804,6 +807,16 @@ function ResultScreen({
     !!exam.reviewOpensAt &&
     Date.now() < new Date(exam.reviewOpensAt).getTime() &&
     result?.reason !== "disqualified";
+
+  useEffect(() => {
+    if (!result?.passed || showAnswers || scoreLocked) return;
+    const burst = (x, angle) =>
+      confetti({ particleCount: 80, spread: 70, origin: { x, y: 0.6 }, angle, colors: ["#7B0000", "#D4AF37", "#ffffff", "#22c55e"] });
+    burst(0.25, 60);
+    burst(0.75, 120);
+    const t = setTimeout(() => { burst(0.2, 65); burst(0.8, 115); }, 400);
+    return () => clearTimeout(t);
+  }, [result?.passed, showAnswers, scoreLocked]);
 
   return (
     <StudentShell activeLink="My Courses">

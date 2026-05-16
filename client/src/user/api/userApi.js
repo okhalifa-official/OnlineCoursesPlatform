@@ -199,3 +199,23 @@ export async function deleteCourseReview(id) {
   return userApiFetch(`/user/courses/${id}/reviews`, { method: "DELETE" });
 }
 
+/** Fetches the student's issued certificates (passed enrollments) and in-progress courses. */
+export async function getMyCertificates() {
+  return userApiFetch("/user/my-certificates");
+}
+
+/** Fetches lean dashboard data: active enrollments, recent certificates. */
+export async function getDashboard() {
+  return userApiFetch("/user/dashboard");
+}
+
+/** Fetches a single course material (with base64 data) for browser download. */
+export async function downloadCourseMaterial(courseId, idx) {
+  return userApiFetch(`/user/courses/${courseId}/materials/${idx}`);
+}
+
+/** Fetches the admin-uploaded certificate file (base64 + mimeType + name) for an enrollment. */
+export async function downloadCertificateFile(enrollmentId) {
+  return userApiFetch(`/user/my-certificates/${enrollmentId}/file`);
+}
+
