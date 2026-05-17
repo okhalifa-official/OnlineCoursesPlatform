@@ -14,6 +14,26 @@ const paymentTransactionSchema = new mongoose.Schema(
       default: generateTransactionId,
     },
 
+    paymentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Payment",
+    },
+
+    referenceNumber: {
+      type: String,
+      trim: true,
+    },
+
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+
+    courseId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Course",
+    },
+
     userName: {
       type: String,
       required: [true, "User name is required"],
@@ -76,6 +96,16 @@ const paymentTransactionSchema = new mongoose.Schema(
     gateway: {
       type: String,
       default: "Manual",
+      trim: true,
+    },
+
+    gatewayStatus: {
+      type: String,
+      trim: true,
+    },
+
+    gatewayTransactionId: {
+      type: String,
       trim: true,
     },
 
@@ -146,5 +176,7 @@ paymentTransactionSchema.index({
   method: "text",
   status: "text",
 });
+
+paymentTransactionSchema.index({ referenceNumber: 1 }, { unique: true, sparse: true });
 
 module.exports = mongoose.model("PaymentTransaction", paymentTransactionSchema);
