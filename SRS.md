@@ -477,55 +477,153 @@ This section specifies the functional requirements of the system. Each requireme
 
 #### 4.1.1 Graphical User Interface
 
-| Screen ID | Screen name | Description | Mock-up reference |
-| --------- | ----------- | ----------- | ----------------- |
-| UI-001    |             |             |                   |
-| UI-002    |             |             |                   |
-| UI-003    |             |             |                   |
+| Screen ID | Screen name                     | Description                                                         | Mock-up reference            |
+| --------- | ------------------------------- | ------------------------------------------------------------------- | ---------------------------- |
+| UI-001    | User Landing Page               | The screen shall display the public homepage for visitors.          | LandingPage.jsx              |
+| UI-002    | Courses Page                    | The screen shall display available courses for visitors and users.  | CoursesPage.jsx              |
+| UI-003    | Course Details Page             | The screen shall display selected course details.                   | CourseDetail.jsx             |
+| UI-004    | Course View Page                | The screen shall display the selected learning course area.         | CourseView.jsx               |
+| UI-005    | Lecture View Page               | The screen shall display selected lecture content.                  | LectureView.jsx              |
+| UI-006    | Exam View Page                  | The screen shall display the course exam interface.                 | ExamView.jsx                 |
+| UI-007    | Exam Review Page                | The screen shall display exam review content.                       | ExamView.jsx                 |
+| UI-008    | User Login Page                 | The screen shall allow users to log in.                             | UserLogin.jsx                |
+| UI-009    | User Registration Page          | The screen shall allow new users to register.                       | UserRegister.jsx             |
+| UI-010    | User Home Page                  | The screen shall display the authenticated user homepage.           | UserHome.jsx                 |
+| UI-011    | My Courses Page                 | The screen shall display the user’s enrolled courses.               | MyCourses.jsx                |
+| UI-012    | Certificates Page               | The screen shall display user certificates.                         | Certificates.jsx             |
+| UI-013    | Verify Certificate Page         | The screen shall allow certificate verification.                    | VerifyCertificate.jsx        |
+| UI-014    | User Profile Page               | The screen shall display user profile information.                  | UserProfile.jsx              |
+| UI-015    | Mission and Vision Page         | The screen shall display mission and vision content.                | MissionVision.jsx            |
+| UI-016    | Board of Directors Page         | The screen shall display board of directors content.                | BoardOfDirectors.jsx         |
+| UI-017    | MENA Board Page                 | The screen shall display MENA board content.                        | MENABoard.jsx                |
+| UI-018    | Scientific Committee Page       | The screen shall display scientific committee content.              | ScientificCommittee.jsx      |
+| UI-019    | Clinical Advisors Page          | The screen shall display clinical advisors content.                 | ClinicalAdvisors.jsx         |
+| UI-020    | Business Partners Page          | The screen shall display business partners content.                 | BusinessPartners.jsx         |
+| UI-021    | Scientific Partners Page        | The screen shall display scientific partners content.               | ScientificPartners.jsx       |
+| UI-022    | Policies Page                   | The screen shall display platform policies.                         | Policies.jsx                 |
+| UI-023    | Admin Login Page                | The screen shall allow Admin users to log in.                       | Login.jsx                    |
+| UI-024    | Admin Dashboard                 | The screen shall display Admin dashboard data.                      | AdminDashboard.jsx           |
+| UI-025    | Site Content Page               | The screen shall allow Admin users to manage website content.       | SiteContent.jsx              |
+| UI-026    | Educational Centers Page        | The screen shall display educational center records.                | EducationalCenters.jsx       |
+| UI-027    | Add Educational Center Page     | The screen shall allow Admin users to create an educational center. | AddEducationalCenter.jsx     |
+| UI-028    | Edit Educational Center Page    | The screen shall allow Admin users to update an educational center. | EditEducationalCenter.jsx    |
+| UI-029    | Educational Center Profile Page | The screen shall display one educational center profile.            | EducationalCenterProfile.jsx |
+| UI-030    | Users Management Page           | The screen shall display platform users.                            | Users.jsx                    |
+| UI-031    | Add User Page                   | The screen shall allow Admin users to create a user.                | AddUser.jsx                  |
+| UI-032    | Edit User Page                  | The screen shall allow Admin users to update a user.                | EditUser.jsx                 |
+| UI-033    | Student Permissions Page        | The screen shall allow Admin users to manage student permissions.   | StudentPermissions.jsx       |
+| UI-034    | Admin Permissions Page          | The screen shall allow Admin users to manage admin permissions.     | AdminPermissions.jsx         |
+| UI-035    | Admin Courses Page              | The screen shall display course records for Admin users.            | Courses.jsx                  |
+| UI-036    | Add Course Page                 | The screen shall allow Admin users to create a course.              | AddCourse.jsx                |
+| UI-037    | Edit Course Page                | The screen shall allow Admin users to update a course.              | EditCourse.jsx               |
+| UI-038    | Course Students Page            | The screen shall display students enrolled in a course.             | CourseStudents.jsx           |
+| UI-039    | Payments Page                   | The screen shall display payment records.                           | Payments.jsx                 |
+| UI-040    | Payment Settings Page           | The screen shall allow Admin users to manage payment settings.      | PaymentSettings.jsx          |
+| UI-041    | Settings Page                   | The screen shall allow Admin users to manage platform settings.     | Settings.jsx                 |
+| UI-042    | Help Page                       | The screen shall display help content for Admin users.              | Help.jsx                     |
+| UI-043    | Approve Instructors Page        | The screen shall allow Admin users to approve instructors.          | ApproveInstructors.jsx       |
+| UI-044    | Reports Page                    | The screen shall display system reports.                            | Reports.jsx                  |
+| UI-045    | Notifications Page              | The screen shall display platform notifications.                    | Notifications.jsx            |
+| UI-046    | Admin Profile Page              | The screen shall display Admin profile information.                 | Profile.jsx                  |
+| UI-047    | Edit Admin Profile Page         | The screen shall allow Admin users to update profile information.   | EditAdminProfile.jsx         |
+| UI-048    | Admin Role Page                 | The screen shall display Admin role information.                    | AdminRole.jsx                |
+| UI-049    | System Logs Page                | The screen shall display system activity logs.                      | SystemLogs.jsx               |
+| UI-050    | Bulk Announcements Page         | The screen shall allow Admin users to send bulk announcements.      | BulkAnnouncements.jsx        |
 
 #### 4.1.2 Command-Line Interface
 
-| Command | Arguments | Description | Example |
-| ------- | --------- | ----------- | ------- |
-|         |           |             |         |
-|         |           |             |         |
+| Command | Arguments | Description                                                                                                                                  | Example |
+| ------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| N/A     | N/A       | The system shall not provide a user-facing command-line interface. Users shall interact with the system through the graphical web interface. | N/A     |
+
 
 #### 4.1.3 Application Programming Interface
 
-| Function name | Arguments (type) | Return value (type) | Side effects | Example |
-| ------------- | ---------------- | ------------------- | ------------ | ------- |
-|               |                  |                     |              |         |
-|               |                  |                     |              |         |
+| Function name            | Arguments (type)                        | Return value (type)                              | Side effects                                                     | Example                    |
+| ------------------------ | --------------------------------------- | ------------------------------------------------ | ---------------------------------------------------------------- | -------------------------- |
+| Authentication API       | credentials: object                     | user data and token: object                      | The system shall authenticate users.                             | `/api/auth`                |
+| Admin API                | token: string, adminData: object        | admin data: object                               | The system shall retrieve or update Admin data.                  | `/api/admin`               |
+| Announcements API        | announcementData: object, token: string | announcement result: object                      | The system shall manage announcements.                           | `/api/announcements`       |
+| Fix Super Admin API      | token: string                           | updated admin user: object                       | The system shall update the current Admin to Super Admin access. | `/api/fix-super-admin/me`  |
+| Dashboard API            | token: string                           | dashboard statistics: object                     | The system shall retrieve Admin dashboard data.                  | `/api/dashboard`           |
+| Users API                | userData: object, token: string         | user object or users array: object/array         | The system shall manage user records.                            | `/api/users`               |
+| Educational Centers API  | centerData: object, token: string       | educational center object or array: object/array | The system shall manage educational center records.              | `/api/educational-centers` |
+| Courses API              | courseData: object, token: string       | course object or courses array: object/array     | The system shall manage course records.                          | `/api/courses`             |
+| Payments API             | paymentData: object, token: string      | payment object or payments array: object/array   | The system shall manage payment records.                         | `/api/payments`            |
+| Settings API             | settingsData: object, token: string     | settings object: object                          | The system shall manage platform settings.                       | `/api/settings`            |
+| Public Page Content API  | pageKey: string                         | public page content: object                      | The system shall retrieve public website content.                | `/api/public/page-content` |
+| Page Content API         | pageContentData: object, token: string  | page content object: object                      | The system shall manage editable page content.                   | `/api/page-content`        |
+| Reports API              | filters: object, token: string          | report data: object/array                        | The system shall retrieve report data.                           | `/api/reports`             |
+| Lectures API             | lectureData: object, token: string      | lecture object or lectures array: object/array   | The system shall manage lecture content.                         | `/api/lectures`            |
+| System Logs API          | token: string                           | logs array: array                                | The system shall retrieve system logs.                           | `/api/system-logs`         |
+| Support Requests API     | requestData: object, token: string      | support request object or array: object/array    | The system shall manage support requests.                        | `/api/support-requests`    |
+| User Side API            | userData: object                        | user-side response: object                       | The system shall handle user-facing operations.                  | `/api/user`                |
+| Backend Health Check API | N/A                                     | text message: string                             | The system shall return backend status.                          | `/`                        |
+
 
 ### 4.2 Hardware Interfaces
 
-| Device | Purpose | Interface description |
-| ------ | ------- | --------------------- |
-|        |         |                       |
-|        |         |                       |
+| Device                          | Purpose                                                                                  | Interface description                                                      |
+| ------------------------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| User laptop or desktop computer | The device shall allow users to access the platform.                                     | The device shall use a modern web browser.                                 |
+| Mobile device                   | The device shall allow users to access the platform on smaller screens.                  | The device shall use a mobile web browser.                                 |
+| Server machine                  | The device shall host the backend application.                                           | The device shall support Node.js runtime.                                  |
+| Database server                 | The device shall store platform data.                                                    | The backend shall connect to MongoDB through a database connection string. |
+| Network device                  | The device shall support data exchange between frontend, backend, and database services. | The network shall support HTTP or HTTPS communication.                     |
+
 
 ### 4.3 Communications Interfaces
 
-| Protocol | Purpose | Description |
-| -------- | ------- | ----------- |
-|          |         |             |
-|          |         |             |
+| Protocol                    | Purpose                              | Description                                                                                           |
+| --------------------------- | ------------------------------------ | ----------------------------------------------------------------------------------------------------- |
+| HTTP                        | Local frontend-backend communication | The system shall use HTTP during local development.                                                   |
+| HTTPS                       | Secure production communication      | The system shall use HTTPS in production.                                                             |
+| REST                        | API communication style              | The system shall expose backend services through REST-style endpoints.                                |
+| JSON                        | Data exchange format                 | The system shall send and receive request data in JSON format.                                        |
+| URL-Encoded Form Data       | Form submission support              | The system shall support URL-encoded form data.                                                       |
+| CORS                        | Cross-origin communication           | The system shall allow the frontend application to communicate with the backend server.               |
+| MongoDB Connection Protocol | Backend-database communication       | The backend shall connect to MongoDB through a database connection URI.                               |
+| JWT / Token Authentication  | Protected route access               | The system shall protect private routes using authentication tokens.                                  |
+| SMTP                        | Email communication                  | The system shall use SMTP if email notifications are enabled.                                         |
+| Payment Gateway API         | Payment communication                | The system shall communicate with an external payment provider if real payment processing is enabled. |
+
 
 ### 4.4 Software Interfaces
 
-| External software | Purpose | Interface type |
-| ----------------- | ------- | -------------- |
-|                   |         |                |
-|                   |         |                |
+| External software             | Purpose                                                                             | Interface type                 |
+| ----------------------------- | ----------------------------------------------------------------------------------- | ------------------------------ |
+| React.js                      | The system shall use React.js to build the frontend user interface.                 | Frontend framework             |
+| React Router                  | The system shall map frontend URLs to pages.                                        | Frontend routing interface     |
+| Vite                          | The system shall run and build the React frontend.                                  | Frontend build tool            |
+| Tailwind CSS                  | The system shall style frontend screens.                                            | Styling framework              |
+| Node.js                       | The system shall run the backend application.                                       | Backend runtime                |
+| Express.js                    | The system shall define backend routes and middleware.                              | Backend framework              |
+| CORS middleware               | The system shall allow controlled frontend-backend communication.                   | Backend middleware             |
+| dotenv                        | The system shall load configuration values from environment variables.              | Configuration interface        |
+| MongoDB                       | The system shall store users, courses, payments, reports, settings, and logs.       | Database                       |
+| Mongoose                      | The system shall connect backend models to MongoDB collections.                     | Database access layer          |
+| JWT library                   | The system shall authenticate protected requests using tokens.                      | Authentication interface       |
+| bcrypt library                | The system shall protect passwords through hashing.                                 | Security library               |
+| Authentication Middleware     | The system shall protect private routes using `protect` and `requireAdmin`.         | Security middleware            |
+| Audit Log Middleware          | The system shall record system activity.                                            | Logging middleware             |
+| Frontend API Layer            | The system shall connect React pages to backend endpoints.                          | Internal API interface         |
+| Payment Provider              | The system shall handle payment processing through an external provider if enabled. | External API                   |
+| Email Service / SMTP Provider | The system shall send email notifications if enabled.                               | External communication service |
+| GitHub                        | The system shall support source code version control.                               | Version control platform       |
+
 
 ## 5. Performance Requirements
 
-| Identifier | Requirement | Metric / Threshold |
-| ---------- | ----------- | ------------------ |
-| PR-001     |             |                    |
-| PR-002     |             |                    |
-| PR-003     |             |                    |
-| PR-004     |             |                    |
+| Identifier | Requirement                                                                                                  | Metric / Threshold                                               |
+| ---------- | ------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------- |
+| PR-001     | The system shall load the Admin dashboard summary data within the required response time.                    | Maximum response time: 1000 ms under 100 concurrent users.       |
+| PR-002     | The system shall load the public courses page within the required page-load time.                            | Maximum page-load time: 3000 ms on a stable internet connection. |
+| PR-003     | The system shall support large request bodies for course content, page content, and file-related operations. | Maximum request body size: 200 MB.                               |
+| PR-004     | The system shall generate Admin reports within the required processing time.                                 | Maximum report generation time: 5000 ms for 1000 records.        |
+| PR-005     | The system shall support multiple users accessing the platform at the same time.                             | Minimum supported load: 100 concurrent users.                    |
+| PR-006     | The system shall complete login authentication within the required response time.                            | Maximum response time: 1500 ms.                                  |
+| PR-007     | The system shall load system logs within the required response time.                                         | Maximum response time: 3000 ms for 1000 log records.             |
+| PR-008     | The system shall load course lecture content within the required response time.                              | Maximum response time: 3000 ms on a stable internet connection.  |
 
 ## 6. Design Constraints
 
