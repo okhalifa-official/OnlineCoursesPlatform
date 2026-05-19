@@ -3,6 +3,10 @@ const SystemLog = require("../Models/SystemLog");
 function sanitizeData(data) {
   if (!data || typeof data !== "object") return data;
 
+  if (Array.isArray(data)) {
+    return data.map(sanitizeData);
+  }
+
   const clean = { ...data };
 
   delete clean.password;
@@ -11,6 +15,24 @@ function sanitizeData(data) {
   delete clean.token;
   delete clean.adminToken;
   delete clean.userToken;
+  delete clean.ccvToken;
+  delete clean.cardDataToken;
+
+  if (clean.card) {
+    clean.card = "[redacted]";
+  }
+
+  if (clean.gatewayPayload) {
+    clean.gatewayPayload = "[redacted]";
+  }
+
+  Object.keys(clean).forEach((key) => {
+    const value = clean[key];
+
+    if (value && typeof value === "object") {
+      clean[key] = sanitizeData(value);
+    }
+  });
 
   return clean;
 }
@@ -202,6 +224,12 @@ function getTargetEntity(req, res) {
 }
 
 function getPayload(req, res) {
+  if (req.originalUrl.includes("/api/payment-gateway")) {
+    return res.locals.auditPayload
+      ? sanitizeData(res.locals.auditPayload)
+      : { redacted: true };
+  }
+
   if (res.locals.auditPayload) {
     return sanitizeData(res.locals.auditPayload);
   }

@@ -412,6 +412,7 @@ router.delete("/courses/:id/reviews", protectUser, async (req, res) => {
   }
 });
 
+
 // ─── Public certificate verification ─────────────────────────────────────────
 // No auth required — anyone can verify a certificate by its code.
 
