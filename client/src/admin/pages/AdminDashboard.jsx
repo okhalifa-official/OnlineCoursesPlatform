@@ -128,7 +128,7 @@ export default function AdminDashboard() {
         </div>
 
         <nav className="space-y-2">
-          side
+          
           <SidebarLink
             to="/educational-centers"
             icon="home"
