@@ -620,7 +620,6 @@ This section specifies the functional requirements of the system. Each requireme
 | PR-007     | The system shall load system logs within an acceptable response time for Admin review.                                           | Target response time: up to 3000 ms for normal log retrieval.                                                         |
 | PR-008     | The system shall load course lecture content within an acceptable response time on a stable connection.                          | Target response time: up to 3000 ms on a stable internet connection.                                                  |
 
-
 ## 6. Design Constraints
 
 ### 6.1 Standards Compliance
@@ -684,7 +683,6 @@ This section specifies the functional requirements of the system. Each requireme
 | NFR-040    | Searchability         | The system shall allow records to be displayed and filtered in organized lists. Applied in the project: educational centers, payments, support requests, and system logs support search or filter parameters, while users, courses, and logs are displayed in organized pages.                 |
 | NFR-041    | Data Consistency      | The system shall keep related data organized through database models. Applied in the project: MongoDB schemas use structured fields, references, enums, and relationships to keep related data consistent.                                                                                     |
 | NFR-042    | System Traceability   | The system shall allow system changes to be traced. Applied in the project: system logs store actor information, module name, action type, target entity, request status, method, path, IP address, user agent, and sanitized request data.                                                    |
-
 
 ## 8. Diagrams
 
@@ -794,22 +792,21 @@ This section collects the diagrams that describe the system at the design level.
 
 ### 12.1 Definitions, Acronyms, Abbreviations
 
-| Term           | Definition                                                                                                                   |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| MERN           | A development stack that includes MongoDB, Express.js, React.js, and Node.js.                                                |
-| UI             | User Interface; the screens that users interact with in the system.                                                          |
-| API            | Application Programming Interface; the connection between the frontend and backend.                                          |
-| RBAC           | Role-Based Access Control; a method used to restrict system access based on user roles.                                                                                                                |
-| Dashboard      | A screen that displays important system data and management shortcuts.                                                       |
-| Authentication | The process of verifying a user’s identity before allowing access to the system.                                             |
-| Authorization  | The process of checking what an authenticated user is allowed to access.                                                     |
-| JWT            | JSON Web Token; a token used to manage authenticated user sessions.                                                          |
-| MongoDB        | The database used to store platform data.                                                                                    |
-| Express.js     | The backend framework used to create API routes.                                                                             |
-| React.js       | The frontend library used to build the user interface.                                                                       |
-| Node.js        | The runtime environment used to run the backend server.                                                                      |
-| System Log     | A record of important actions performed inside the system.                                                                                                                               |
-
+| Term           | Definition                                                                              |
+| -------------- | --------------------------------------------------------------------------------------- |
+| MERN           | A development stack that includes MongoDB, Express.js, React.js, and Node.js.           |
+| UI             | User Interface; the screens that users interact with in the system.                     |
+| API            | Application Programming Interface; the connection between the frontend and backend.     |
+| RBAC           | Role-Based Access Control; a method used to restrict system access based on user roles. |
+| Dashboard      | A screen that displays important system data and management shortcuts.                  |
+| Authentication | The process of verifying a user’s identity before allowing access to the system.        |
+| Authorization  | The process of checking what an authenticated user is allowed to access.                |
+| JWT            | JSON Web Token; a token used to manage authenticated user sessions.                     |
+| MongoDB        | The database used to store platform data.                                               |
+| Express.js     | The backend framework used to create API routes.                                        |
+| React.js       | The frontend library used to build the user interface.                                  |
+| Node.js        | The runtime environment used to run the backend server.                                 |
+| System Log     | A record of important actions performed inside the system.                              |
 
 ### 12.2 Collected Material
 
@@ -826,29 +823,21 @@ This section provides additional useful information for understanding the requir
 
 ### 12.1 Definitions, Acronyms, Abbreviations
 
-| Term           | Definition                                                                                                                   |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| SRS            | Software Requirements Specification; a document that describes the functional and non-functional requirements of the system. |
-| MERN           | A development stack that includes MongoDB, Express.js, React.js, and Node.js.                                                |
-| UI             | User Interface; the screens that users interact with in the system.                                                          |
-| API            | Application Programming Interface; the connection between the frontend and backend.                                          |
-| RBAC           | Role-Based Access Control; a method used to restrict system access based on user roles.                                      |
-| Admin          | A system user who manages users, courses, payments, reports, notifications, settings, and logs.                              |
-| Instructor     | A system user who is related to course delivery and course content.                                                          |
-| Student        | A system user who views courses, lectures, exams, certificates, and profile information.                                     |
-| Course         | A learning unit that contains course details, lectures, exams, and related content.                                          |
-| Lecture        | A learning content item inside a course.                                                                                     |
-| Certificate    | A document generated for a student after completing course requirements.                                                     |
-| Dashboard      | A screen that displays important system data and management shortcuts.                                                       |
-| Authentication | The process of verifying a user’s identity before allowing access to the system.                                             |
-| Authorization  | The process of checking what an authenticated user is allowed to access.                                                     |
-| JWT            | JSON Web Token; a token used to manage authenticated user sessions.                                                          |
-| MongoDB        | The database used to store platform data.                                                                                    |
-| Express.js     | The backend framework used to create API routes.                                                                             |
-| React.js       | The frontend library used to build the user interface.                                                                       |
-| Node.js        | The runtime environment used to run the backend server.                                                                      |
-| System Log     | A record of important actions performed inside the system.                                                                   |
-| Audit Trail    | A traceable history of system actions and changes.                                                                           |
+| Term           | Definition                                                                              |
+| -------------- | --------------------------------------------------------------------------------------- |
+| MERN           | A development stack that includes MongoDB, Express.js, React.js, and Node.js.           |
+| UI             | User Interface; the screens that users interact with in the system.                     |
+| API            | Application Programming Interface; the connection between the frontend and backend.     |
+| RBAC           | Role-Based Access Control; a method used to restrict system access based on user roles. |
+| Dashboard      | A screen that displays important system data and management shortcuts.                  |
+| Authentication | The process of verifying a user’s identity before allowing access to the system.        |
+| Authorization  | The process of checking what an authenticated user is allowed to access.                |
+| JWT            | JSON Web Token; a token used to manage authenticated user sessions.                     |
+| MongoDB        | The database used to store platform data.                                               |
+| Express.js     | The backend framework used to create API routes.                                        |
+| React.js       | The frontend library used to build the user interface.                                  |
+| Node.js        | The runtime environment used to run the backend server.                                 |
+| System Log     | A record of important actions performed inside the system.                              |
 
 ### 12.2 Collected Material
 
@@ -857,7 +846,6 @@ This section provides additional useful information for understanding the requir
 2. Project documentation files, including the SRS document, functional requirements, non-functional requirements, operational scenarios, interface requirements, and performance requirements.
 
 3. Project implementation materials, including frontend page screenshots, backend API route files, React routing files, and MERN project structure screenshots.
-
 
 ## 13. References
 
