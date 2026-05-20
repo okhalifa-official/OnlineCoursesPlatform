@@ -1022,7 +1022,13 @@ This section provides additional useful information for understanding the requir
 | Node.js        | The runtime environment used to run the backend server.                                 |
 | System Log     | A record of important actions performed inside the system.                              |
 
-### 12.2 Collected Material
+### 12.2 Rich Picture
+
+![Rich Picture](diagrams/Rich%20Picture.png)
+
+**Figure 12-1.** Rich picture — system context and stakeholder relationships.
+
+### 12.3 Collected Material
 
 1. Client interview notes about the platform goals, user roles, course management, payments, exams, certificates, reports, and notifications.
 
