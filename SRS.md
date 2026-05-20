@@ -794,18 +794,70 @@ This section collects the diagrams that describe the system at the design level.
 
 ### 12.1 Definitions, Acronyms, Abbreviations
 
-| Term | Definition |
-| ---- | ---------- |
-|      |            |
-|      |            |
-|      |            |
-|      |            |
+| Term           | Definition                                                                                                                   |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| MERN           | A development stack that includes MongoDB, Express.js, React.js, and Node.js.                                                |
+| UI             | User Interface; the screens that users interact with in the system.                                                          |
+| API            | Application Programming Interface; the connection between the frontend and backend.                                          |
+| RBAC           | Role-Based Access Control; a method used to restrict system access based on user roles.                                                                                                                |
+| Dashboard      | A screen that displays important system data and management shortcuts.                                                       |
+| Authentication | The process of verifying a user’s identity before allowing access to the system.                                             |
+| Authorization  | The process of checking what an authenticated user is allowed to access.                                                     |
+| JWT            | JSON Web Token; a token used to manage authenticated user sessions.                                                          |
+| MongoDB        | The database used to store platform data.                                                                                    |
+| Express.js     | The backend framework used to create API routes.                                                                             |
+| React.js       | The frontend library used to build the user interface.                                                                       |
+| Node.js        | The runtime environment used to run the backend server.                                                                      |
+| System Log     | A record of important actions performed inside the system.                                                                                                                               |
+
 
 ### 12.2 Collected Material
 
-1.
-2.
-3.
+Yes. This confirms that **Section 12 is simple**. It only needs two parts:
+
+1. **12.1 Definitions, Acronyms, Abbreviations**
+2. **12.2 Collected Material**
+
+Use this exact version.
+
+## 12. Appendices
+
+This section provides additional useful information for understanding the requirements of the Online Courses Platform.
+
+### 12.1 Definitions, Acronyms, Abbreviations
+
+| Term           | Definition                                                                                                                   |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| SRS            | Software Requirements Specification; a document that describes the functional and non-functional requirements of the system. |
+| MERN           | A development stack that includes MongoDB, Express.js, React.js, and Node.js.                                                |
+| UI             | User Interface; the screens that users interact with in the system.                                                          |
+| API            | Application Programming Interface; the connection between the frontend and backend.                                          |
+| RBAC           | Role-Based Access Control; a method used to restrict system access based on user roles.                                      |
+| Admin          | A system user who manages users, courses, payments, reports, notifications, settings, and logs.                              |
+| Instructor     | A system user who is related to course delivery and course content.                                                          |
+| Student        | A system user who views courses, lectures, exams, certificates, and profile information.                                     |
+| Course         | A learning unit that contains course details, lectures, exams, and related content.                                          |
+| Lecture        | A learning content item inside a course.                                                                                     |
+| Certificate    | A document generated for a student after completing course requirements.                                                     |
+| Dashboard      | A screen that displays important system data and management shortcuts.                                                       |
+| Authentication | The process of verifying a user’s identity before allowing access to the system.                                             |
+| Authorization  | The process of checking what an authenticated user is allowed to access.                                                     |
+| JWT            | JSON Web Token; a token used to manage authenticated user sessions.                                                          |
+| MongoDB        | The database used to store platform data.                                                                                    |
+| Express.js     | The backend framework used to create API routes.                                                                             |
+| React.js       | The frontend library used to build the user interface.                                                                       |
+| Node.js        | The runtime environment used to run the backend server.                                                                      |
+| System Log     | A record of important actions performed inside the system.                                                                   |
+| Audit Trail    | A traceable history of system actions and changes.                                                                           |
+
+### 12.2 Collected Material
+
+1. Client interview notes about the platform goals, user roles, course management, payments, exams, certificates, reports, and notifications.
+
+2. Project documentation files, including the SRS document, functional requirements, non-functional requirements, operational scenarios, interface requirements, and performance requirements.
+
+3. Project implementation materials, including frontend page screenshots, backend API route files, React routing files, and MERN project structure screenshots.
+
 
 ## 13. References
 
