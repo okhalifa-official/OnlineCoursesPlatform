@@ -92,20 +92,118 @@ export default function App() {
 
       <Routes>
         {/* ── User-facing public routes ── */}
-        <Route path="/"             element={<UserPage><LandingPage  /></UserPage>} />
-        <Route path="/courses"      element={<UserPage><CoursesPage  /></UserPage>} />
-        <Route path="/courses/:id"  element={<UserPage><CourseDetail /></UserPage>} />
-        <Route path="/learn/:id"    element={<UserPage><CourseView   /></UserPage>} />
-        <Route path="/learn/:id/lecture/:mi/:li" element={<UserPage><LectureView /></UserPage>} />
-        <Route path="/learn/:id/exam" element={<UserPage><ExamView /></UserPage>} />
-        <Route path="/learn/:id/exam/review" element={<UserPage><ExamView /></UserPage>} />
-        <Route path="/login"        element={<UserPage><UserLogin    /></UserPage>} />
-        <Route path="/register"     element={<UserPage><UserRegister /></UserPage>} />
-        <Route path="/home"         element={<UserPage><UserHome     /></UserPage>} />
-        <Route path="/my-courses"   element={<UserPage><MyCourses    /></UserPage>} />
-        <Route path="/certificates" element={<UserPage><Certificates /></UserPage>} />
-        <Route path="/verify"       element={<UserPage><VerifyCertificate /></UserPage>} />
-        <Route path="/user-profile" element={<UserPage><UserProfile  /></UserPage>} />
+        <Route
+          path="/"
+          element={
+            <UserPage>
+              <LandingPage />
+            </UserPage>
+          }
+        />
+        <Route
+          path="/courses"
+          element={
+            <UserPage>
+              <CoursesPage />
+            </UserPage>
+          }
+        />
+        <Route
+          path="/courses/:id"
+          element={
+            <UserPage>
+              <CourseDetail />
+            </UserPage>
+          }
+        />
+        <Route
+          path="/learn/:id"
+          element={
+            <UserPage>
+              <CourseView />
+            </UserPage>
+          }
+        />
+        <Route
+          path="/learn/:id/lecture/:mi/:li"
+          element={
+            <UserPage>
+              <LectureView />
+            </UserPage>
+          }
+        />
+        <Route
+          path="/learn/:id/exam"
+          element={
+            <UserPage>
+              <ExamView />
+            </UserPage>
+          }
+        />
+        <Route
+          path="/learn/:id/exam/review"
+          element={
+            <UserPage>
+              <ExamView />
+            </UserPage>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <UserPage>
+              <UserLogin />
+            </UserPage>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <UserPage>
+              <UserRegister />
+            </UserPage>
+          }
+        />
+        <Route
+          path="/home"
+          element={
+            <UserPage>
+              <UserHome />
+            </UserPage>
+          }
+        />
+        <Route
+          path="/my-courses"
+          element={
+            <UserPage>
+              <MyCourses />
+            </UserPage>
+          }
+        />
+        <Route
+          path="/certificates"
+          element={
+            <UserPage>
+              <Certificates />
+            </UserPage>
+          }
+        />
+        <Route
+          path="/verify"
+          element={
+            <UserPage>
+              <VerifyCertificate />
+            </UserPage>
+          }
+        />
+        <Route
+          path="/user-profile"
+          element={
+            <UserPage>
+              <UserProfile />
+            </UserPage>
+          }
+        />
 
         {/* ── About-us pages ── */}
         <Route
@@ -384,7 +482,14 @@ export default function App() {
             </PrivatePage>
           }
         />
-
+        <Route
+          path="/bulk-announcements"
+          element={
+            <PrivatePage>
+              <BulkAnnouncements />
+            </PrivatePage>
+          }
+        />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>
