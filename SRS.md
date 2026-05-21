@@ -6,7 +6,7 @@
 
 | Field                | Value                                     |
 | -------------------- | ----------------------------------------- |
-| Document version     | V1.7                                      |
+| Document version     | V1.8                                      |
 | Status               | Draft                                     |
 | Authors              | Mohamed Hany, Malak Foudh, Noureen Mohammed, Omar Khalifa |
 | Supervisor           | Mohamed Hany                              |
@@ -23,8 +23,9 @@
 | V1.3    | 17-05-2026 | Malak Foudh      | Added the class diagram and some functional requirements. |
 | V1.4    | 18-05-2026 | Noureen Mohammed | Added the non-functional requirements section.           |
 | V1.5    | 19-05-2026 | Omar Khalifa     | Added the operational scenarios.                         |
-| V1.6    | 20-05-2026 | Omar Khalifa     | Added the sequence diagrams.                             |
-| V1.7    | 21-05-2026 | Mohamed Hany     | Reviewed the whole document and fixed consistency issues. |
+| V1.6    | 19-05-2026 | Noureen Mohammed | Added the performance requirements and the interface requirements section. |
+| V1.7    | 20-05-2026 | Omar Khalifa     | Added the sequence diagrams.                             |
+| V1.8    | 21-05-2026 | Mohamed Hany     | Reviewed the whole document and fixed consistency issues. |
 
 ## 1. Introduction
 
