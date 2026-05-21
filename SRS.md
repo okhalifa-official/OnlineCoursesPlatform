@@ -2617,6 +2617,12 @@ This section describes the main operational scenarios of Sonoschool. Each scenar
 | T-006   | Payment and exam modules            | T-004         | 19-04-2026 | 10-05-2026 | Omar Khalifa     | Stripe, Node.js           |
 | T-007   | Testing and bug fixing              | T-005, T-006  | 11-05-2026 | 20-05-2026 | All team members | Test tools                |
 | T-008   | Final review and delivery           | T-007         | 21-05-2026 | 28-05-2026 | Mohamed Hany     | —                         |
+| T-009   | GUI design and requirements gathering and analysis | T-002 | 01-04-2026 | 14-04-2026 | Omar Khalifa                | Design tools, client notes |
+| T-010   | End-user pages and features         | T-003         | 19-04-2026 | 06-05-2026 | Malak Foudh, Omar Khalifa   | React.js                  |
+| T-011   | Admin dashboard GUI                 | T-003         | 19-04-2026 | 06-05-2026 | Noureen Mohammed            | React.js                  |
+| T-012   | Admin backend                       | T-004         | 19-04-2026 | 06-05-2026 | Noureen Mohammed, Mohamed Hany | Express.js, Node.js    |
+| T-013   | Payment frontend and backend        | T-004         | 19-04-2026 | 06-05-2026 | Badr Mohamed                | Stripe, React.js, Node.js |
+| T-014   | Courses and exams modules           | T-004         | 19-04-2026 | 06-05-2026 | Mohamed Hany                | React.js, Node.js         |
 
 ### 10.1 Gantt or PERT Chart
 
