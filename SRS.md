@@ -2608,27 +2608,19 @@ This section describes the main operational scenarios of Sonoschool. Each scenar
 ## 10. Preliminary Schedule
 
 | Task ID | Task name | Dependencies | Start | End | Owner | Resources |
-| ------- | --------- | ------------ | ---------- | ---------- | ---------------- | ------------------------- |
-| T-001   | Requirements gathering and analysis | —             | 01-03-2026 | 14-03-2026 | Mohamed Hany     | Client interviews, notes  |
-| T-002   | Write the SRS document              | T-001         | 15-03-2026 | 31-03-2026 | All team members | SRS template              |
-| T-003   | User interface design and mock-ups  | T-002         | 01-04-2026 | 14-04-2026 | Malak Foudh      | Design tools              |
-| T-004   | Database and backend setup          | T-002         | 01-04-2026 | 18-04-2026 | Mohamed Hany     | MongoDB, Node.js          |
-| T-005   | Frontend development                | T-003         | 19-04-2026 | 10-05-2026 | Noureen Mohammed | React.js                  |
-| T-006   | Payment and exam modules            | T-004         | 19-04-2026 | 10-05-2026 | Omar Khalifa     | Stripe, Node.js           |
-| T-007   | Testing and bug fixing              | T-005, T-006  | 11-05-2026 | 20-05-2026 | All team members | Test tools                |
-| T-008   | Final review and delivery           | T-007         | 21-05-2026 | 28-05-2026 | Mohamed Hany     | —                         |
-| T-009   | GUI design and requirements gathering and analysis | T-002 | 01-04-2026 | 14-04-2026 | Omar Khalifa                | Design tools, client notes |
-| T-010   | End-user pages and features         | T-003         | 19-04-2026 | 06-05-2026 | Malak Foudh, Omar Khalifa   | React.js                  |
-| T-011   | Admin dashboard GUI                 | T-003         | 19-04-2026 | 06-05-2026 | Noureen Mohammed            | React.js                  |
-| T-012   | Admin backend                       | T-004         | 19-04-2026 | 06-05-2026 | Noureen Mohammed, Mohamed Hany | Express.js, Node.js    |
-| T-013   | Payment frontend and backend        | T-004         | 19-04-2026 | 06-05-2026 | Badr Mohamed                | Stripe, React.js, Node.js |
-| T-014   | Courses and exams modules           | T-004         | 19-04-2026 | 06-05-2026 | Mohamed Hany                | React.js, Node.js         |
-
-### 10.1 Gantt or PERT Chart
-
-> _Insert schedule chart screenshot here._
-
-**Figure 10-1.** Project schedule.
+| ------- | --------- | ------------ | ---------- | ---------- | ------------------------------ | -------------------------- |
+| T-001   | Requirements gathering and analysis                | —                          | 01-03-2026 | 14-03-2026 | Mohamed Hany                   | Client interviews, notes   |
+| T-002   | GUI design and requirements gathering and analysis | —                          | 01-03-2026 | 14-03-2026 | Omar Khalifa                   | Design tools, client notes |
+| T-003   | Write the SRS document                             | T-001, T-002               | 15-03-2026 | 31-03-2026 | All team members               | SRS template               |
+| T-004   | User interface design and mock-ups                 | T-003                      | 01-04-2026 | 14-04-2026 | Malak Foudh                    | Design tools               |
+| T-005   | Database and backend setup                         | T-003                      | 01-04-2026 | 18-04-2026 | Mohamed Hany                   | MongoDB, Node.js           |
+| T-006   | Admin dashboard GUI                                | T-004                      | 19-04-2026 | 10-05-2026 | Noureen Mohammed               | React.js                   |
+| T-007   | Admin backend                                      | T-005                      | 19-04-2026 | 10-05-2026 | Noureen Mohammed, Mohamed Hany | Express.js, Node.js        |
+| T-008   | End-user pages and features                        | T-004                      | 19-04-2026 | 10-05-2026 | Malak Foudh, Omar Khalifa      | React.js                   |
+| T-009   | Courses and exams modules                          | T-005                      | 19-04-2026 | 10-05-2026 | Mohamed Hany                   | React.js, Node.js          |
+| T-010   | Payment frontend and backend                       | T-005                      | 19-04-2026 | 10-05-2026 | Badr Mohamed                   | Stripe, React.js, Node.js  |
+| T-011   | Testing and bug fixing                             | T-006, T-007, T-008, T-009, T-010 | 11-05-2026 | 20-05-2026 | All team members        | Test tools                 |
+| T-012   | Final review and delivery                          | T-011                      | 21-05-2026 | 28-05-2026 | Mohamed Hany                   | —                          |
 
 ## 11. Appendices
 
