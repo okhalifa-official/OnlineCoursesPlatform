@@ -8,7 +8,7 @@
 | -------------------- | ----------------------------------------- |
 | Document version     | V1.8                                      |
 | Status               | Draft                                     |
-| Authors              | Mohamed Hany, Malak Foudh, Noureen Mohammed, Omar Khalifa |
+| Authors              | Mohamed Hany, Malak Foudh, Noureen Mohammed, Omar Khalifa, Badr Mohamed |
 | Supervisor           | Mohamed Hany                              |
 | Faculty / University | MSA - Modern Sciences and Arts University |
 | Date of issue        | 21-05-2026                                |
@@ -145,6 +145,8 @@ Sonoschool addresses both problems by bringing course access, progress tracking,
 
 This section specifies the functional requirements of the system. Each requirement is expressed using a Requirement Pattern; every FR appears below as a single table grouping the catalogue fields, pattern application, pre/post conditions, risks, acceptance criteria, follow-on requirements, and considerations for development and testing.
 
+The requirements draw on patterns from all eight Requirement Pattern domains: **Fundamental**, **Information**, **Data Entity**, **User Function**, **Access Control**, **Performance**, **Flexibility**, and **Commercial**. The functional requirements below use the Information, Data Entity, User Function, Access Control, and Commercial domains; the Fundamental and Flexibility domains are covered by the Pervasive Requirements in §3.2; and the Performance domain is covered by §5 (Performance Requirements).
+
 ### 3.1 Summary
 
 | Identifier | Name                                      | Priority    | Pattern                                | Domain         |
@@ -159,7 +161,7 @@ This section specifies the functional requirements of the system. Each requireme
 | FR-006.1   | Search Courses by Keyword                 | Should have | Inquiry (follow-on)                    | User Function  |
 | FR-006.2   | Filter and Sort Courses                   | Should have | Inquiry (follow-on)                    | User Function  |
 | FR-007     | Manage Course Cart                        | Should have | Living entity                          | Data Entity    |
-| FR-008     | Pay Course Fees via Stripe                | Must have   | Transaction + Inter-system interaction | Data Entity    |
+| FR-008     | Pay Course Fees via Stripe                | Must have   | Transaction + Inter-system interaction + Fee/tax | Data Entity + Commercial |
 | FR-009     | Enroll Student in Paid Course             | Must have   | Transaction                            | Data Entity    |
 | FR-010     | View Enrolled Courses                     | Must have   | Inquiry                                | User Function  |
 | FR-011     | View Lecture Content                      | Must have   | Inquiry + Inter-system interaction     | User Function  |
@@ -205,14 +207,14 @@ This section specifies the functional requirements of the system. Each requireme
 
 ### 3.2 Pervasive Requirements
 
-| Identifier | Pattern              | Statement |
-| ---------- | -------------------- | --------- |
-| PRV-001    | User authentication  | All FRs except FR-001, FR-002, FR-006 (and its follow-ons), and FR-023 require an active authenticated session. |
-| PRV-002    | Comply-with-standard | All paid lesson content shall be served with `Cache-Control: no-store` and a per-user watermark. |
-| PRV-003    | Chronicle            | Every Transaction-pattern FR shall append an immutable audit record (actor, action, timestamp). |
-| PRV-004    | Accessibility        | Every user-facing screen shall be accessible and easy to use, with clear navigation, readable text, and sufficient colour contrast. |
-| PRV-005    | Multi-lingual        | All user-facing strings (UI labels, error messages, and notification templates) shall be served from a translation catalogue supporting English and Arabic, with right-to-left layout automatically applied when Arabic is selected. |
-| PRV-006    | Inter-system interaction | All outbound emails (welcome email on registration, certificate email on issuance) shall be sent through the external Email Service. |
+| Identifier | Pattern              | Pattern domain | Statement |
+| ---------- | -------------------- | -------------- | --------- |
+| PRV-001    | User authentication  | Access Control | All FRs except FR-001, FR-002, FR-006 (and its follow-ons), and FR-023 require an active authenticated session. |
+| PRV-002    | Comply-with-standard | Fundamental    | All paid lesson content shall be served with `Cache-Control: no-store` and a per-user watermark. |
+| PRV-003    | Chronicle            | Data Entity    | Every Transaction-pattern FR shall append an immutable audit record (actor, action, timestamp). |
+| PRV-004    | Accessibility        | User Function  | Every user-facing screen shall be accessible and easy to use, with clear navigation, readable text, and sufficient colour contrast. |
+| PRV-005    | Multi-lingual        | Flexibility    | All user-facing strings (UI labels, error messages, and notification templates) shall be served from a translation catalogue supporting English and Arabic, with right-to-left layout automatically applied when Arabic is selected. |
+| PRV-006    | Inter-system interaction | Fundamental | All outbound emails (welcome email on registration, certificate email on issuance) shall be sent through the external Email Service. |
 
 ### 3.3 Requirement Details
 
@@ -549,8 +551,8 @@ This section specifies the functional requirements of the system. Each requireme
 | Author | Malak Foudh |
 | Business area | Payments |
 | Stakeholders | Student |
-| Pattern used | Transaction + Inter-system interaction |
-| Pattern domain | Data Entity |
+| Pattern used | Transaction + Inter-system interaction + Fee/tax |
+| Pattern domain | Data Entity + Commercial |
 | Related patterns | **refers to** FR-007 (cart provides the basket), **refers to** FR-009 (Enrollment is the consequence) |
 | Classification (Functional / Pervasive / Affects DB) | Functional: Yes / Pervasive: No / Affects DB: Yes |
 | Applicability | Applies whenever an authenticated student proceeds to checkout from their cart. |
@@ -2123,6 +2125,8 @@ Git and Maintenance Commands
 | GitHub                        | The system shall support source code version control.                               | Version control platform       |
 
 ## 5. Performance Requirements
+
+This section covers the **Performance** Requirement Pattern domain. Each requirement below applies the Response time pattern (and, for PR-003 and PR-005, the throughput and capacity patterns), stating a measurable threshold the system must meet.
 
 | Identifier | Requirement                                                                                                                      | Metric / Threshold                                                                                                    |
 | ---------- | -------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
