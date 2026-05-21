@@ -142,8 +142,6 @@ A web-based academic medical learning platform.
 **1. Delete only the safe things.**
 Hard delete (FR-027.2, FR-036.3) fires only on *Draft, zero-reference* entities. Everything else *archives* (FR-038, FR-039). This protects the audit chronicle and every downstream reference — certificates, enrollments, past exam scores keep working.
 
-**2. Reorder by stating the goal, not the move.**
-FR-028.1 takes the *whole new lecture order*, not a "move up/down" delta. Result: idempotent (safe to retry), race-free (parallel admins cannot corrupt each other), and trivially testable.
 
 *Common thread: design the API around the final state the user wants, not the step-by-step actions to get there.*
 
