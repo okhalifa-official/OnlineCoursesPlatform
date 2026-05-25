@@ -23,9 +23,18 @@ const registerUser = async (req, res) => {
       return res.status(409).json({ message: "Email already in use" });
     }
 
+    // Derive a unique username from the email local-part
+    const baseUsername = email.split("@")[0].toLowerCase().replace(/[^a-z0-9_]/g, "");
+    let username = baseUsername;
+    let suffix = 1;
+    while (await User.findOne({ username })) {
+      username = `${baseUsername}${suffix++}`;
+    }
+
     const hashed = await bcrypt.hash(password, 12);
 
     const user = await User.create({
+      username,
       fullName,
       email,
       passwordHash: hashed,

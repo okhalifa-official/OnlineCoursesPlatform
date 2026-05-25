@@ -169,31 +169,12 @@ export default function HeroSection() {
         </div>
 
         <div className="w-full max-w-sm bg-softGrey rounded-2xl overflow-hidden border border-gray-100 aspect-video flex items-center justify-center relative">
-          {cmsHero?.imageUrl ? (
-            <img
-              src={cmsHero.imageUrl}
-              alt={cmsHero.title || "Hero"}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <div className="text-gray-300 text-center">
-              <svg
-                className="w-16 h-16 mx-auto mb-2"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={1}
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                />
-              </svg>
-
-              <p className="text-sm">Bedside scanning demo</p>
-            </div>
-          )}
+          <img
+            src={cmsHero?.imageUrl || "/hero.png"}
+            alt={cmsHero?.title || "Hero"}
+            className="w-full h-full object-cover"
+            onError={(e) => { e.currentTarget.src = "/hero.png"; }}
+          />
         </div>
 
         <div className="bg-charcoal text-white rounded-xl px-4 py-3 text-xs self-end">
