@@ -131,6 +131,38 @@ const PaymentSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.Mixed,
       default: null,
     },
+
+    instapayReference: {
+      type: String,
+      trim: true,
+    },
+
+    screenshotBase64: {
+      type: String,
+      default: null,
+      select: false,
+    },
+
+    screenshotMimeType: {
+      type: String,
+      default: null,
+    },
+
+    verificationStatus: {
+      type: String,
+      enum: ["", "verified", "needs_review", "rejected"],
+      default: "",
+    },
+
+    verificationReasons: {
+      type: [String],
+      default: [],
+    },
+
+    extractedData: {
+      type: mongoose.Schema.Types.Mixed,
+      default: null,
+    },
   },
   {
     timestamps: true,

@@ -83,9 +83,8 @@ export default function CourseDetail() {
       return;
     }
 
-    // Paid courses: payment isn't wired up yet — just inform the user.
     if (course && Number(course.coursePrice) > 0) {
-      alert("Payment integration coming soon.");
+      navigate(`/payment?courseId=${id}`);
       return;
     }
 
@@ -363,7 +362,7 @@ export default function CourseDetail() {
 
                 {!isFree && (
                   <p className="text-[11px] text-gray-400 text-center mt-3">
-                    Payment integration coming soon.
+                    Pay by card via Kashier, or by InstaPay with AI-verified screenshot.
                   </p>
                 )}
 

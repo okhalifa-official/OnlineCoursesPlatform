@@ -48,6 +48,8 @@ import {
   UserLogin,
   Certificates,
   VerifyCertificate,
+  PaymentPage,
+  PaymentHistory,
 } from "./user/index";
 
 import MissionVision from "./user/pages/about-us/MissionVision";
@@ -193,6 +195,22 @@ export default function App() {
           element={
             <UserPage>
               <VerifyCertificate />
+            </UserPage>
+          }
+        />
+        <Route
+          path="/payment"
+          element={
+            <UserPage>
+              <PaymentPage />
+            </UserPage>
+          }
+        />
+        <Route
+          path="/payment-history"
+          element={
+            <UserPage>
+              <PaymentHistory />
             </UserPage>
           }
         />

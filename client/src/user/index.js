@@ -12,3 +12,5 @@ export { default as LectureView } from "./pages/LectureView";
 export { default as WhyUsPage } from "./pages/WhyUsPage";
 export { default as Certificates } from "./pages/Certificates";
 export { default as VerifyCertificate } from "./pages/VerifyCertificate";
+export { default as PaymentPage } from "./pages/Payment";
+export { default as PaymentHistory } from "./pages/PaymentHistory";

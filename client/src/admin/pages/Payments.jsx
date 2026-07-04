@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
+  approveInstapayReview,
   createPayment,
   deletePayment,
   getPaymentStats,
   getPayments,
+  getPendingInstapayReviews,
   refundPayment,
+  rejectInstapayReview,
   seedPayments,
   sendPaymentReminder,
   updatePaymentStatus,
@@ -37,6 +40,48 @@ export default function Payments() {
   const [formData, setFormData] = useState(emptyPayment);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [instapayReviews, setInstapayReviews] = useState([]);
+  const [reviewActionId, setReviewActionId] = useState(null);
+  const [expandedReviewId, setExpandedReviewId] = useState(null);
+
+  async function loadInstapayReviews() {
+    try {
+      const response = await getPendingInstapayReviews();
+      setInstapayReviews(response?.items || []);
+    } catch (error) {
+      console.error("Load InstaPay reviews error:", error.message);
+    }
+  }
+
+  useEffect(function () {
+    loadInstapayReviews();
+  }, []);
+
+  async function handleApproveReview(id) {
+    setReviewActionId(id);
+    try {
+      await approveInstapayReview(id);
+      await Promise.all([loadInstapayReviews(), loadPayments()]);
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      setReviewActionId(null);
+    }
+  }
+
+  async function handleRejectReview(id) {
+    const reason = window.prompt("Reason for rejection (shown to student):", "The screenshot could not be verified.");
+    if (reason === null) return;
+    setReviewActionId(id);
+    try {
+      await rejectInstapayReview(id, reason);
+      await loadInstapayReviews();
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      setReviewActionId(null);
+    }
+  }
 
   const [filters, setFilters] = useState({
     search: "",
@@ -361,6 +406,137 @@ export default function Payments() {
           onClick={() => setQuickStatusFilter("pending")}
         />
       </section>
+
+      {instapayReviews.length > 0 && (
+        <section className="bg-white rounded-xl shadow-card border border-[#E5E5E5] overflow-hidden mb-12">
+          <div className="p-6 border-b border-[#EEEEEE] bg-[#FAFAFA] flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
+            <div>
+              <h3 className="text-lg font-bold text-charcoal heading-font flex items-center gap-2">
+                <span className="material-symbols-outlined text-charcoal/70">receipt_long</span>
+                InstaPay submissions ({instapayReviews.length})
+              </h3>
+              <p className="text-sm text-charcoal/70 mt-1">
+                Every InstaPay screenshot submitted by students. Auto-approved payments are visible so you can still spot-check them.
+              </p>
+            </div>
+          </div>
+
+          <div className="divide-y divide-[#EEEEEE]">
+            {instapayReviews.map(function (review) {
+              const isExpanded = expandedReviewId === review._id;
+              const isProcessing = reviewActionId === review._id;
+              const vStatus = review.verificationStatus || "needs_review";
+              const isApproved = vStatus === "verified";
+              const isRejected = vStatus === "rejected";
+              const pillClass = isApproved
+                ? "bg-green-100 text-green-700"
+                : isRejected
+                ? "bg-red-100 text-red-700"
+                : "bg-amber-100 text-amber-700";
+              const pillLabel = isApproved
+                ? review.gatewayStatus === "MANUALLY_APPROVED"
+                  ? "Approved by admin"
+                  : "Auto-approved"
+                : isRejected
+                ? "Rejected"
+                : "Under review";
+
+              return (
+                <div key={review._id} className="p-6">
+                  <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <div className="font-bold text-charcoal">
+                          {review.user?.name || "Unknown student"}
+                          <span className="ml-2 text-sm font-normal text-charcoal/60">
+                            {review.user?.email}
+                          </span>
+                        </div>
+                        <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${pillClass}`}>
+                          {pillLabel}
+                        </span>
+                      </div>
+                      <div className="text-sm text-charcoal/70 mt-1">
+                        Course: <span className="font-medium">{review.course?.courseName || "?"}</span>
+                        {" — "}
+                        Amount:{" "}
+                        <span className="font-medium">
+                          {review.amount} {review.currency}
+                        </span>
+                      </div>
+                      {review.instapayReference && (
+                        <div className="text-xs text-charcoal/60 mt-1 font-mono">
+                          InstaPay ref: {review.instapayReference}
+                        </div>
+                      )}
+                      {Array.isArray(review.verificationReasons) &&
+                        review.verificationReasons.length > 0 &&
+                        !isApproved && (
+                          <ul className="mt-2 text-sm text-amber-700 list-disc list-inside">
+                            {review.verificationReasons.map(function (reason, index) {
+                              return <li key={index}>{reason}</li>;
+                            })}
+                          </ul>
+                        )}
+                    </div>
+
+                    <div className="flex gap-2 flex-wrap">
+                      <button
+                        type="button"
+                        onClick={function () {
+                          setExpandedReviewId(isExpanded ? null : review._id);
+                        }}
+                        className="bg-white text-charcoal border border-[#DDDDDD] px-4 py-2 rounded-xl font-bold text-sm hover:bg-[#fafafa]"
+                      >
+                        {isExpanded ? "Hide screenshot" : "View screenshot"}
+                      </button>
+                      {!isApproved && !isRejected && (
+                        <>
+                          <button
+                            type="button"
+                            disabled={isProcessing}
+                            onClick={function () {
+                              handleApproveReview(review._id);
+                            }}
+                            className="bg-green-600 text-white px-4 py-2 rounded-xl font-bold text-sm hover:bg-green-700 disabled:opacity-60"
+                          >
+                            {isProcessing ? "Working..." : "Approve"}
+                          </button>
+                          <button
+                            type="button"
+                            disabled={isProcessing}
+                            onClick={function () {
+                              handleRejectReview(review._id);
+                            }}
+                            className="bg-brandRed text-white px-4 py-2 rounded-xl font-bold text-sm hover:opacity-90 disabled:opacity-60"
+                          >
+                            Reject
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  {isExpanded && review.screenshotDataUrl && (
+                    <div className="mt-4 border border-[#EEEEEE] rounded-xl p-4 bg-[#FAFAFA]">
+                      <img
+                        src={review.screenshotDataUrl}
+                        alt="InstaPay screenshot"
+                        className="max-h-96 rounded-lg border border-[#DDDDDD]"
+                      />
+                      {review.extractedData && (
+                        <pre className="mt-3 text-xs bg-white p-3 rounded-lg border border-[#EEEEEE] overflow-auto">
+                          {JSON.stringify(review.extractedData, null, 2)}
+                        </pre>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       <section className="bg-white rounded-xl shadow-card border border-[#E5E5E5] overflow-hidden mb-12">
         <div className="p-6 border-b border-[#EEEEEE] flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 bg-[#FAFAFA]">

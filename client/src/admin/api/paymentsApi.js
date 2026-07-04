@@ -79,3 +79,20 @@ export async function updatePaymentSettings(settingsData) {
     body: JSON.stringify(settingsData),
   });
 }
+
+export async function getPendingInstapayReviews() {
+  return adminFetch("/payments/instapay/pending");
+}
+
+export async function approveInstapayReview(id) {
+  return adminFetch(`/payments/instapay/${id}/approve`, {
+    method: "POST",
+  });
+}
+
+export async function rejectInstapayReview(id, reason = "Rejected by admin") {
+  return adminFetch(`/payments/instapay/${id}/reject`, {
+    method: "POST",
+    body: JSON.stringify({ reason }),
+  });
+}

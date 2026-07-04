@@ -2,6 +2,35 @@ import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { getUserToken, getUserInfo, clearUserToken } from "../api/userApi";
 import UserLogo from "./UserLogo";
+import axios from "axios";
+
+const NOTIF_API = "http://localhost:4000/api/user/notifications";
+
+function timeAgo(dateStr) {
+  if (!dateStr) return "";
+  const diff = Date.now() - new Date(dateStr);
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  if (days < 7) return `${days}d ago`;
+  return new Date(dateStr).toLocaleDateString();
+}
+
+function iconForType(type) {
+  const map = {
+    payment_received:  { icon: "receipt_long",   color: "bg-blue-50 text-blue-600" },
+    payment_verified:  { icon: "check_circle",   color: "bg-emerald-50 text-emerald-600" },
+    payment_approved:  { icon: "check_circle",   color: "bg-emerald-50 text-emerald-600" },
+    payment_rejected:  { icon: "cancel",         color: "bg-red-50 text-red-600" },
+    enrollment:        { icon: "school",         color: "bg-emerald-50 text-emerald-600" },
+    admin_message:     { icon: "campaign",       color: "bg-amber-50 text-amber-600" },
+    info:              { icon: "info",           color: "bg-gray-100 text-gray-500" },
+  };
+  return map[type] || map.info;
+}
 
 const ABOUT_LINKS = [
   { label: "Mission & Vision",     href: "/about/mission-vision"      },
@@ -49,6 +78,60 @@ export default function UserNavbar({ links = [] }) {
 
   const [aboutOpen, setAboutOpen] = useState(false);
   const aboutRef = useRef(null);
+
+  const [notifOpen, setNotifOpen] = useState(false);
+  const notifRef = useRef(null);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    function onDown(e) {
+      if (notifRef.current && !notifRef.current.contains(e.target)) setNotifOpen(false);
+    }
+    document.addEventListener("mousedown", onDown);
+    return () => document.removeEventListener("mousedown", onDown);
+  }, []);
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    let ignore = false;
+    async function loadNotifications() {
+      try {
+        const token = getUserToken();
+        if (!token) return;
+        const response = await axios.get(NOTIF_API, { headers: { Authorization: `Bearer ${token}` } });
+        if (ignore) return;
+        setNotifications(response.data?.items || []);
+        setUnreadCount(response.data?.unreadCount || 0);
+      } catch (e) {}
+    }
+    loadNotifications();
+    const interval = setInterval(loadNotifications, 20000);
+    return () => { ignore = true; clearInterval(interval); };
+  }, [isLoggedIn, tick]);
+
+  async function markAllNotificationsRead() {
+    try {
+      const token = getUserToken();
+      if (!token) return;
+      await axios.post(`${NOTIF_API}/read-all`, {}, { headers: { Authorization: `Bearer ${token}` } });
+      setUnreadCount(0);
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    } catch (e) {}
+  }
+
+  async function handleNotificationClick(notif) {
+    try {
+      const token = getUserToken();
+      if (token && !notif.read) {
+        axios.post(`${NOTIF_API}/${notif._id}/read`, {}, { headers: { Authorization: `Bearer ${token}` } });
+      }
+    } catch (e) {}
+    setNotifications((prev) => prev.map((n) => n._id === notif._id ? { ...n, read: true } : n));
+    setUnreadCount((c) => Math.max(0, c - (notif.read ? 0 : 1)));
+    setNotifOpen(false);
+    if (notif.link) navigate(notif.link);
+  }
 
   useEffect(() => {
     function onDown(e) {
@@ -224,11 +307,80 @@ export default function UserNavbar({ links = [] }) {
             </Link>
 
             {/* Notification bell */}
-            <button className="relative w-9 h-9 rounded-full bg-softGrey hover:bg-gray-200 flex items-center justify-center transition shrink-0">
-              <svg className="w-5 h-5 text-charcoal" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-              </svg>
-            </button>
+            <div className="relative" ref={notifRef}>
+              <button
+                type="button"
+                title="Notifications"
+                onClick={() => {
+                  const willOpen = !notifOpen;
+                  setNotifOpen(willOpen);
+                  if (willOpen && unreadCount > 0) markAllNotificationsRead();
+                }}
+                className="relative w-9 h-9 rounded-full bg-softGrey hover:bg-gray-200 flex items-center justify-center transition shrink-0"
+              >
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full bg-brandRed text-white text-[10px] font-bold flex items-center justify-center px-1 border-2 border-white">
+                    {unreadCount > 9 ? "9+" : unreadCount}
+                  </span>
+                )}
+                <svg className="w-5 h-5 text-charcoal" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+              </button>
+
+              {notifOpen && (
+                <div className="absolute right-0 top-[calc(100%+8px)] bg-white border border-gray-100 rounded-xl shadow-lg w-80 z-50 max-h-[440px] flex flex-col">
+                  <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+                    <p className="text-sm font-bold text-charcoal">Notifications</p>
+                    {notifications.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={markAllNotificationsRead}
+                        className="text-[11px] text-brandRed hover:underline font-semibold"
+                      >Mark all read</button>
+                    )}
+                  </div>
+
+                  {notifications.length === 0 ? (
+                    <div className="p-8 text-center">
+                      <div className="w-12 h-12 mx-auto rounded-full bg-softGrey flex items-center justify-center mb-2">
+                        <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" strokeWidth={1.6} viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                        </svg>
+                      </div>
+                      <p className="text-sm font-semibold text-charcoal">You're all caught up</p>
+                      <p className="text-xs text-gray-500 mt-1">No new notifications yet.</p>
+                    </div>
+                  ) : (
+                    <div className="overflow-y-auto flex-1 divide-y divide-gray-100">
+                      {notifications.map((notif) => {
+                        const meta = iconForType(notif.type);
+                        return (
+                          <button
+                            key={notif._id}
+                            type="button"
+                            onClick={() => handleNotificationClick(notif)}
+                            className={`w-full text-left px-4 py-3 hover:bg-softGrey transition flex items-start gap-3 ${notif.read ? "" : "bg-blue-50/40"}`}
+                          >
+                            <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${meta.color}`}>
+                              <span className="material-symbols-outlined text-lg">{meta.icon}</span>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className={`text-sm ${notif.read ? "text-charcoal" : "text-charcoal font-bold"} leading-snug`}>{notif.title}</p>
+                              {notif.body && (
+                                <p className="text-xs text-gray-500 mt-0.5 leading-snug line-clamp-2">{notif.body}</p>
+                              )}
+                              <p className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider font-semibold">{timeAgo(notif.createdAt)}</p>
+                            </div>
+                            {!notif.read && <span className="w-2 h-2 rounded-full bg-brandRed shrink-0 mt-2" />}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
 
             {/* User chip + dropdown */}
             <div className="relative">
@@ -302,6 +454,7 @@ export default function UserNavbar({ links = [] }) {
                     </svg>
                     Profile
                   </Link>
+
 
                   {/* Sign out */}
                   <button

@@ -1,43 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  clearUserToken,
-  getUserToken,
-  getMyEnrollments,
-} from "../api/userApi";
-import UserNavbar from "../components/UserNavbar";
-import UserSidebar from "../components/UserSidebar";
+import { getUserToken, getMyEnrollments } from "../api/userApi";
+import StudentLayout from "../components/StudentLayout";
 import usePageTitle from "../hooks/usePageTitle";
 import { listInstructors, formatInstructorList, stripHtmlToText } from "../components/CourseBar";
-
-const NAV_LINKS = [
-  { label: "Home",    to: "/",         section: null      },
-  { label: "Courses", to: "/courses",  section: null      },
-  { label: "Contact", to: "/#contact", section: "contact" },
-];
-
-const SIDEBAR_LINKS = [
-  {
-    label: "Dashboard",
-    to: "/home",
-    icon: <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" /></svg>,
-  },
-  {
-    label: "My Courses",
-    to: "/my-courses",
-    icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>,
-  },
-  {
-    label: "Certificates",
-    to: "/certificates",
-    icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg>,
-  },
-  {
-    label: "Profile",
-    to: "/user-profile",
-    icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>,
-  },
-];
 
 const CATEGORY_COLORS = {
   pocus:      { from: "#6B21A8", to: "#4C1D95" },
@@ -213,11 +179,6 @@ export default function MyCourses() {
       .finally(() => setLoading(false));
   }, [navigate]);
 
-  function handleLogout() {
-    clearUserToken();
-    navigate("/login");
-  }
-
   // Each enrollment record has a populated courseId. Drop ones whose course
   // was deleted (courseId becomes null after populate in that case).
   const courses = enrollments
@@ -232,17 +193,8 @@ export default function MyCourses() {
   );
 
   return (
-    <div className="min-h-screen bg-softGrey">
-      <UserNavbar links={NAV_LINKS} />
-
-      <div className="flex" style={{ minHeight: "calc(100vh - 3.5rem)" }}>
-        <UserSidebar
-          links={SIDEBAR_LINKS}
-          activeLink="My Courses"
-          onLogout={handleLogout}
-        />
-
-        <main className="flex-1 flex flex-col min-h-screen">
+    <StudentLayout activeLink="My Courses">
+      <div className="flex flex-col min-h-screen">
           <div className="sticky top-14 z-10 bg-softGrey border-b border-gray-200 px-8 py-4 flex items-center justify-between">
             <p className="text-sm text-gray-400">
               Home / <span className="text-charcoal font-medium">My Courses</span>
@@ -340,8 +292,7 @@ export default function MyCourses() {
               </>
             )}
           </div>
-        </main>
       </div>
-    </div>
+    </StudentLayout>
   );
 }

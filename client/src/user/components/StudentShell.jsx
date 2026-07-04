@@ -30,6 +30,15 @@ const NAV_ITEMS = [
     ),
   },
   {
+    label: "Payment",
+    to: "/payment-history",
+    icon: (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M5 6h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2zm3 8h4" />
+      </svg>
+    ),
+  },
+  {
     label: "Profile",
     to: "/user-profile",
     icon: (

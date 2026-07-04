@@ -18,6 +18,7 @@ const lectureRouter = require("./Routers/lecture");
 const paymentGatewayRouter = require("./Routers/paymentGateway");
 const userSideRouter = require("./Routers/userAuth");
 const userPaymentRouter = require("./Routers/userPayment");
+const notificationsRouter = require("./Routers/notifications");
 const educationalCenterRouter = require("./Routers/EducationalCenter");
 const systemLogRouter = require("./Routers/systemLog");
 const paymentRouter = require("./Routers/payment");
@@ -132,6 +133,7 @@ app.use("/api/system-logs", protect, requireAdmin, systemLogRouter);
 app.use("/api/support-requests", protect, requireAdmin, supportRequestRoutes);
 
 app.use("/api/user/payments", userPaymentRouter);
+app.use("/api/user/notifications", notificationsRouter);
 app.use("/api/user", userSideRouter);
 
 app.get("/", function (req, res) {

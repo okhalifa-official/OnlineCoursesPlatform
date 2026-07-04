@@ -16,6 +16,12 @@ const {
   seedPaymentTransactions,
 } = require("../Controllers/Payment");
 
+const {
+  listPendingInstapayReviews,
+  approveInstapayPayment,
+  rejectInstapayPayment,
+} = require("../Controllers/instapayPayment");
+
 /*
   IMPORTANT:
   Fixed routes must come before /:id
@@ -29,6 +35,10 @@ router.get("/settings", getPaymentSettings);
 router.put("/settings", updatePaymentSettings);
 
 router.post("/seed", seedPaymentTransactions);
+
+router.get("/instapay/pending", listPendingInstapayReviews);
+router.post("/instapay/:id/approve", approveInstapayPayment);
+router.post("/instapay/:id/reject", rejectInstapayPayment);
 
 router.get("/:id", getPaymentTransactionById);
 router.put("/:id", updatePaymentTransaction);
