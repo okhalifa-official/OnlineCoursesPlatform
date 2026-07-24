@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import StudentLayout from "../components/StudentLayout";
+import { formatPrice, getCurrencyPreference } from "../../utils/currency";
 
 const API_BASE = "http://localhost:4000/api";
 const MAX_FILE_BYTES = 6 * 1024 * 1024;
@@ -25,14 +26,6 @@ function getQueryParams() {
     courseId: searchParams.get("courseId") || "",
     paymentRef: searchParams.get("paymentRef") || "",
   };
-}
-
-function formatCurrency(amount) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "EGP",
-    maximumFractionDigits: 2,
-  }).format(Number(amount || 0));
 }
 
 async function fileToBase64(file) {
@@ -72,7 +65,10 @@ export default function PaymentPage() {
       setCourseLoading(true);
       setError("");
       try {
-        const response = await axios.get(`${API_BASE}/user/courses/${query.courseId}`);
+        const currencyPreference = getCurrencyPreference();
+        const response = await axios.get(`${API_BASE}/user/courses/${query.courseId}`, {
+          headers: currencyPreference ? { "X-Currency-Preference": currencyPreference } : {},
+        });
         if (!ignore) setCourse(response.data);
       } catch (err) {
         if (!ignore) setError(err.response?.data?.message || "Failed to load the selected course.");
@@ -88,13 +84,22 @@ export default function PaymentPage() {
     let ignore = false;
     async function loadConfig() {
       try {
-        const response = await axios.get(`${API_BASE}/user/payments/instapay/config`);
+        const currencyPreference = getCurrencyPreference();
+        const response = await axios.get(`${API_BASE}/user/payments/instapay/config`, {
+          headers: currencyPreference ? { "X-Currency-Preference": currencyPreference } : {},
+        });
         if (!ignore) setInstapayConfig(response.data);
       } catch (e) {}
     }
     loadConfig();
     return () => { ignore = true; };
   }, []);
+
+  useEffect(() => {
+    if (instapayConfig?.available === false && activeTab === "instapay") {
+      setActiveTab("card");
+    }
+  }, [instapayConfig, activeTab]);
 
   useEffect(() => {
     if (phase !== "verified") return;
@@ -182,10 +187,16 @@ export default function PaymentPage() {
     setCheckoutLoading(true);
     setError("");
     try {
+      const currencyPreference = getCurrencyPreference();
       const response = await axios.post(
         `${API_BASE}/user/payments/checkout-session`,
         { courseId: query.courseId },
-        { headers: { Authorization: `Bearer ${authToken}` } }
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            ...(currencyPreference ? { "X-Currency-Preference": currencyPreference } : {}),
+          },
+        }
       );
       window.location.assign(response.data.sessionUrl);
     } catch (requestError) {
@@ -394,13 +405,15 @@ function FormBlock({
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="border-b border-gray-100 px-6 py-4 flex gap-2">
-          <button
-            type="button"
-            onClick={() => setActiveTab("instapay")}
-            className={`flex-1 py-2.5 px-4 rounded-xl font-bold text-sm transition ${
-              activeTab === "instapay" ? "bg-charcoal text-white" : "text-charcoal hover:bg-softGrey"
-            }`}
-          >InstaPay</button>
+          {instapayConfig?.available !== false && (
+            <button
+              type="button"
+              onClick={() => setActiveTab("instapay")}
+              className={`flex-1 py-2.5 px-4 rounded-xl font-bold text-sm transition ${
+                activeTab === "instapay" ? "bg-charcoal text-white" : "text-charcoal hover:bg-softGrey"
+              }`}
+            >InstaPay</button>
+          )}
           <button
             type="button"
             onClick={() => setActiveTab("card")}
@@ -459,7 +472,7 @@ function FormBlock({
         <div className="border-t border-gray-100 my-4" />
         <div className="flex justify-between items-baseline mb-5">
           <span className="text-sm text-gray-500">Total</span>
-          <span className="text-2xl font-extrabold text-charcoal">{formatCurrency(course?.coursePrice)}</span>
+          <span className="text-2xl font-extrabold text-charcoal">{formatPrice(course?.displayPrice, course?.currency)}</span>
         </div>
 
         {activeTab === "card" ? (
@@ -499,7 +512,7 @@ function InstapayForm({ course, instapayConfig, handleScreenshotSelected, screen
         <p className="text-[10px] font-bold tracking-widest uppercase text-white/70">Step 1</p>
         <p className="text-white font-bold text-lg mt-1">Send the payment via your bank app</p>
         <p className="text-sm text-white/80 mt-2">
-          Send <span className="font-bold text-white">{formatCurrency(course?.coursePrice)}</span> via InstaPay to:
+          Send <span className="font-bold text-white">{formatPrice(course?.displayPrice, course?.currency)}</span> via InstaPay to:
         </p>
         <div className="bg-white/15 rounded-xl mt-3 px-5 py-4 text-center font-mono font-bold text-2xl tracking-wide">
           {instapayConfig?.handle || "loading…"}
