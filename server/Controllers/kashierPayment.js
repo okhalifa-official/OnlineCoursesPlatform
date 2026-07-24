@@ -114,6 +114,16 @@ function mapPaymentTransactionMethod({ payment, order, webhookData }) {
   return "Visa"
 }
 
+function buildReusablePendingPaymentFilter({ courseId, userId, currency }) {
+  return {
+    checkoutExpiresAt: { $gt: new Date() },
+    courseId,
+    currency,
+    status: "pending",
+    userId,
+  }
+}
+
 async function findOwnedPayment(referenceNumber, userId) {
   return Payment.findOne({
     referenceNumber,
@@ -486,12 +496,13 @@ const createCheckoutSession = async function (req, res) {
       }
     )
 
-    const reusablePayment = await Payment.findOne({
-      checkoutExpiresAt: { $gt: new Date() },
-      courseId,
-      status: "pending",
-      userId: req.user._id,
-    }).sort({ createdAt: -1 })
+    const reusablePayment = await Payment.findOne(
+      buildReusablePendingPaymentFilter({
+        courseId,
+        userId: req.user._id,
+        currency,
+      })
+    ).sort({ createdAt: -1 })
 
     if (reusablePayment?.sessionUrl) {
       return res.status(200).json({
@@ -517,11 +528,13 @@ const createCheckoutSession = async function (req, res) {
       })
     } catch (error) {
       if (error?.code === 11000) {
-        const pendingPayment = await Payment.findOne({
-          courseId,
-          status: "pending",
-          userId: req.user._id,
-        }).sort({ createdAt: -1 })
+        const pendingPayment = await Payment.findOne(
+          buildReusablePendingPaymentFilter({
+            courseId,
+            userId: req.user._id,
+            currency,
+          })
+        ).sort({ createdAt: -1 })
 
         if (pendingPayment?.sessionUrl) {
           return res.status(200).json({
@@ -764,6 +777,7 @@ const handleKashierWebhook = async function (req, res) {
 }
 
 module.exports = {
+  buildReusablePendingPaymentFilter,
   createCheckoutSession,
   getPaymentStatus,
   handleKashierWebhook,
