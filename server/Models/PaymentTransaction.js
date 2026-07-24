@@ -65,8 +65,8 @@ const paymentTransactionSchema = new mongoose.Schema(
 
     currency: {
       type: String,
-      enum: ["USD", "EUR", "GBP", "EGP"],
-      default: "USD",
+      enum: ["USD", "EGP"],
+      default: "EGP",
     },
 
     method: {
