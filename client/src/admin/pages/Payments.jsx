@@ -1091,7 +1091,7 @@ function CreatePaymentModal({ formData, onChange, onSubmit, onClose, saving }) {
                 name="currency"
                 value={formData.currency}
                 onChange={onChange}
-                options={["USD", "EUR", "GBP", "EGP"]}
+                options={["EGP", "USD"]}
               />
 
               <Select
