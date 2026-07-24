@@ -1,6 +1,11 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { resolveCountryFromIp, __clearCacheForTests } = require("./geolocation");
+const {
+  resolveCountryFromIp,
+  __clearCacheForTests,
+  __setCacheLimitForTests,
+  __getCacheForTests,
+} = require("./geolocation");
 
 test("private/loopback IPs resolve to null without calling fetch", async (t) => {
   const originalFetch = global.fetch;
@@ -67,4 +72,38 @@ test("caches a resolved country for the same IP", async (t) => {
   await resolveCountryFromIp("9.9.9.9");
 
   assert.equal(callCount, 1);
+});
+
+test("evicts the oldest entry once the cache exceeds its configured limit", async (t) => {
+  const originalFetch = global.fetch;
+  global.fetch = async () => ({
+    ok: true,
+    json: async () => ({ countryCode: "US", status: "success" }),
+  });
+  t.after(() => {
+    global.fetch = originalFetch;
+    __setCacheLimitForTests(undefined); // restore default limit
+  });
+
+  __clearCacheForTests();
+  __setCacheLimitForTests(3);
+
+  await resolveCountryFromIp("1.1.1.1");
+  await resolveCountryFromIp("2.2.2.2");
+  await resolveCountryFromIp("3.3.3.3");
+
+  const cacheBeforeEviction = __getCacheForTests();
+  assert.equal(cacheBeforeEviction.size, 3);
+  assert.ok(cacheBeforeEviction.has("1.1.1.1"));
+
+  // Fourth distinct IP should push the cache past its limit of 3,
+  // evicting the oldest entry (1.1.1.1) by insertion order.
+  await resolveCountryFromIp("4.4.4.4");
+
+  const cacheAfterEviction = __getCacheForTests();
+  assert.equal(cacheAfterEviction.size, 3);
+  assert.equal(cacheAfterEviction.has("1.1.1.1"), false);
+  assert.ok(cacheAfterEviction.has("2.2.2.2"));
+  assert.ok(cacheAfterEviction.has("3.3.3.3"));
+  assert.ok(cacheAfterEviction.has("4.4.4.4"));
 });

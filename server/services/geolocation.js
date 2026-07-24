@@ -1,7 +1,20 @@
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24h
 const REQUEST_TIMEOUT_MS = 1500;
+const DEFAULT_CACHE_MAX_ENTRIES = 5000;
 
 let cache = new Map(); // ip -> { countryCode, expiresAt }
+let cacheMaxEntries = DEFAULT_CACHE_MAX_ENTRIES;
+
+function setCacheEntry(ip, value) {
+  if (cache.size >= cacheMaxEntries && !cache.has(ip)) {
+    const oldestKey = cache.keys().next().value;
+    if (oldestKey !== undefined) {
+      cache.delete(oldestKey);
+    }
+  }
+
+  cache.set(ip, value);
+}
 
 function isPrivateOrLoopbackIp(ip) {
   if (!ip) return true;
@@ -43,7 +56,7 @@ async function resolveCountryFromIp(ip) {
     const data = await response.json();
     const countryCode = data?.status === "success" ? data.countryCode || null : null;
 
-    cache.set(ip, { countryCode, expiresAt: Date.now() + CACHE_TTL_MS });
+    setCacheEntry(ip, { countryCode, expiresAt: Date.now() + CACHE_TTL_MS });
 
     return countryCode;
   } catch (error) {
@@ -57,4 +70,17 @@ function __clearCacheForTests() {
   cache = new Map();
 }
 
-module.exports = { resolveCountryFromIp, __clearCacheForTests };
+function __setCacheLimitForTests(n) {
+  cacheMaxEntries = n === undefined ? DEFAULT_CACHE_MAX_ENTRIES : n;
+}
+
+function __getCacheForTests() {
+  return cache;
+}
+
+module.exports = {
+  resolveCountryFromIp,
+  __clearCacheForTests,
+  __setCacheLimitForTests,
+  __getCacheForTests,
+};
