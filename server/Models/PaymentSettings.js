@@ -17,10 +17,10 @@ const paymentSettingsSchema = new mongoose.Schema(
       default: false,
     },
 
-    baseCurrency: {
-      type: String,
-      enum: ["USD", "EUR", "GBP", "EGP"],
-      default: "USD",
+    manualExchangeRateFallback: {
+      type: Number,
+      default: 50,
+      min: 1,
     },
 
     updatedBy: {
