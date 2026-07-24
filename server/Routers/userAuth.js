@@ -7,6 +7,9 @@ const Course = require("../Models/course");
 const Lecture = require("../Models/lecture");
 const Enrollment = require("../Models/enrollment");
 const Review = require("../Models/review");
+const { resolveCurrency } = require("../middleware/currencyMiddleware");
+const { convertPrice } = require("../utils/currency");
+const { getEgpPerUsd } = require("../services/exchangeRate");
 
 // Auth
 router.post("/register", registerUser);
@@ -16,22 +19,29 @@ router.put("/profile", protectUser, updateUserProfile);
 router.put("/change-password", protectUser, changePassword);
 
 // Courses — browse published courses
-router.get("/courses", async (req, res) => {
+router.get("/courses", resolveCurrency, async (req, res) => {
   try {
     const courses = await Course.find({ publishStatus: "Published" }).sort({
       createdAt: -1,
     });
-    res.json(courses);
+    const egpPerUsd = await getEgpPerUsd();
+    const annotated = courses.map((course) => {
+      const { amount, currency } = convertPrice(course.coursePrice, req.resolvedCurrency, egpPerUsd);
+      return { ...course.toObject(), displayPrice: amount, currency };
+    });
+    res.json(annotated);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-router.get("/courses/:id", async (req, res) => {
+router.get("/courses/:id", resolveCurrency, async (req, res) => {
   try {
     const course = await Course.findById(req.params.id);
     if (!course) return res.status(404).json({ message: "Course not found" });
-    res.json(course);
+    const egpPerUsd = await getEgpPerUsd();
+    const { amount, currency } = convertPrice(course.coursePrice, req.resolvedCurrency, egpPerUsd);
+    res.json({ ...course.toObject(), displayPrice: amount, currency });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
