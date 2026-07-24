@@ -1,3 +1,5 @@
+import { getCurrencyPreference } from "../../utils/currency";
+
 // Base URL for all user API calls. Matches the Express server port.
 const API_BASE_URL = "http://localhost:4000/api";
 
@@ -65,6 +67,11 @@ export async function userApiFetch(path, options = {}) {
   // Don't set Content-Type for FormData — browser must set it with the boundary.
   if (!(options.body instanceof FormData)) {
     headers["Content-Type"] = "application/json";
+  }
+
+  const currencyPreference = getCurrencyPreference();
+  if (currencyPreference) {
+    headers["X-Currency-Preference"] = currencyPreference;
   }
 
   if (token) {
