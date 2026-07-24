@@ -365,6 +365,7 @@ const getInstapayConfig = async function (req, res) {
   return res.status(200).json({
     handle: MERCHANT_HANDLE,
     currency: DEFAULT_CURRENCY,
+    available: req.resolvedCurrency !== "USD",
   });
 };
 

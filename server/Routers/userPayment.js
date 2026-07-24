@@ -14,7 +14,7 @@ const { resolveCurrency } = require("../middleware/currencyMiddleware")
 
 const router = express.Router()
 
-router.get("/instapay/config", getInstapayConfig)
+router.get("/instapay/config", resolveCurrency, getInstapayConfig)
 
 router.use(protectUser)
 
