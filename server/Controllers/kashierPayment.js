@@ -3,7 +3,6 @@ const mongoose = require("mongoose")
 const Course = require("../Models/course")
 const Enrollment = require("../Models/enrollment")
 const Payment = require("../Models/payment")
-const PaymentSettings = require("../Models/PaymentSettings")
 const PaymentTransaction = require("../Models/PaymentTransaction")
 const User = require("../Models/user")
 const {
@@ -12,6 +11,8 @@ const {
   reconcileOrder,
   verifyWebhookSignature,
 } = require("../services/kashierPaymentService")
+const { convertPrice } = require("../utils/currency")
+const { getEgpPerUsd } = require("../services/exchangeRate")
 
 function normalizeAmount(value) {
   return Number(Number(value || 0).toFixed(2))
@@ -111,12 +112,6 @@ function mapPaymentTransactionMethod({ payment, order, webhookData }) {
   }
 
   return "Visa"
-}
-
-async function getBaseCurrency() {
-  const settings = await PaymentSettings.findOne().select("baseCurrency")
-
-  return settings?.baseCurrency || "EGP"
 }
 
 async function findOwnedPayment(referenceNumber, userId) {
@@ -435,14 +430,14 @@ const createCheckoutSession = async function (req, res) {
       })
     }
 
-    const [course, existingEnrollment, currency] = await Promise.all([
+    const [course, existingEnrollment, egpPerUsd] = await Promise.all([
       Course.findById(courseId).select("courseName coursePrice publishStatus"),
       Enrollment.findOne({
         courseId,
         userId: req.user._id,
         status: { $in: ["active", "completed"] },
       }),
-      getBaseCurrency(),
+      getEgpPerUsd(),
     ])
 
     if (!course) {
@@ -463,7 +458,11 @@ const createCheckoutSession = async function (req, res) {
       })
     }
 
-    const courseAmount = normalizeAmount(course.coursePrice)
+    const { amount: courseAmount, currency } = convertPrice(
+      normalizeAmount(course.coursePrice),
+      req.resolvedCurrency,
+      egpPerUsd
+    )
 
     if (courseAmount <= 0) {
       return res.status(400).json({
