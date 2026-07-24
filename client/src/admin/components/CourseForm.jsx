@@ -891,7 +891,7 @@ export default function CourseForm({
               <div className="space-y-6">
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-[#333333] px-1">
-                    Course Price (USD)
+                    Course Price (EGP)
                   </label>
 
                   <div className="relative">
