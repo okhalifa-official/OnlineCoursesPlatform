@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import StudentLayout from "../components/StudentLayout";
+import { formatPrice } from "../../utils/currency";
 
 const API_BASE = "http://localhost:4000/api";
 
@@ -15,18 +16,6 @@ function getStoredAuthToken() {
     if (sessionValue) return sessionValue;
   }
   return "";
-}
-
-function formatCurrency(amount, currency) {
-  try {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: currency || "EGP",
-      maximumFractionDigits: 2,
-    }).format(Number(amount || 0));
-  } catch {
-    return `${Number(amount || 0).toFixed(2)} ${currency || "EGP"}`;
-  }
 }
 
 function formatDate(date) {
@@ -101,17 +90,19 @@ export default function PaymentHistory() {
   }, [authToken]);
 
   const stats = useMemo(() => {
-    let total = 0, spent = 0, pending = 0, approved = 0;
+    let total = 0, pending = 0, approved = 0;
+    const spentByCurrency = {};
     items.forEach((p) => {
       total += 1;
       const s = p.displayStatus;
       if (s === "under_review" || s === "pending") pending += 1;
       if (s === "auto_approved" || s === "approved" || s === "confirmed") {
         approved += 1;
-        spent += Number(p.amount || 0);
+        const currency = p.currency || "EGP";
+        spentByCurrency[currency] = (spentByCurrency[currency] || 0) + Number(p.amount || 0);
       }
     });
-    return { total, spent, pending, approved };
+    return { total, spentByCurrency, pending, approved };
   }, [items]);
 
   return (
@@ -137,7 +128,13 @@ export default function PaymentHistory() {
           <StatCard label="Total payments"   value={stats.total}                            accent="text-charcoal" />
           <StatCard label="Approved"         value={stats.approved}                          accent="text-emerald-600" />
           <StatCard label="Pending"          value={stats.pending}                           accent="text-blue-600" />
-          <StatCard label="Total spent"      value={formatCurrency(stats.spent, "EGP")}      accent="text-brandRed" />
+          <StatCard
+            label="Total spent"
+            value={Object.entries(stats.spentByCurrency)
+              .map(([currency, amount]) => formatPrice(amount, currency))
+              .join(" + ") || formatPrice(0, "EGP")}
+            accent="text-brandRed"
+          />
         </div>
 
         {loading ? (
@@ -225,7 +222,7 @@ function PaymentRow({ payment }) {
 
         <div className="text-right shrink-0">
           <p className="text-xl font-extrabold text-charcoal">
-            {formatCurrency(payment.amount, payment.currency)}
+            {formatPrice(payment.amount, payment.currency)}
           </p>
 
           {isApproved && payment.courseId && (
