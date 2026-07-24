@@ -4,6 +4,7 @@ import { getPublishedCourses, getMyCourseIds, getUserToken } from "../api/userAp
 import UserNavbar from "../components/UserNavbar";
 import usePageTitle from "../hooks/usePageTitle";
 import { listInstructors, formatInstructorList, stripHtmlToText } from "../components/CourseBar";
+import { formatPrice } from "../../utils/currency";
 
 const NAV_LINKS = [
   { label: "Home",    to: "/",         section: null      },
@@ -245,7 +246,9 @@ function CourseCard({ course, enrolled }) {
             </p>
           ) : <span />}
           <span className={`font-bold text-base ${!course.coursePrice || Number(course.coursePrice) === 0 ? "text-emerald-600" : "text-brandRed"}`}>
-            {!course.coursePrice || Number(course.coursePrice) === 0 ? "Free" : `$${course.coursePrice}`}
+            {!course.coursePrice || Number(course.coursePrice) === 0
+              ? "Free"
+              : formatPrice(course.displayPrice, course.currency)}
           </span>
         </div>
       </div>

@@ -9,6 +9,8 @@ import UserNavbar from "../components/UserNavbar";
 import usePageTitle from "../hooks/usePageTitle";
 import { listInstructors, useCourseRating } from "../components/CourseBar";
 import RichText from "../components/RichText";
+import { formatPrice } from "../../utils/currency";
+import CurrencyToggle from "../components/CurrencyToggle";
 
 const NAV_LINKS = [
   { label: "Home",    to: "/",         section: null      },
@@ -344,8 +346,13 @@ export default function CourseDetail() {
               />
 
               <div className="p-6">
+                {!isFree && (
+                  <div className="mb-3">
+                    <CurrencyToggle onChange={() => window.location.reload()} />
+                  </div>
+                )}
                 <p className={`font-heading font-black text-3xl mb-4 ${isFree ? "text-emerald-600" : "text-charcoal"}`}>
-                  {isFree ? "Free" : `$${course.coursePrice}`}
+                  {isFree ? "Free" : formatPrice(course.displayPrice, course.currency)}
                 </p>
 
                 <button
