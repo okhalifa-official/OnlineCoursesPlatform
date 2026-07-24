@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 
 const {
   buildReusablePendingPaymentFilter,
+  buildSupersedeStaleCurrencyPaymentFilter,
   buildSupersedeStaleCurrencyPaymentUpdate,
 } = require("./kashierPayment");
 
@@ -109,4 +110,81 @@ test("supersede update mentions the newly requested currency for EGP too", () =>
   const update = buildSupersedeStaleCurrencyPaymentUpdate({ currency: "EGP" });
 
   assert.match(update.$set.failureReason, /EGP/);
+});
+
+// The supersede filter above (courseId + opposite-currency + pending +
+// userId) used to have no gateway guard, so it could match and silently
+// expire an InstaPay submission that is legitimately pending manual admin
+// review (InstaPay payments stay "pending" indefinitely with
+// checkoutExpiresAt: null - see server/Controllers/instapayPayment.js's
+// Payment.create call, which sets gateway: "instapay"). Kashier-created
+// payments default to gateway: "kashier" (see server/Models/payment.js).
+// Only a stale Kashier-originated pending payment is a plausible abandoned
+// card-checkout attempt, so the filter must exclude gateway: "instapay" -
+// mirroring the exact guard convention InstaPay's own supersede sweep
+// already uses (gateway: { $ne: "instapay" } in instapayPayment.js).
+test("supersede filter excludes InstaPay-originated payments so a pending review is never superseded", () => {
+  const courseId = new mongoose.Types.ObjectId().toString();
+  const userId = new mongoose.Types.ObjectId();
+
+  const filter = buildSupersedeStaleCurrencyPaymentFilter({
+    courseId,
+    userId,
+    currency: "USD",
+  });
+
+  assert.equal(filter.courseId, courseId);
+  assert.equal(filter.userId, userId);
+  assert.equal(filter.status, "pending");
+  assert.deepEqual(filter.currency, { $ne: "USD" });
+  assert.deepEqual(filter.gateway, { $ne: "instapay" });
+
+  // Simulate the exact bug scenario: an InstaPay payment pending review,
+  // same course/user, opposite (EGP) currency to the new USD checkout.
+  const instapayPendingReview = {
+    courseId,
+    userId,
+    status: "pending",
+    currency: "EGP",
+    gateway: "instapay",
+    checkoutExpiresAt: null,
+  };
+
+  const matchesInstapayPayment =
+    String(filter.courseId) === String(instapayPendingReview.courseId) &&
+    String(filter.userId) === String(instapayPendingReview.userId) &&
+    filter.status === instapayPendingReview.status &&
+    filter.currency.$ne !== instapayPendingReview.currency &&
+    filter.gateway.$ne !== instapayPendingReview.gateway;
+
+  assert.equal(
+    matchesInstapayPayment,
+    false,
+    "the supersede filter must not match an InstaPay payment pending admin review"
+  );
+
+  // A stale Kashier pending payment in the opposite currency should still
+  // match, so the original supersede behavior for abandoned card checkouts
+  // keeps working.
+  const staleKashierPayment = {
+    courseId,
+    userId,
+    status: "pending",
+    currency: "EGP",
+    gateway: "kashier",
+    checkoutExpiresAt: new Date(Date.now() + 60 * 60 * 1000),
+  };
+
+  const matchesStaleKashierPayment =
+    String(filter.courseId) === String(staleKashierPayment.courseId) &&
+    String(filter.userId) === String(staleKashierPayment.userId) &&
+    filter.status === staleKashierPayment.status &&
+    filter.currency.$ne !== staleKashierPayment.currency &&
+    filter.gateway.$ne !== staleKashierPayment.gateway;
+
+  assert.equal(
+    matchesStaleKashierPayment,
+    true,
+    "the supersede filter must still match a stale Kashier pending payment in the opposite currency"
+  );
 });

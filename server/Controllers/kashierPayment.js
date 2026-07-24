@@ -124,6 +124,23 @@ function buildReusablePendingPaymentFilter({ courseId, userId, currency }) {
   }
 }
 
+function buildSupersedeStaleCurrencyPaymentFilter({ courseId, userId, currency }) {
+  return {
+    courseId,
+    // Only ever supersede a payment that could plausibly be an abandoned
+    // Kashier card-checkout attempt. InstaPay submissions stay "pending"
+    // indefinitely while awaiting manual admin review (see
+    // instapayPayment.js's Payment.create, which sets gateway: "instapay"),
+    // so they must never be silently marked as superseded here. This
+    // mirrors the exact guard InstaPay's own supersede sweep already uses
+    // (gateway: { $ne: "instapay" } in instapayPayment.js).
+    gateway: { $ne: "instapay" },
+    currency: { $ne: currency },
+    status: "pending",
+    userId,
+  }
+}
+
 function buildSupersedeStaleCurrencyPaymentUpdate({ currency }) {
   return {
     $set: {
@@ -588,12 +605,11 @@ const createCheckoutSession = async function (req, res) {
         supersedeAttempted = true
 
         const supersedeResult = await Payment.updateOne(
-          {
+          buildSupersedeStaleCurrencyPaymentFilter({
             courseId,
-            currency: { $ne: currency },
-            status: "pending",
             userId: req.user._id,
-          },
+            currency,
+          }),
           buildSupersedeStaleCurrencyPaymentUpdate({ currency })
         )
 
@@ -829,6 +845,7 @@ const handleKashierWebhook = async function (req, res) {
 
 module.exports = {
   buildReusablePendingPaymentFilter,
+  buildSupersedeStaleCurrencyPaymentFilter,
   buildSupersedeStaleCurrencyPaymentUpdate,
   createCheckoutSession,
   getPaymentStatus,
