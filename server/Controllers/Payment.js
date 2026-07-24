@@ -54,7 +54,6 @@ async function getOrCreatePaymentSettings() {
       visaMastercard: true,
       digitalWallet: true,
       cashOffline: false,
-      baseCurrency: "USD",
     });
   }
 
@@ -446,7 +445,9 @@ const updatePaymentSettings = async function (req, res) {
         visaMastercard: Boolean(req.body.visaMastercard),
         digitalWallet: Boolean(req.body.digitalWallet),
         cashOffline: Boolean(req.body.cashOffline),
-        baseCurrency: req.body.baseCurrency || currentSettings.baseCurrency,
+        manualExchangeRateFallback:
+          Number(req.body.manualExchangeRateFallback) ||
+          currentSettings.manualExchangeRateFallback,
         updatedBy: req.user?._id,
       },
       {
