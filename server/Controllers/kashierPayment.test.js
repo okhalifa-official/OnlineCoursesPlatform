@@ -2,7 +2,10 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const mongoose = require("mongoose");
 
-const { buildReusablePendingPaymentFilter } = require("./kashierPayment");
+const {
+  buildReusablePendingPaymentFilter,
+  buildSupersedeStaleCurrencyPaymentUpdate,
+} = require("./kashierPayment");
 
 // createCheckoutSession's "reuse a pending checkout" optimization must never
 // hand back a session created in a different currency than the one the
@@ -80,4 +83,30 @@ test("reusable-pending-payment filter for one currency would not match a payment
     false,
     "a USD-scoped reuse filter must not match an EGP-currency pending payment"
   );
+});
+
+// When createCheckoutSession hits the unique-index collision (11000) on
+// Payment.create and the currency-scoped recovery lookup finds nothing, the
+// payment blocking the unique-per-user-per-course "pending" slot must be a
+// stale, opposite-currency pending payment (see server/Models/payment.js —
+// the index is { userId, courseId } unique when status: "pending",
+// regardless of currency). Rather than permanently 409-blocking a deliberate
+// currency switch, that stale payment should be marked expired/superseded so
+// the new-currency payment can be created on retry. This mirrors the
+// status/failureReason convention already used both by the checkout-expiry
+// sweep in kashierPayment.js and by InstaPay's supersede logic in
+// instapayPayment.js ("Superseded by an InstaPay submission").
+test("supersede update marks a stale-currency pending payment as expired with a descriptive failureReason", () => {
+  const update = buildSupersedeStaleCurrencyPaymentUpdate({ currency: "USD" });
+
+  assert.equal(update.$set.status, "expired");
+  assert.equal(update.$set.gatewayStatus, "EXPIRED");
+  assert.match(update.$set.failureReason, /superseded/i);
+  assert.match(update.$set.failureReason, /USD/);
+});
+
+test("supersede update mentions the newly requested currency for EGP too", () => {
+  const update = buildSupersedeStaleCurrencyPaymentUpdate({ currency: "EGP" });
+
+  assert.match(update.$set.failureReason, /EGP/);
 });

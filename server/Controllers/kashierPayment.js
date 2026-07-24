@@ -124,6 +124,16 @@ function buildReusablePendingPaymentFilter({ courseId, userId, currency }) {
   }
 }
 
+function buildSupersedeStaleCurrencyPaymentUpdate({ currency }) {
+  return {
+    $set: {
+      failureReason: `Superseded by a new checkout session in ${currency}`,
+      gatewayStatus: "EXPIRED",
+      status: "expired",
+    },
+  }
+}
+
 async function findOwnedPayment(referenceNumber, userId) {
   return Payment.findOne({
     referenceNumber,
@@ -516,18 +526,25 @@ const createCheckoutSession = async function (req, res) {
     }
 
     let payment
+    let supersedeAttempted = false
 
-    try {
-      payment = await Payment.create({
-        amount: courseAmount,
-        courseId,
-        currency,
-        paymentMethod: "card",
-        status: "pending",
-        userId: req.user._id,
-      })
-    } catch (error) {
-      if (error?.code === 11000) {
+    for (;;) {
+      try {
+        payment = await Payment.create({
+          amount: courseAmount,
+          courseId,
+          currency,
+          paymentMethod: "card",
+          status: "pending",
+          userId: req.user._id,
+        })
+
+        break
+      } catch (error) {
+        if (error?.code !== 11000) {
+          throw error
+        }
+
         const pendingPayment = await Payment.findOne(
           buildReusablePendingPaymentFilter({
             courseId,
@@ -547,12 +564,46 @@ const createCheckoutSession = async function (req, res) {
           })
         }
 
-        return res.status(409).json({
-          message: "A checkout session is already being created for this course. Please retry in a few seconds.",
-        })
-      }
+        if (pendingPayment) {
+          // A same-currency pending payment exists but hasn't gotten a
+          // sessionUrl yet (still mid-creation in another request) - this is
+          // a genuine few-seconds race, not a stale currency. Don't
+          // supersede it; ask the caller to retry shortly.
+          return res.status(409).json({
+            message: "A checkout session is already being created for this course. Please retry in a few seconds.",
+          })
+        }
 
-      throw error
+        // No same-currency pending payment was found, so the unique
+        // (userId, courseId, status: "pending") slot must be occupied by a
+        // stale, opposite-currency payment from before a deliberate currency
+        // switch (e.g. the visitor started checkout in EGP, then switched to
+        // USD before the EGP session expired). Superseding it lets the
+        // currency switch win instead of permanently 409-blocking the user
+        // for up to the checkout session's ~30-minute expiry window.
+        if (supersedeAttempted) {
+          throw error
+        }
+
+        supersedeAttempted = true
+
+        const supersedeResult = await Payment.updateOne(
+          {
+            courseId,
+            currency: { $ne: currency },
+            status: "pending",
+            userId: req.user._id,
+          },
+          buildSupersedeStaleCurrencyPaymentUpdate({ currency })
+        )
+
+        if (!supersedeResult.modifiedCount) {
+          // Nothing stale-currency to supersede either (e.g. it was cleaned
+          // up concurrently) - surface the original collision instead of
+          // looping.
+          throw error
+        }
+      }
     }
 
     try {
@@ -778,6 +829,7 @@ const handleKashierWebhook = async function (req, res) {
 
 module.exports = {
   buildReusablePendingPaymentFilter,
+  buildSupersedeStaleCurrencyPaymentUpdate,
   createCheckoutSession,
   getPaymentStatus,
   handleKashierWebhook,
