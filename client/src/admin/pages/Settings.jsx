@@ -34,7 +34,7 @@ const defaultPaymentSettings = {
   visaMastercard: true,
   digitalWallet: true,
   cashOffline: false,
-  baseCurrency: "USD",
+  manualExchangeRateFallback: 50,
 };
 
 export default function Settings() {
@@ -537,35 +537,17 @@ export default function Settings() {
                   </div>
                 </div>
 
-                <div className="space-y-3">
-                  <label className="text-xs font-bold text-[#333333] uppercase tracking-wider">
-                    Base Currency
-                  </label>
-
-                  <div className="flex gap-4 flex-wrap">
-                    <select
-                      name="baseCurrency"
-                      value={paymentSettings.baseCurrency}
-                      onChange={handlePaymentChange}
-                      className="flex-1 min-w-[220px] bg-softGrey p-3 rounded-lg border border-[#DDDDDD] text-sm outline-none focus:ring-2 focus:ring-brandRed/20 focus:border-brandRed"
-                    >
-                      <option value="USD">USD - US Dollar</option>
-                      <option value="EUR">EUR - Euro</option>
-                      <option value="GBP">GBP - British Pound</option>
-                      <option value="EGP">EGP - Egyptian Pound</option>
-                    </select>
-
-                    <button
-                      type="button"
-                      onClick={savePayments}
-                      disabled={savingSection === "payments"}
-                      className="px-6 py-3 bg-brandRed text-white rounded-lg text-xs font-bold active:scale-95 transition-all hover:opacity-90 disabled:opacity-60"
-                    >
-                      {savingSection === "payments"
-                        ? "Saving..."
-                        : "Save Changes"}
-                    </button>
-                  </div>
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    onClick={savePayments}
+                    disabled={savingSection === "payments"}
+                    className="px-6 py-3 bg-brandRed text-white rounded-lg text-xs font-bold active:scale-95 transition-all hover:opacity-90 disabled:opacity-60"
+                  >
+                    {savingSection === "payments"
+                      ? "Saving..."
+                      : "Save Changes"}
+                  </button>
                 </div>
               </div>
             </section>

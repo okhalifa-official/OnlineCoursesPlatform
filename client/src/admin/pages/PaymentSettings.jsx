@@ -5,31 +5,12 @@ import {
   updatePaymentSettings,
 } from "../api/paymentsApi";
 
-const currencyOptions = [
-  {
-    value: "USD",
-    label: "USD - US Dollar",
-  },
-  {
-    value: "EUR",
-    label: "EUR - Euro",
-  },
-  {
-    value: "GBP",
-    label: "GBP - British Pound",
-  },
-  {
-    value: "EGP",
-    label: "EGP - Egyptian Pound",
-  },
-];
-
 export default function PaymentSettings() {
   const [formData, setFormData] = useState({
     visaMastercard: true,
     digitalWallet: true,
     cashOffline: false,
-    baseCurrency: "USD",
+    manualExchangeRateFallback: 50,
   });
 
   const [loading, setLoading] = useState(true);
@@ -45,7 +26,7 @@ export default function PaymentSettings() {
         visaMastercard: Boolean(data.visaMastercard),
         digitalWallet: Boolean(data.digitalWallet),
         cashOffline: Boolean(data.cashOffline),
-        baseCurrency: data.baseCurrency || "USD",
+        manualExchangeRateFallback: Number(data.manualExchangeRateFallback) || 50,
       });
     } catch (error) {
       alert(error.message);
@@ -68,10 +49,10 @@ export default function PaymentSettings() {
     }));
   }
 
-  function handleCurrencyChange(e) {
+  function handleFallbackRateChange(e) {
     setFormData((prev) => ({
       ...prev,
-      baseCurrency: e.target.value,
+      manualExchangeRateFallback: Number(e.target.value) || 0,
     }));
   }
 
@@ -143,7 +124,7 @@ export default function PaymentSettings() {
               </h1>
 
               <p className="text-sm text-[#333333] mt-1">
-                Manage payment methods and set the base platform currency.
+                Manage payment methods and the fallback exchange rate.
               </p>
             </div>
           </div>
@@ -180,21 +161,20 @@ export default function PaymentSettings() {
 
           <div className="space-y-3 mb-8">
             <label className="text-xs font-bold uppercase tracking-wider text-[#333333]">
-              Base Currency
+              Fallback Exchange Rate (EGP per 1 USD)
             </label>
 
-            <select
-              name="baseCurrency"
-              value={formData.baseCurrency}
-              onChange={handleCurrencyChange}
+            <input
+              type="number"
+              min="1"
+              step="0.01"
+              value={formData.manualExchangeRateFallback}
+              onChange={handleFallbackRateChange}
               className="w-full bg-softGrey border border-[#DDDDDD] rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-brandRed/20 focus:border-brandRed"
-            >
-              {currencyOptions.map((currency) => (
-                <option value={currency.value} key={currency.value}>
-                  {currency.label}
-                </option>
-              ))}
-            </select>
+            />
+            <p className="text-[11px] text-[#666] italic">
+              Used only if the live exchange rate API is unreachable.
+            </p>
           </div>
 
           <div className="rounded-xl bg-softGrey border border-[#DDDDDD] p-4 mb-8">
@@ -215,7 +195,7 @@ export default function PaymentSettings() {
                 label="Cash / Offline"
                 value={formData.cashOffline ? "Enabled" : "Disabled"}
               />
-              <ConfigRow label="Base Currency" value={formData.baseCurrency} />
+              <ConfigRow label="Fallback Rate" value={`${formData.manualExchangeRateFallback} EGP/USD`} />
             </div>
           </div>
 
