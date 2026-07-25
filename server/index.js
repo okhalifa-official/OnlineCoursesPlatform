@@ -41,7 +41,13 @@ const app = express();
 // geolocation currency resolution in middleware/currencyMiddleware.js.
 app.set("trust proxy", true);
 
-app.use(cors());
+app.use(cors({
+  origin: true,
+  methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "Accept", "Origin", "X-Requested-With"],
+  credentials: true,
+}));
+app.options("*", cors({ origin: true, credentials: true }));
 app.use(express.json({ limit: "200mb" }));
 app.use(express.urlencoded({ limit: "200mb", extended: true }));
 
