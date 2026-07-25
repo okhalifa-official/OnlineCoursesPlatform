@@ -896,14 +896,14 @@ export default function CourseForm({
 
                   <div className="relative">
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-[#D62828]">
-                      $
+                      EGP
                     </span>
 
                     <input
                       name="coursePrice"
                       value={formData.coursePrice}
                       onChange={handleChange}
-                      className="w-full bg-[#F7F7F7] border border-[#E4E4E4] rounded-lg pl-8 pr-4 py-3 focus:ring-2 focus:ring-[#D62828]/15 focus:border-[#D62828] transition-all outline-none font-bold"
+                      className="w-full bg-[#F7F7F7] border border-[#E4E4E4] rounded-lg pl-14 pr-4 py-3 focus:ring-2 focus:ring-[#D62828]/15 focus:border-[#D62828] transition-all outline-none font-bold"
                       placeholder="0.00"
                       type="number"
                       required

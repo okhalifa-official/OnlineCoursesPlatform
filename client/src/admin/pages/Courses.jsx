@@ -13,6 +13,7 @@ import {
   formatInstructorList,
   stripHtmlToText,
 } from "../../user/components/CourseBar";
+import { formatPrice } from "../../utils/currency";
 
 function getTabValue(status) {
   if (status === "Published") return "published";
@@ -430,9 +431,9 @@ export default function Courses() {
                 className="h-12 rounded-xl border border-[#e5e5e5] bg-[#F2F2F2] px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#D62828]/20 focus:border-[#D62828]"
               >
                 <option value="">All Prices</option>
-                <option value="under-100">Under $100</option>
-                <option value="100-200">$100 - $200</option>
-                <option value="above-200">Above $200</option>
+                <option value="under-100">Under EGP 100</option>
+                <option value="100-200">EGP 100 - 200</option>
+                <option value="above-200">Above EGP 200</option>
               </select>
 
               <select
@@ -480,7 +481,7 @@ export default function Courses() {
 
           <StatsCard
             label="Total Revenue"
-            value={`$${stats.totalRevenue.toLocaleString()}`}
+            value={formatPrice(stats.totalRevenue, "EGP")}
             note="+8% ↑"
             positive
           />
@@ -756,7 +757,7 @@ function CourseCard({ course, onDelete, onArchive, onRestore }) {
               isArchived ? "text-[#333333] line-through" : "text-[#D62828]"
             }`}
           >
-            ${Number(course.coursePrice || 0).toFixed(2)}
+            {formatPrice(course.coursePrice, "EGP")}
           </span>
 
           {isArchived ? (

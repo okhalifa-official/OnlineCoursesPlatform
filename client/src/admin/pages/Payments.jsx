@@ -13,6 +13,7 @@ import {
   sendPaymentReminder,
   updatePaymentStatus,
 } from "../api/paymentsApi";
+import { formatPrice } from "../../utils/currency";
 
 const emptyPayment = {
   userName: "",
@@ -1274,7 +1275,7 @@ function getMethodIcon(method) {
 }
 
 function formatMoney(value) {
-  return `$${Number(value || 0).toLocaleString()}`;
+  return formatPrice(value, "EGP");
 }
 
 function formatDate(value) {

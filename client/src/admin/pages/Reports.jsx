@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { getReportsOverview } from "../api/reportsApi";
+import { formatPrice } from "../../utils/currency";
 
 export default function Reports() {
   const [report, setReport] = useState(null);
@@ -106,7 +107,7 @@ export default function Reports() {
         <ReportCard
           icon="payments"
           title="Total Revenue"
-          value={`$${Number(report.summary.totalRevenue).toLocaleString()}`}
+          value={formatPrice(report.summary.totalRevenue, "EGP")}
           note="Calculated from price × active students"
           red
         />
@@ -208,7 +209,7 @@ export default function Reports() {
                     {course.activeStudents}
                   </td>
                   <td className="px-5 py-4 text-sm font-bold text-[#D62828]">
-                    ${Number(course.revenue).toLocaleString()}
+                    {formatPrice(course.revenue, "EGP")}
                   </td>
                   <td className="px-5 py-4 text-sm">
                     {course.completionRate}%
