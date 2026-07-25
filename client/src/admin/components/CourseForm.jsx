@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import RichTextEditor from "./RichTextEditor";
+import { getTracks } from "../api/tracksApi";
 
 export const emptyCourse = {
   courseName: "",
+  trackId: "",
   courseDescription: "",
   coursePrice: "",
   publishStatus: "Draft",
@@ -40,6 +42,13 @@ export default function CourseForm({
   saving,
 }) {
   const [editingLesson, setEditingLesson] = useState(null);
+  const [tracks, setTracks] = useState([]);
+
+  useEffect(function () {
+    getTracks()
+      .then(setTracks)
+      .catch((error) => console.error("Load tracks error:", error.message));
+  }, []);
 
   function handleChange(e) {
     setFormData({
@@ -889,6 +898,29 @@ export default function CourseForm({
               </h2>
 
               <div className="space-y-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-[#333333] px-1">
+                    Track
+                  </label>
+
+                  <select
+                    name="trackId"
+                    value={formData.trackId || ""}
+                    onChange={handleChange}
+                    required
+                    className="w-full bg-[#F7F7F7] border border-[#E4E4E4] rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#D62828]/15 focus:border-[#D62828] transition-all outline-none font-bold"
+                  >
+                    <option value="" disabled>
+                      Select a track
+                    </option>
+                    {tracks.map((track) => (
+                      <option key={track._id} value={track._id}>
+                        {track.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-[#333333] px-1">
                     Course Price (EGP)
