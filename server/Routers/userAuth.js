@@ -7,6 +7,7 @@ const Course = require("../Models/course");
 const Lecture = require("../Models/lecture");
 const Enrollment = require("../Models/enrollment");
 const Review = require("../Models/review");
+require("../Models/Track");
 const { resolveCurrency } = require("../middleware/currencyMiddleware");
 const { convertPrice } = require("../utils/currency");
 const { getEgpPerUsd } = require("../services/exchangeRate");
@@ -21,9 +22,11 @@ router.put("/change-password", protectUser, changePassword);
 // Courses — browse published courses
 router.get("/courses", resolveCurrency, async (req, res) => {
   try {
-    const courses = await Course.find({ publishStatus: "Published" }).sort({
-      createdAt: -1,
-    });
+    const courses = await Course.find({ publishStatus: "Published" })
+      .populate("trackId", "name slug color")
+      .sort({
+        createdAt: -1,
+      });
     const egpPerUsd = await getEgpPerUsd();
     const annotated = courses.map((course) => {
       const { amount, currency } = convertPrice(course.coursePrice, req.resolvedCurrency, egpPerUsd);
@@ -37,7 +40,10 @@ router.get("/courses", resolveCurrency, async (req, res) => {
 
 router.get("/courses/:id", resolveCurrency, async (req, res) => {
   try {
-    const course = await Course.findById(req.params.id);
+    const course = await Course.findById(req.params.id).populate(
+      "trackId",
+      "name slug color"
+    );
     if (!course) return res.status(404).json({ message: "Course not found" });
     const egpPerUsd = await getEgpPerUsd();
     const { amount, currency } = convertPrice(course.coursePrice, req.resolvedCurrency, egpPerUsd);
