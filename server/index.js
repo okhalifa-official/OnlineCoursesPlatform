@@ -20,6 +20,8 @@ const userSideRouter = require("./Routers/userAuth");
 const userPaymentRouter = require("./Routers/userPayment");
 const notificationsRouter = require("./Routers/notifications");
 const educationalCenterRouter = require("./Routers/EducationalCenter");
+const trackRouter = require("./Routers/Track");
+const publicTrackRouter = require("./Routers/publicTrack");
 const systemLogRouter = require("./Routers/systemLog");
 const paymentRouter = require("./Routers/payment");
 const settingRouter = require("./Routers/setting");
@@ -128,6 +130,9 @@ app.use(
   requireAdmin,
   educationalCenterRouter
 );
+
+app.use("/api/tracks", protect, requireAdmin, trackRouter);
+app.use("/api/public/tracks", publicTrackRouter);
 
 app.use("/api/courses", protect, requireAdmin, courseRouter);
 app.use("/api/payments", protect, requireAdmin, paymentRouter);
