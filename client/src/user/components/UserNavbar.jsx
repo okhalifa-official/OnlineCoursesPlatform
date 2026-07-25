@@ -4,7 +4,8 @@ import { getUserToken, getUserInfo, clearUserToken } from "../api/userApi";
 import UserLogo from "./UserLogo";
 import axios from "axios";
 
-const NOTIF_API = "http://localhost:4000/api/user/notifications";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000/api";
+const NOTIF_API = `${API_BASE_URL}/user/notifications`;
 
 function timeAgo(dateStr) {
   if (!dateStr) return "";

@@ -6,7 +6,9 @@ import {
 } from "./apiClient";
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:4000/api";
+  import.meta.env.VITE_API_BASE_URL ||
+  import.meta.env.VITE_API_URL ||
+  "http://localhost:4000/api";
 
 async function postLogin(path, body) {
   const response = await fetch(`${API_BASE_URL}${path}`, {
