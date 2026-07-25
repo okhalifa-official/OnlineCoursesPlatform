@@ -4,7 +4,7 @@ import axios from "axios";
 import StudentLayout from "../components/StudentLayout";
 import { formatPrice, getCurrencyPreference } from "../../utils/currency";
 
-const API_BASE = "http://localhost:4000/api";
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000/api";
 const MAX_FILE_BYTES = 6 * 1024 * 1024;
 
 function getStoredAuthToken() {
