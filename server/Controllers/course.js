@@ -1,5 +1,6 @@
 const Course = require("../Models/course");
 const Enrollment = require("../Models/enrollment");
+require("../Models/Track");
 
 const getCourses = async function (req, res) {
   try {
@@ -8,7 +9,10 @@ const getCourses = async function (req, res) {
     // means we go through Mongoose's own model → collection mapping, which
     // is more reliable than guessing the collection name.
     const [courses, enrollmentCounts] = await Promise.all([
-      Course.find({}).sort({ createdAt: -1 }).lean(),
+      Course.find({})
+        .populate("trackId", "name slug color")
+        .sort({ createdAt: -1 })
+        .lean(),
       Enrollment.aggregate([
         { $group: { _id: "$courseId", count: { $sum: 1 } } },
       ]),
