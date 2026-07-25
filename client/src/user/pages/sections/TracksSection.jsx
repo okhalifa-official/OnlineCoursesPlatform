@@ -1,40 +1,17 @@
+// client/src/user/pages/sections/TracksSection.jsx
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useLandingData } from "../../utils/LandingDataContext";
-import useSiteContent from "../../hooks/useSiteContent";
+import { getPublicTracks } from "../../api/tracksApi";
 
 export default function TracksSection() {
   const navigate = useNavigate();
+  const [tracks, setTracks] = useState([]);
 
-  const data = useLandingData();
-  const xmlTracks = Array.isArray(data?.tracks) ? data.tracks : [];
-
-  const { getSection } = useSiteContent("landing");
-  const cmsTracks = getSection("tracks");
-
-  const eyebrow =
-    cmsTracks?.subtitle ||
-    "What we offer";
-
-  const headline =
-    cmsTracks?.title ||
-    `We deliver ${xmlTracks.length} specialised tracks`;
-
-  const body =
-    cmsTracks?.body ||
-    "";
-
-  const buttonText =
-    cmsTracks?.buttonText ||
-    "View all courses";
-
-  const buttonLink =
-    cmsTracks?.buttonLink ||
-    "/courses";
-
-  const tracks =
-    Array.isArray(cmsTracks?.items) && cmsTracks.items.length > 0
-      ? cmsTracks.items
-      : xmlTracks;
+  useEffect(function () {
+    getPublicTracks()
+      .then(setTracks)
+      .catch((error) => console.error("Load tracks error:", error.message));
+  }, []);
 
   return (
     <section id="tracks" className="bg-softGrey py-20">
@@ -42,29 +19,24 @@ export default function TracksSection() {
         <div className="flex items-end justify-between mb-8 gap-6">
           <div>
             <p className="text-brandRed text-xs font-bold uppercase tracking-widest mb-2">
-              {eyebrow}
+              What we offer
             </p>
 
             <h2
               className="font-heading font-black text-charcoal"
               style={{ fontSize: "clamp(1.5rem, 3vw, 2rem)" }}
             >
-              {headline}
+              We deliver {tracks.length} specialised track
+              {tracks.length === 1 ? "" : "s"}
             </h2>
-
-            {body && (
-              <p className="text-gray-500 text-sm leading-relaxed mt-4 max-w-2xl whitespace-pre-line">
-                {body}
-              </p>
-            )}
           </div>
 
           <button
             type="button"
-            onClick={() => navigate(buttonLink)}
+            onClick={() => navigate("/courses")}
             className="hidden sm:flex items-center gap-2 border border-gray-300 bg-white rounded-xl px-5 py-2.5 text-sm font-semibold text-charcoal hover:border-brandRed hover:text-brandRed transition"
           >
-            {buttonText}
+            View all courses
 
             <svg
               className="w-4 h-4"
@@ -83,71 +55,49 @@ export default function TracksSection() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {tracks.map((track, index) => {
-            const label =
-              track.label ||
-              track.title ||
-              `Track ${index + 1}`;
-
-            const description =
-              track.desc ||
-              track.description ||
-              track.body ||
-              "";
-
-            const color =
-              track.color ||
-              "#D62828";
-
-            const link =
-              track.buttonLink ||
-              track.link ||
-              buttonLink;
-
-            return (
+          {tracks.map((track) => (
+            <div
+              key={track.slug}
+              className="bg-white rounded-2xl p-5 border border-gray-100 hover:shadow-card hover:-translate-y-0.5 transition-all duration-200 group cursor-pointer"
+              onClick={() => navigate(`/courses?track=${track.slug}`)}
+            >
               <div
-                key={`${label}-${index}`}
-                className="bg-white rounded-2xl p-5 border border-gray-100 hover:shadow-card hover:-translate-y-0.5 transition-all duration-200 group cursor-pointer"
-                onClick={() => navigate(link)}
+                className="w-8 h-8 rounded-lg mb-4 flex items-center justify-center"
+                style={{ background: `${track.color}18` }}
               >
                 <div
-                  className="w-8 h-8 rounded-lg mb-4 flex items-center justify-center"
-                  style={{ background: `${color}18` }}
-                >
-                  <div
-                    className="w-3 h-3 rounded-sm"
-                    style={{ background: color }}
-                  />
-                </div>
-
-                <p className="font-heading font-bold text-charcoal text-sm mb-1">
-                  {label}
-                </p>
-
-                <p className="text-gray-400 text-xs leading-relaxed mb-4">
-                  {description}
-                </p>
-
-                <p className="text-xs font-semibold text-charcoal group-hover:text-brandRed transition flex items-center gap-1">
-                  Explore track
-
-                  <svg
-                    className="w-3 h-3"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={2.5}
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                    />
-                  </svg>
-                </p>
+                  className="w-3 h-3 rounded-sm"
+                  style={{ background: track.color }}
+                />
               </div>
-            );
-          })}
+
+              <p className="font-heading font-bold text-charcoal text-sm mb-1">
+                {track.name}
+              </p>
+
+              <p className="text-gray-400 text-xs leading-relaxed mb-4">
+                {track.description}
+              </p>
+
+              <p className="text-xs font-semibold text-charcoal group-hover:text-brandRed transition flex items-center gap-1">
+                Explore track
+
+                <svg
+                  className="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2.5}
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                  />
+                </svg>
+              </p>
+            </div>
+          ))}
         </div>
       </div>
     </section>
