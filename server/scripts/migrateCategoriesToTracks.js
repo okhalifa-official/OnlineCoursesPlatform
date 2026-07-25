@@ -37,29 +37,39 @@ async function run() {
     return;
   }
 
-  const distinctCategories = [
-    ...new Set(toMigrate.map((c) => (c.category || "General").trim() || "General")),
-  ];
+  // Matching/deduping is case-insensitive (category was free-text with no admin UI
+  // constraint, so "Radiology" and "radiology" must merge into a single Track).
+  // The display name for a newly-created Track uses the FIRST-SEEN casing variant
+  // for that case-insensitive key, in iteration order over `toMigrate` (the raw
+  // courses array) — deterministic and simple to reason about.
+  const nameByKey = new Map();
+  for (const c of toMigrate) {
+    const name = (c.category || "General").trim() || "General";
+    const key = name.toLowerCase();
+    if (!nameByKey.has(key)) {
+      nameByKey.set(key, name);
+    }
+  }
+  const distinctCategories = [...nameByKey.values()];
 
-  const existingTracks = await Track.find({
-    name: { $in: distinctCategories },
-  });
-  const trackIdByName = new Map(
-    existingTracks.map((t) => [t.name, t._id])
+  // Fetch ALL existing tracks and match case-insensitively in JS. Simpler and more
+  // obviously correct than a regex/collation query for a one-shot script.
+  const existingTracks = await Track.find({});
+  const trackIdByKey = new Map(
+    existingTracks.map((t) => [t.name.toLowerCase(), t._id])
   );
 
-  const usedSlugs = new Set(
-    (await Track.find({}).select("slug")).map((t) => t.slug)
-  );
+  const usedSlugs = new Set(existingTracks.map((t) => t.slug));
 
   let tracksCreated = 0;
 
   for (const name of distinctCategories) {
-    if (trackIdByName.has(name)) continue;
+    const key = name.toLowerCase();
+    if (trackIdByKey.has(key)) continue;
 
     const slug = await buildUniqueSlugForMigration(name, usedSlugs);
     const track = await Track.create({ name, slug });
-    trackIdByName.set(name, track._id);
+    trackIdByKey.set(key, track._id);
     tracksCreated += 1;
   }
 
@@ -67,7 +77,7 @@ async function run() {
 
   for (const course of toMigrate) {
     const categoryName = (course.category || "General").trim() || "General";
-    const trackId = trackIdByName.get(categoryName);
+    const trackId = trackIdByKey.get(categoryName.toLowerCase());
 
     await coursesCollection.updateOne(
       { _id: course._id },
