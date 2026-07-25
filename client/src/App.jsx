@@ -23,6 +23,9 @@ import {
   AddEducationalCenter,
   EditEducationalCenter,
   EducationalCenterProfile,
+  Tracks,
+  AddTrack,
+  EditTrack,
   SystemLogs,
   Payments,
   SiteContent,
@@ -334,6 +337,31 @@ export default function App() {
           element={
             <PrivatePage>
               <EducationalCenterProfile />
+            </PrivatePage>
+          }
+        />
+
+        <Route
+          path="/tracks"
+          element={
+            <PrivatePage>
+              <Tracks />
+            </PrivatePage>
+          }
+        />
+        <Route
+          path="/tracks/add"
+          element={
+            <PrivatePage>
+              <AddTrack />
+            </PrivatePage>
+          }
+        />
+        <Route
+          path="/tracks/edit/:id"
+          element={
+            <PrivatePage>
+              <EditTrack />
             </PrivatePage>
           }
         />

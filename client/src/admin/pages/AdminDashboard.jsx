@@ -142,6 +142,7 @@ export default function AdminDashboard() {
           />
           <SidebarLink to="/users" icon="group" text="Users" />
           <SidebarLink to="/admin/courses" icon="menu_book" text="Courses" />
+          <SidebarLink to="/tracks" icon="route" text="Tracks" />
           <SidebarLink to="/payments" icon="payments" text="Payments" />
           <SidebarLink to="/reports" icon="bar_chart" text="Reports" />
           <SidebarLink to="/settings" icon="settings" text="Settings" />
