@@ -76,9 +76,10 @@ const courseSchema = new mongoose.Schema(
       default: "Draft",
     },
 
-    category: {
-      type: String,
-      default: "General",
+    trackId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Track",
+      required: true,
     },
 
     instructor: {
