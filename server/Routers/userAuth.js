@@ -92,7 +92,10 @@ router.post("/courses/:id/enroll", protectUser, async (req, res) => {
 // My enrollments — full populated enrollments
 router.get("/my-enrollments", protectUser, async (req, res) => {
   try {
-    const enrollments = await Enrollment.find({ userId: req.user._id }).populate("courseId");
+    const enrollments = await Enrollment.find({ userId: req.user._id }).populate({
+      path: "courseId",
+      populate: { path: "trackId", select: "name slug color" },
+    });
     res.json(enrollments);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -119,7 +122,7 @@ router.get("/courses/:id/learn", protectUser, async (req, res) => {
     });
     if (!enrollment) return res.status(403).json({ message: "Not enrolled" });
 
-    const course = await Course.findById(req.params.id);
+    const course = await Course.findById(req.params.id).populate("trackId", "name slug color");
     if (!course) return res.status(404).json({ message: "Course not found" });
 
     res.json(course);
@@ -226,14 +229,22 @@ router.get("/dashboard", protectUser, async (req, res) => {
       userId: req.user._id,
       status: "active",
     })
-      .populate("courseId", "courseName category previewImage modules materials updatedAt")
+      .populate({
+        path: "courseId",
+        select: "courseName trackId previewImage modules materials updatedAt",
+        populate: { path: "trackId", select: "name slug color" },
+      })
       .sort({ updatedAt: -1 });
 
     const recentCerts = await Enrollment.find({
       userId: req.user._id,
       "certificate.data": { $ne: null, $exists: true },
     })
-      .populate("courseId", "courseName category")
+      .populate({
+        path: "courseId",
+        select: "courseName trackId",
+        populate: { path: "trackId", select: "name slug color" },
+      })
       .sort({ "certificate.uploadedAt": -1 })
       .limit(3);
 
@@ -303,7 +314,11 @@ router.get("/my-certificates", protectUser, async (req, res) => {
       userId: req.user._id,
       "certificate.data": { $ne: null, $exists: true },
     })
-      .populate("courseId", "courseName category")
+      .populate({
+        path: "courseId",
+        select: "courseName trackId",
+        populate: { path: "trackId", select: "name slug color" },
+      })
       .sort({ "certificate.uploadedAt": -1 });
 
     const inProgress = await Enrollment.find({
@@ -314,7 +329,11 @@ router.get("/my-certificates", protectUser, async (req, res) => {
       ],
       status: "active",
     })
-      .populate("courseId", "courseName category modules")
+      .populate({
+        path: "courseId",
+        select: "courseName trackId modules",
+        populate: { path: "trackId", select: "name slug color" },
+      })
       .sort({ enrollmentDate: -1 });
 
     // Strip base64 from the passed list — client only needs metadata for the
@@ -470,14 +489,18 @@ router.get("/verify/:code", async (req, res) => {
     }
 
     await enrollment.populate("userId", "fullName");
-    await enrollment.populate("courseId", "courseName category");
+    await enrollment.populate({
+      path: "courseId",
+      select: "courseName trackId",
+      populate: { path: "trackId", select: "name slug color" },
+    });
 
     res.json({
       valid:       true,
       code:        enrollment.certificateCode,
       studentName: enrollment.userId?.fullName       || "",
       courseName:  enrollment.courseId?.courseName   || "",
-      category:    enrollment.courseId?.category     || "",
+      category:    enrollment.courseId?.trackId?.name || "",
       issuedAt:    enrollment.certificate.uploadedAt,
       mimeType:    enrollment.certificate.mimeType,
       fileName:    enrollment.certificate.name,

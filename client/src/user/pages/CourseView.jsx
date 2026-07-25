@@ -17,21 +17,8 @@ import {
 
 const TABS = ["Lectures", "Discussion", "Material", "Instructor", "Reviews"];
 
-const CATEGORY_GRADIENTS = {
-  pocus:      "from-purple-700 to-purple-900",
-  echo:       "from-rose-700 to-rose-900",
-  cardiology: "from-blue-700 to-blue-900",
-  radiology:  "from-emerald-700 to-emerald-900",
-  emergency:  "from-amber-700 to-amber-900",
-  default:    "from-slate-700 to-slate-900",
-};
-
-function categoryGradient(category) {
-  if (!category) return CATEGORY_GRADIENTS.default;
-  const key = Object.keys(CATEGORY_GRADIENTS).find((k) =>
-    category.toLowerCase().includes(k)
-  );
-  return CATEGORY_GRADIENTS[key] || CATEGORY_GRADIENTS.default;
+function trackGradientStyle(trackColor = "#334155") {
+  return { backgroundImage: `linear-gradient(to bottom right, ${trackColor}, #0f172a)` };
 }
 
 function progressKey(courseId) {
@@ -194,7 +181,6 @@ export default function CourseView() {
     </p>
   );
 
-  const gradientClass = categoryGradient(course.category);
 
   return (
     <StudentShell activeLink="My Courses">
@@ -209,8 +195,11 @@ export default function CourseView() {
             {/* Left: meta + title + stats */}
             <div className="min-w-0">
               <div className="flex items-center gap-2 mb-4 flex-wrap">
-                <span className={`inline-block bg-gradient-to-br ${gradientClass} text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-md`}>
-                  {course.category || "Course"}
+                <span
+                  className="inline-block text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-md"
+                  style={trackGradientStyle(course.trackId?.color)}
+                >
+                  {course.trackId?.name || "Course"}
                 </span>
                 {exam?.enabled && (
                   <span className="bg-brandRed/10 text-brandRed text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-md">
@@ -299,7 +288,7 @@ export default function CourseView() {
                     className="absolute inset-0 w-full h-full object-cover"
                   />
                 ) : (
-                  <div className={`absolute inset-0 bg-gradient-to-br ${gradientClass}`} />
+                  <div className="absolute inset-0" style={trackGradientStyle(course.trackId?.color)} />
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10 group-hover:from-black/85 transition" />
 

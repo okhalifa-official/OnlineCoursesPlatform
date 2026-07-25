@@ -107,28 +107,12 @@ function formatDate(d) {
   return new Date(d).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
 }
 
-const CERT_COLORS = {
-  pocus: "#1E3A5F", echo: "#5C1A1A", cardiology: "#1D3557",
-  radiology: "#064E3B", emergency: "#78350F", msk: "#0D4A3E", default: "#1F2937",
-};
-function certColor(category) {
-  if (!category) return CERT_COLORS.default;
-  const k = Object.keys(CERT_COLORS).find((k) => category.toLowerCase().includes(k));
-  return CERT_COLORS[k] || CERT_COLORS.default;
+function certColor(trackColor = "#1F2937") {
+  return trackColor;
 }
 
-const CAT_BG = {
-  pocus:      ["#4C1D95", "#6D28D9"],
-  echo:       ["#7B1D1D", "#991B1B"],
-  cardiology: ["#1E3A8A", "#1D4ED8"],
-  radiology:  ["#064E3B", "#065F46"],
-  emergency:  ["#78350F", "#92400E"],
-  default:    ["#1F2937", "#374151"],
-};
-function catBg(category) {
-  if (!category) return CAT_BG.default;
-  const k = Object.keys(CAT_BG).find((k) => category.toLowerCase().includes(k));
-  return CAT_BG[k] || CAT_BG.default;
+function catBg(trackColor = "#1F2937") {
+  return [trackColor, "#374151"];
 }
 
 // ─── sub-components ───────────────────────────────────────────────────────────
@@ -151,7 +135,7 @@ function CircularProgress({ value, size = 52, strokeW = 4 }) {
 
 function CourseContinueCard({ enr }) {
   const course = enr.courseId;
-  const [from, to] = catBg(course?.category);
+  const [from, to] = catBg(course?.trackId?.color);
   const days = daysLabel(enr.expiryDate);
   const resume = enr.resume;
   const total = enr.totalLectures;
@@ -254,7 +238,7 @@ function CourseContinueCard({ enr }) {
 
 function DashCertRow({ cert }) {
   const [busy, setBusy] = useState(false);
-  const color = certColor(cert.courseId?.category);
+  const color = certColor(cert.courseId?.trackId?.color);
   const date = formatDate(cert.certificate?.uploadedAt || cert.updatedAt);
 
   async function handlePdf() {

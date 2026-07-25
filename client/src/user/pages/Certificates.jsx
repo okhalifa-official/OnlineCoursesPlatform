@@ -8,22 +8,8 @@ import {
 import StudentLayout from "../components/StudentLayout";
 import usePageTitle from "../hooks/usePageTitle";
 
-const CERT_COLORS = {
-  pocus:      "#1E3A5F",
-  echo:       "#5C1A1A",
-  cardiology: "#1D3557",
-  radiology:  "#064E3B",
-  emergency:  "#78350F",
-  msk:        "#0D4A3E",
-  default:    "#1F2937",
-};
-
-function getCertColor(category) {
-  if (!category) return CERT_COLORS.default;
-  const key = Object.keys(CERT_COLORS).find((k) =>
-    category.toLowerCase().includes(k)
-  );
-  return CERT_COLORS[key] || CERT_COLORS.default;
+function getCertColor(trackColor) {
+  return trackColor || "#1F2937";
 }
 
 function certCode(enrollment) {
@@ -169,7 +155,7 @@ function CertificateModal({ enrollment, onClose }) {
 function CertCard({ enrollment, onView }) {
   const [copied, setCopied] = useState(false);
   const [pdfBusy, setPdfBusy] = useState(false);
-  const color = getCertColor(enrollment.courseId?.category);
+  const color = getCertColor(enrollment.courseId?.trackId?.color);
   const code = certCode(enrollment);
   const date = formatDate(enrollment.certificate?.uploadedAt || enrollment.updatedAt);
   const courseName = enrollment.courseId?.courseName || "Course";

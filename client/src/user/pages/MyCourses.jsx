@@ -5,21 +5,8 @@ import StudentLayout from "../components/StudentLayout";
 import usePageTitle from "../hooks/usePageTitle";
 import { listInstructors, formatInstructorList, stripHtmlToText } from "../components/CourseBar";
 
-const CATEGORY_COLORS = {
-  pocus:      { from: "#6B21A8", to: "#4C1D95" },
-  echo:       { from: "#7B2D2D", to: "#4A1515" },
-  cardiology: { from: "#1D4ED8", to: "#1E3A8A" },
-  radiology:  { from: "#065F46", to: "#064E3B" },
-  emergency:  { from: "#B45309", to: "#78350F" },
-  default:    { from: "#374151", to: "#1F2937" },
-};
-
-function getCategoryGradient(category) {
-  if (!category) return CATEGORY_COLORS.default;
-  const key = Object.keys(CATEGORY_COLORS).find((k) =>
-    category.toLowerCase().includes(k)
-  );
-  return CATEGORY_COLORS[key] || CATEGORY_COLORS.default;
+function getTrackGradient(color) {
+  return { from: color || "#374151", to: "#1F2937" };
 }
 
 function useCourseProgress(courseId, modules) {
@@ -63,7 +50,7 @@ function ProgressBar({ percent }) {
 }
 
 function EnrolledCard({ course }) {
-  const { from, to } = getCategoryGradient(course.category);
+  const { from, to } = getTrackGradient(course.trackId?.color);
   const moduleCount = Array.isArray(course.modules) ? course.modules.length : 0;
   const instructorLabel = formatInstructorList(listInstructors(course));
   const { lectureCount, percent } = useCourseProgress(course._id, course.modules);
@@ -105,9 +92,9 @@ function EnrolledCard({ course }) {
         </div>
 
         <div className="relative z-10">
-          {course.category && (
+          {course.trackId?.name && (
             <span className="text-white/70 text-[10px] font-semibold uppercase tracking-widest mb-1 block">
-              {course.category}
+              {course.trackId.name}
             </span>
           )}
           <h3 className="font-heading font-bold text-white text-lg leading-snug line-clamp-2">
@@ -188,7 +175,7 @@ export default function MyCourses() {
   const filtered = courses.filter(
     (c) =>
       c.courseName?.toLowerCase().includes(search.toLowerCase()) ||
-      c.category?.toLowerCase().includes(search.toLowerCase()) ||
+      c.trackId?.name?.toLowerCase().includes(search.toLowerCase()) ||
       c.courseDescription?.toLowerCase().includes(search.toLowerCase())
   );
 

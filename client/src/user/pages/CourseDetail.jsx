@@ -163,7 +163,7 @@ export default function CourseDetail() {
 
           {/* Category pill */}
           <span className="inline-block bg-red-50 text-brandRed text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-4">
-            {course.category || "General"}
+            {course.trackId?.name || "General"}
           </span>
 
           {/* Title */}

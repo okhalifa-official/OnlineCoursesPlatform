@@ -89,9 +89,9 @@ export default function CourseBar({ course, onShowReviews }) {
     <div className="bg-white border-b border-gray-100">
       <div className="max-w-6xl mx-auto px-6 py-4 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3 min-w-0">
-          {course.category && (
+          {course.trackId?.name && (
             <span className="bg-red-50 text-brandRed text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-md shrink-0">
-              {course.category}
+              {course.trackId.name}
             </span>
           )}
           <h2 className="font-heading font-bold text-charcoal text-base truncate">
