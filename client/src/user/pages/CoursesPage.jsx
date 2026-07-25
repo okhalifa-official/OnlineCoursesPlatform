@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getPublishedCourses, getMyCourseIds, getUserToken } from "../api/userApi";
+import { getPublicTracks } from "../api/tracksApi";
 import UserNavbar from "../components/UserNavbar";
 import usePageTitle from "../hooks/usePageTitle";
 import { listInstructors, formatInstructorList, stripHtmlToText } from "../components/CourseBar";
@@ -14,46 +15,6 @@ const NAV_LINKS = [
   { label: "Events",  to: "/#events",  section: "events"  },
   { label: "Contact", to: "/#contact", section: "contact" },
 ];
-
-const MEDICAL_SPECIALTIES = [
-  "Emergency Medicine",
-  "Internal Medicine",
-  "Cardiology",
-  "Radiology",
-  "Critical Care",
-  "Anesthesiology",
-  "General Surgery",
-  "Pediatrics",
-  "Obstetrics & Gynecology",
-  "Orthopedics",
-  "Neurology",
-  "Oncology",
-  "Nephrology",
-  "Pulmonology",
-  "Gastroenterology",
-  "Rheumatology",
-  "Other",
-];
-
-// Gradient colour pairs keyed by a substring of the category name.
-// Matched case-insensitively so "Basic POCUS" hits the "pocus" key.
-const CATEGORY_COLORS = {
-  pocus:      { from: "#6B21A8", to: "#4C1D95" },
-  echo:       { from: "#7B2D2D", to: "#4A1515" },
-  cardiology: { from: "#1D4ED8", to: "#1E3A8A" },
-  radiology:  { from: "#065F46", to: "#064E3B" },
-  emergency:  { from: "#B45309", to: "#78350F" },
-  default:    { from: "#374151", to: "#1F2937" },
-};
-
-/** Returns the { from, to } gradient pair for a given category string. */
-function getCategoryGradient(category) {
-  if (!category) return CATEGORY_COLORS.default;
-  const key = Object.keys(CATEGORY_COLORS).find((k) =>
-    category.toLowerCase().includes(k)
-  );
-  return CATEGORY_COLORS[key] || CATEGORY_COLORS.default;
-}
 
 const SORT_OPTIONS = [
   {
@@ -181,7 +142,7 @@ function SortDropdown({ value, onChange }) {
  * Price: 0 / falsy → "Free" in green; any positive value → "$X" in brandRed.
  */
 function CourseCard({ course, enrolled }) {
-  const { from, to } = getCategoryGradient(course.category);
+  const trackColor = course.trackId?.color || "#374151";
   // Hide "Unassigned" and empty values, dedupe, and surface every instructor
   // (cards used to drop the second one).
   const instructorNames = listInstructors(course);
@@ -200,7 +161,7 @@ function CourseCard({ course, enrolled }) {
         style={
           course.previewImage
             ? undefined
-            : { background: `linear-gradient(135deg, ${from} 0%, ${to} 100%)` }
+            : { background: trackColor }
         }
       >
         {course.previewImage && (
@@ -221,9 +182,9 @@ function CourseCard({ course, enrolled }) {
         )}
 
         <div className="relative z-10">
-          {course.category && (
+          {course.trackId?.name && (
             <span className="text-white/70 text-[10px] font-semibold uppercase tracking-widest mb-1 block">
-              {course.category}
+              {course.trackId.name}
             </span>
           )}
           <h3 className="font-heading font-bold text-white text-lg leading-snug line-clamp-2">
@@ -328,7 +289,8 @@ export default function CoursesPage() {
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("newest");
-  const [activeCategories, setActiveCategories] = useState(new Set());
+  const [tracks, setTracks] = useState([]);
+  const [activeTracks, setActiveTracks] = useState(new Set());
   const [priceFilter, setPriceFilter] = useState("all");
   const [enrollFilter, setEnrollFilter] = useState("all");
   const isLoggedIn = !!getUserToken();
@@ -344,33 +306,43 @@ export default function CoursesPage() {
     Promise.all([
       getPublishedCourses().catch((err) => { setError(err.message); return []; }),
       enrolledPromise,
+      getPublicTracks().catch(() => []),
     ])
-      .then(([list, ids]) => {
+      .then(([list, ids, trackList]) => {
         setCourses(Array.isArray(list) ? list : []);
         setEnrolledIds(new Set(Array.isArray(ids) ? ids : []));
+        setTracks(Array.isArray(trackList) ? trackList : []);
+
+        const params = new URLSearchParams(window.location.search);
+        const requestedSlug = params.get("track");
+        const matched = Array.isArray(trackList)
+          ? trackList.find((t) => t.slug === requestedSlug)
+          : null;
+
+        if (matched) {
+          setActiveTracks(new Set([matched._id]));
+        }
       })
       .finally(() => setLoading(false));
   }, []);
 
-  const categories = MEDICAL_SPECIALTIES;
-
-  function toggleCategory(cat) {
-    setActiveCategories((prev) => {
+  function toggleTrack(trackId) {
+    setActiveTracks((prev) => {
       const next = new Set(prev);
-      if (next.has(cat)) next.delete(cat);
-      else next.add(cat);
+      if (next.has(trackId)) next.delete(trackId);
+      else next.add(trackId);
       return next;
     });
   }
 
   function clearAll() {
-    setActiveCategories(new Set());
+    setActiveTracks(new Set());
     setPriceFilter("all");
     setEnrollFilter("all");
   }
 
   const activeFiltersCount =
-    activeCategories.size +
+    activeTracks.size +
     (priceFilter !== "all" ? 1 : 0) +
     (enrollFilter !== "all" ? 1 : 0);
 
@@ -379,10 +351,10 @@ export default function CoursesPage() {
       const q = search.toLowerCase();
       const matchesSearch =
         c.courseName?.toLowerCase().includes(q) ||
-        c.category?.toLowerCase().includes(q) ||
+        c.trackId?.name?.toLowerCase().includes(q) ||
         c.courseDescription?.toLowerCase().includes(q);
-      const matchesCategory = activeCategories.size === 0 ||
-        [...activeCategories].some((s) => s.toLowerCase() === c.category?.toLowerCase());
+      const matchesTrack = activeTracks.size === 0 ||
+        (c.trackId?._id && activeTracks.has(c.trackId._id));
       const price = Number(c.coursePrice) || 0;
       const matchesPrice =
         priceFilter === "all" ||
@@ -393,7 +365,7 @@ export default function CoursesPage() {
         enrollFilter === "all" ||
         (enrollFilter === "enrolled" && enrolled) ||
         (enrollFilter === "new" && !enrolled);
-      return matchesSearch && matchesCategory && matchesPrice && matchesEnroll;
+      return matchesSearch && matchesTrack && matchesPrice && matchesEnroll;
     })
     .sort((a, b) => {
       if (sort === "az")         return (a.courseName || "").localeCompare(b.courseName || "");
@@ -444,15 +416,15 @@ export default function CoursesPage() {
             {/* Filter pills — shown after load */}
             {!loading && !error && (
               <>
-                {(
-                  <FilterDropdown label="Category" activeCount={activeCategories.size}>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2.5">Category</p>
+                {tracks.length > 0 && (
+                  <FilterDropdown label="Track" activeCount={activeTracks.size}>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2.5">Track</p>
                     <div className="space-y-2">
-                      {categories.map((cat) => {
-                        const count = courses.filter((c) => c.category?.toLowerCase() === cat.toLowerCase()).length;
-                        const active = activeCategories.has(cat);
+                      {tracks.map((track) => {
+                        const count = courses.filter((c) => c.trackId?._id === track._id).length;
+                        const active = activeTracks.has(track._id);
                         return (
-                          <button key={cat} type="button" onClick={() => toggleCategory(cat)} className="flex items-center gap-2.5 w-full group">
+                          <button key={track._id} type="button" onClick={() => toggleTrack(track._id)} className="flex items-center gap-2.5 w-full group">
                             <div className={`w-4 h-4 rounded border-2 flex items-center justify-center transition flex-shrink-0
                               ${active ? "bg-brandRed border-brandRed" : "border-gray-300 group-hover:border-brandRed"}`}>
                               {active && (
@@ -461,7 +433,7 @@ export default function CoursesPage() {
                                 </svg>
                               )}
                             </div>
-                            <span className={`text-sm flex-1 text-left transition ${active ? "text-charcoal font-semibold" : "text-gray-500 group-hover:text-charcoal"}`}>{cat}</span>
+                            <span className={`text-sm flex-1 text-left transition ${active ? "text-charcoal font-semibold" : "text-gray-500 group-hover:text-charcoal"}`}>{track.name}</span>
                             <span className="text-[11px] text-gray-300 tabular-nums">{count}</span>
                           </button>
                         );
