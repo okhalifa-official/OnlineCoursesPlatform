@@ -33,18 +33,6 @@ function matchPrice(price, filter) {
   return true;
 }
 
-function getCategoryColor(category) {
-  const colors = {
-    "Basic POCUS": "bg-[#1E2A61]",
-    "Two Days": "bg-[#B98D36]",
-    Advanced: "bg-[#885FB0]",
-    Archived: "bg-[#551212]",
-    General: "bg-[#046E67]",
-  };
-
-  return colors[category] || "bg-[#046E67]";
-}
-
 export default function Courses() {
   const [courses, setCourses] = useState([]);
   const [admin, setAdmin] = useState(null);
@@ -54,7 +42,7 @@ export default function Courses() {
 
   const [activeTab, setActiveTab] = useState("all");
   const [search, setSearch] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("");
+  const [trackFilter, setTrackFilter] = useState("");
   const [priceFilter, setPriceFilter] = useState("");
   const [instructorFilter, setInstructorFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -137,16 +125,21 @@ export default function Courses() {
   function resetFilters() {
     setActiveTab("all");
     setSearch("");
-    setCategoryFilter("");
+    setTrackFilter("");
     setPriceFilter("");
     setInstructorFilter("");
     setStatusFilter("");
   }
 
-  const categories = useMemo(
+  const trackOptions = useMemo(
     function () {
-      const values = courses.map((course) => course.category || "General");
-      return [...new Set(values)];
+      const seen = new Map();
+      courses.forEach((course) => {
+        if (course.trackId?._id) {
+          seen.set(course.trackId._id, course.trackId);
+        }
+      });
+      return [...seen.values()];
     },
     [courses]
   );
@@ -163,7 +156,7 @@ export default function Courses() {
     function () {
       return courses.filter((course) => {
         const courseTab = getTabValue(course.publishStatus);
-        const courseCategory = (course.category || "General").toLowerCase();
+        const courseTrackId = course.trackId?._id || "";
         const courseInstructor = (
           course.instructor || "Unassigned"
         ).toLowerCase();
@@ -172,7 +165,7 @@ export default function Courses() {
         const searchableText = [
           course.courseName,
           course.courseDescription,
-          course.category,
+          course.trackId?.name,
           course.instructor,
           course.publishStatus,
           course.coursePrice,
@@ -182,8 +175,7 @@ export default function Courses() {
 
         const matchTab = activeTab === "all" || courseTab === activeTab;
 
-        const matchCategory =
-          !categoryFilter || courseCategory === categoryFilter.toLowerCase();
+        const matchTrack = !trackFilter || courseTrackId === trackFilter;
 
         const matchInstructor =
           !instructorFilter ||
@@ -200,7 +192,7 @@ export default function Courses() {
 
         return (
           matchTab &&
-          matchCategory &&
+          matchTrack &&
           matchInstructor &&
           matchStatus &&
           matchSearch &&
@@ -211,7 +203,7 @@ export default function Courses() {
     [
       courses,
       activeTab,
-      categoryFilter,
+      trackFilter,
       instructorFilter,
       statusFilter,
       search,
@@ -413,14 +405,14 @@ export default function Courses() {
           <section className="bg-white border border-[#e5e5e5] rounded-[22px] shadow-card p-6 mb-10">
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
               <select
-                value={categoryFilter}
-                onChange={(e) => setCategoryFilter(e.target.value)}
+                value={trackFilter}
+                onChange={(e) => setTrackFilter(e.target.value)}
                 className="h-12 rounded-xl border border-[#e5e5e5] bg-[#F2F2F2] px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#D62828]/20 focus:border-[#D62828]"
               >
-                <option value="">All Categories</option>
-                {categories.map((category) => (
-                  <option key={category} value={category}>
-                    {category}
+                <option value="">All Tracks</option>
+                {trackOptions.map((track) => (
+                  <option key={track._id} value={track._id}>
+                    {track.name}
                   </option>
                 ))}
               </select>
@@ -629,7 +621,8 @@ function StatsCard({ label, value, note, positive, danger }) {
 }
 
 function CourseCard({ course, onDelete, onArchive, onRestore }) {
-  const category = course.category || "General";
+  const trackName = course.trackId?.name || "Uncategorized";
+  const trackColor = course.trackId?.color || "#046E67";
   const isArchived = course.publishStatus === "Archived";
   // Pull the real instructor list off the new instructors[] array, falling
   // back to "Unassigned" only when no usable names exist.
@@ -655,11 +648,10 @@ function CourseCard({ course, onDelete, onArchive, onRestore }) {
 
         <div className="absolute top-4 left-4">
           <span
-            className={`${getCategoryColor(
-              category
-            )} text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider`}
+            className="text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider"
+            style={{ backgroundColor: trackColor }}
           >
-            {category}
+            {trackName}
           </span>
         </div>
 
