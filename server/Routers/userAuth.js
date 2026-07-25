@@ -500,7 +500,7 @@ router.get("/verify/:code", async (req, res) => {
       code:        enrollment.certificateCode,
       studentName: enrollment.userId?.fullName       || "",
       courseName:  enrollment.courseId?.courseName   || "",
-      category:    enrollment.courseId?.trackId?.name || "",
+      track:       enrollment.courseId?.trackId?.name || "",
       issuedAt:    enrollment.certificate.uploadedAt,
       mimeType:    enrollment.certificate.mimeType,
       fileName:    enrollment.certificate.name,
