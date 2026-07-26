@@ -3,7 +3,7 @@ const PaymentTransaction = require("../Models/PaymentTransaction");
 const SystemLog = require("../Models/SystemLog");
 
 function formatMoney(value) {
-  return `$${Number(value || 0).toLocaleString()}`;
+  return `EGP ${Number(value || 0).toLocaleString()}`;
 }
 
 function formatPercent(value) {
