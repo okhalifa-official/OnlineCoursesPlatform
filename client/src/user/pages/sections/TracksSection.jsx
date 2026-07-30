@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getPublicTracks } from "../../api/tracksApi";
 
-export default function TracksSection() {
+export default function TracksSection({ previewOverride } = {}) {
   const navigate = useNavigate();
   const [tracks, setTracks] = useState([]);
 

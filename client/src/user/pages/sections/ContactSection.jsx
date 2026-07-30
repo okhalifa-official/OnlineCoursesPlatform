@@ -1,13 +1,13 @@
 import { useLandingData } from "../../utils/LandingDataContext";
 import useSiteContent from "../../hooks/useSiteContent";
 
-export default function ContactSection() {
+export default function ContactSection({ previewOverride } = {}) {
   const data = useLandingData();
 
   const xmlContact = data?.contact || {};
 
   const { getSection } = useSiteContent("landing");
-  const cmsContact = getSection("contact");
+  const cmsContact = previewOverride ?? getSection("contact");
 
   const eyebrow =
     cmsContact?.subtitle ||

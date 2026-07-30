@@ -19,12 +19,12 @@ function formatDate(dateStr) {
   });
 }
 
-export default function VerifySection() {
+export default function VerifySection({ previewOverride } = {}) {
   const navigate = useNavigate();
   const data = useLandingData();
   const xmlVerify = data?.verify || {};
   const { getSection } = useSiteContent("landing");
-  const cmsVerify = getSection("verify");
+  const cmsVerify = previewOverride ?? getSection("verify");
 
   const eyebrow    = cmsVerify?.subtitle   || xmlVerify?.eyebrow    || "Verify";
   const headline   = cmsVerify?.title      || xmlVerify?.headline   || "Verify your certificate";

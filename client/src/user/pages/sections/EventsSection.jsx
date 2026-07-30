@@ -1,13 +1,13 @@
 import { useLandingData } from "../../utils/LandingDataContext";
 import useSiteContent from "../../hooks/useSiteContent";
 
-export default function EventsSection() {
+export default function EventsSection({ previewOverride } = {}) {
   const data = useLandingData();
 
   const xmlEvents = data?.events || {};
 
   const { getSection } = useSiteContent("landing");
-  const cmsEvents = getSection("events");
+  const cmsEvents = previewOverride ?? getSection("events");
 
   const eyebrow =
     cmsEvents?.subtitle ||

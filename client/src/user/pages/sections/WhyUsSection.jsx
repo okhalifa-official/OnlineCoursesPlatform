@@ -1,13 +1,13 @@
 import { useLandingData } from "../../utils/LandingDataContext";
 import useSiteContent from "../../hooks/useSiteContent";
 
-export default function WhyUsSection() {
+export default function WhyUsSection({ previewOverride } = {}) {
   const data = useLandingData();
 
   const xmlWhyUs = data?.whyUs || {};
 
   const { getSection } = useSiteContent("landing");
-  const cmsWhyUs = getSection("why-us");
+  const cmsWhyUs = previewOverride ?? getSection("why-us");
 
   const eyebrow =
     cmsWhyUs?.subtitle ||

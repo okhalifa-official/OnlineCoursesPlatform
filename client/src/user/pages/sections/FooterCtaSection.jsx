@@ -3,7 +3,7 @@ import { getUserToken } from "../../api/userApi";
 import { useLandingData } from "../../utils/LandingDataContext";
 import useSiteContent from "../../hooks/useSiteContent";
 
-export default function FooterCtaSection() {
+export default function FooterCtaSection({ previewOverride } = {}) {
   const navigate = useNavigate();
   const isLoggedIn = !!getUserToken();
 
@@ -11,7 +11,7 @@ export default function FooterCtaSection() {
   const xmlCta = data?.footerCta || {};
 
   const { getSection } = useSiteContent("landing");
-  const cmsCta = getSection("footer-cta");
+  const cmsCta = previewOverride ?? getSection("footer-cta");
 
   const eyebrow =
     cmsCta?.subtitle ||

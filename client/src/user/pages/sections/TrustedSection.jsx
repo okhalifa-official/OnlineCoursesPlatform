@@ -1,13 +1,13 @@
 import { useLandingData } from "../../utils/LandingDataContext";
 import useSiteContent from "../../hooks/useSiteContent";
 
-export default function TrustedSection() {
+export default function TrustedSection({ previewOverride } = {}) {
   const data = useLandingData();
 
   const xmlTrusted = Array.isArray(data?.trusted) ? data.trusted : [];
 
   const { getSection } = useSiteContent("landing");
-  const cmsTrusted = getSection("trusted");
+  const cmsTrusted = previewOverride ?? getSection("trusted");
 
   const title =
     cmsTrusted?.subtitle ||
