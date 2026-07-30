@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import UserNavbar from "../../components/UserNavbar";
+import useSiteContent from "../../hooks/useSiteContent";
 
 const NAV_LINKS = [
   { label: "Home",    to: "/",         section: null      },
@@ -10,22 +10,10 @@ const NAV_LINKS = [
   { label: "Contact", to: "/#contact", section: "contact" },
 ];
 
-async function fetchData() {
-  const res  = await fetch("/data/board-of-directors.xml");
-  const text = await res.text();
-  const doc  = new DOMParser().parseFromString(text, "application/xml");
-  return [...doc.querySelectorAll("member")].map((m) => ({
-    name:        m.getAttribute("name"),
-    title:       m.getAttribute("title"),
-    institution: m.getAttribute("institution"),
-    specialty:   m.getAttribute("specialty"),
-    bio:         m.getAttribute("bio"),
-  }));
-}
-
-export default function BoardOfDirectors() {
-  const [members, setMembers] = useState([]);
-  useEffect(() => { fetchData().then(setMembers); }, []);
+export default function BoardOfDirectors({ previewOverride } = {}) {
+  const { content } = useSiteContent("board-of-directors");
+  const pageData = previewOverride ?? content?.pageData;
+  const members = pageData?.members || [];
 
   return (
     <div className="min-h-screen bg-white">
