@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import UserNavbar from "../../components/UserNavbar";
+import useSiteContent from "../../hooks/useSiteContent";
 
 const NAV_LINKS = [
   { label: "Home",    to: "/",         section: null      },
@@ -10,23 +10,10 @@ const NAV_LINKS = [
   { label: "Contact", to: "/#contact", section: "contact" },
 ];
 
-async function fetchData() {
-  const res  = await fetch("/data/scientific-partners.xml");
-  const text = await res.text();
-  const doc  = new DOMParser().parseFromString(text, "application/xml");
-  return [...doc.querySelectorAll("partner")].map((p) => ({
-    name:     p.getAttribute("name"),
-    fullName: p.getAttribute("fullName"),
-    country:  p.getAttribute("country"),
-    type:     p.getAttribute("type"),
-    website:  p.getAttribute("website"),
-    desc:     p.getAttribute("desc"),
-  }));
-}
-
-export default function ScientificPartners() {
-  const [partners, setPartners] = useState([]);
-  useEffect(() => { fetchData().then(setPartners); }, []);
+export default function ScientificPartners({ previewOverride } = {}) {
+  const { content } = useSiteContent("scientific-partners");
+  const pageData = previewOverride ?? content?.pageData;
+  const partners = pageData?.partners || [];
 
   return (
     <div className="min-h-screen bg-white">

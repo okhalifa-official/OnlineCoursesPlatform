@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import UserNavbar from "../../components/UserNavbar";
+import useSiteContent from "../../hooks/useSiteContent";
 
 const NAV_LINKS = [
   { label: "Home",    to: "/",         section: null      },
@@ -19,23 +20,11 @@ const TYPE_COLORS = {
   default:      "#374151",
 };
 
-async function fetchData() {
-  const res  = await fetch("/data/business-partners.xml");
-  const text = await res.text();
-  const doc  = new DOMParser().parseFromString(text, "application/xml");
-  return [...doc.querySelectorAll("partner")].map((p) => ({
-    name:    p.getAttribute("name"),
-    country: p.getAttribute("country"),
-    type:    p.getAttribute("type"),
-    website: p.getAttribute("website"),
-    desc:    p.getAttribute("desc"),
-  }));
-}
-
-export default function BusinessPartners() {
-  const [partners, setPartners] = useState([]);
-  const [active, setActive]     = useState("All");
-  useEffect(() => { fetchData().then(setPartners); }, []);
+export default function BusinessPartners({ previewOverride } = {}) {
+  const { content } = useSiteContent("business-partners");
+  const pageData = previewOverride ?? content?.pageData;
+  const partners = pageData?.partners || [];
+  const [active, setActive] = useState("All");
 
   const types   = ["All", ...Array.from(new Set(partners.map((p) => p.type)))];
   const visible = active === "All" ? partners : partners.filter((p) => p.type === active);
