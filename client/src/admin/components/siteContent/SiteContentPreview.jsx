@@ -43,7 +43,7 @@ export default function SiteContentPreview({ pageKey, hero, sections, pageData }
       </p>
 
       <div className="rounded-2xl border border-[#DDDDDD] overflow-auto" style={{ maxHeight: "80vh" }}>
-        <div style={{ width: "1024px", transform: "scale(0.62)", transformOrigin: "top left" }}>
+        <div className="mx-auto min-w-[320px]" style={{ width: "100%", maxWidth: 1024 }}>
           <PreviewErrorBoundary resetKey={pageKey}>
             {isLanding && (
               <div className="bg-white">

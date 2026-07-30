@@ -169,7 +169,7 @@ export default function SiteContent() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 xl:grid-cols-[240px_1fr_1fr] gap-6 items-start">
+        <div className="grid grid-cols-1 xl:grid-cols-[240px_minmax(560px,1fr)_minmax(560px,1fr)] gap-6 items-start">
           <SiteContentSidebar selectedPageKey={selectedPageKey} onSelect={setSelectedPageKey} />
 
           <section className="rounded-3xl bg-white border border-[#E5E5E5] shadow-card p-6">
