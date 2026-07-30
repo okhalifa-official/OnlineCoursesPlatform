@@ -1,6 +1,5 @@
 import UserNavbar from "../components/UserNavbar";
 import usePageTitle from "../hooks/usePageTitle";
-import { LandingDataProvider } from "../utils/LandingDataContext";
 import HeroSection      from "./sections/HeroSection";
 import TrustedSection   from "./sections/TrustedSection";
 import AboutSection     from "./sections/AboutSection";
@@ -23,20 +22,18 @@ const NAV_LINKS = [
 export default function LandingPage() {
   usePageTitle(null);
   return (
-    <LandingDataProvider>
-      <div className="min-h-screen bg-white">
-        <UserNavbar links={NAV_LINKS} />
+    <div className="min-h-screen bg-white">
+      <UserNavbar links={NAV_LINKS} />
 
-        <HeroSection />
-        <TrustedSection />
-        <VerifySection />
-        <AboutSection />
-        <TracksSection />
-        <WhyUsSection />
-        <EventsSection />
-        <ContactSection />
-        <FooterCtaSection />
-      </div>
-    </LandingDataProvider>
+      <HeroSection />
+      <TrustedSection />
+      <VerifySection />
+      <AboutSection />
+      <TracksSection />
+      <WhyUsSection />
+      <EventsSection />
+      <ContactSection />
+      <FooterCtaSection />
+    </div>
   );
 }
