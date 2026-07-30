@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useLandingData } from "../../utils/LandingDataContext";
 import useSiteContent from "../../hooks/useSiteContent";
 import HeroVideoModal from "../../components/HeroVideoModal";
 
@@ -8,63 +7,37 @@ export default function HeroSection({ previewOverride } = {}) {
   const navigate = useNavigate();
   const [videoOpen, setVideoOpen] = useState(false);
 
-  const data = useLandingData();
-  const xmlHero = data?.hero || {};
-
   const { hero: fetchedHero } = useSiteContent("landing");
   const cmsHero = previewOverride?.hero ?? fetchedHero;
 
-  const badge =
-    cmsHero?.subtitle ||
-    xmlHero?.badge ||
-    "Internationally Accredited POCUS";
+  const badge = cmsHero?.subtitle || "Internationally Accredited POCUS";
 
   const headline =
-    cmsHero?.title ||
-    xmlHero?.headline ||
-    "Hands-on Ultrasound Training for the Real Bedside.";
+    cmsHero?.title || "Hands-on Ultrasound Training for the Real Bedside.";
 
-  const headlineHighlight = xmlHero?.headlineHighlight || "Training";
+  const headlineHighlight = cmsHero?.headlineHighlight || "Training";
 
   const subheadline =
     cmsHero?.description ||
-    xmlHero?.subheadline ||
     "Practical ultrasound learning designed for real clinical confidence.";
 
   const buttonText = cmsHero?.buttonText || "Browse Courses";
   const buttonLink = cmsHero?.buttonLink || "/courses";
   const videoUrl = cmsHero?.videoUrl || "";
 
-  const stats = Array.isArray(xmlHero?.stats) ? xmlHero.stats : [];
+  const stats = Array.isArray(cmsHero?.stats) ? cmsHero.stats : [];
 
-  const ratingValue = xmlHero?.rating?.value || "4.9";
-  const ratingReviews = xmlHero?.rating?.reviews || "120+";
+  const ratingValue = cmsHero?.rating?.value || "4.9";
+  const ratingReviews = cmsHero?.rating?.reviews || "120+";
 
-  const workshopTitle =
-    xmlHero?.workshopBadge?.title || "Live Workshops";
+  const workshopTitle = cmsHero?.workshopBadge?.title || "Live Workshops";
 
   const workshopSubtitle =
-    xmlHero?.workshopBadge?.subtitle || "Hands-on clinical training";
+    cmsHero?.workshopBadge?.subtitle || "Hands-on clinical training";
 
   function renderHeadline() {
     if (cmsHero?.title) {
       return cmsHero.title;
-    }
-
-    if (
-      xmlHero?.headline &&
-      xmlHero?.headlineHighlight &&
-      xmlHero.headline.includes(xmlHero.headlineHighlight)
-    ) {
-      const parts = xmlHero.headline.split(xmlHero.headlineHighlight);
-
-      return (
-        <>
-          {parts[0]}
-          <span className="text-brandRed">{xmlHero.headlineHighlight}</span>
-          {parts[1]}
-        </>
-      );
     }
 
     return (
