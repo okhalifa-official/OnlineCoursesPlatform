@@ -88,11 +88,41 @@ const pageContentSchema = new mongoose.Schema(
         type: String,
         default: "",
       },
+      headlineHighlight: {
+        type: String,
+        default: "",
+      },
+      rating: {
+        value: { type: Number, default: 0 },
+        reviews: { type: Number, default: 0 },
+      },
+      workshopBadge: {
+        title: { type: String, default: "" },
+        subtitle: { type: String, default: "" },
+      },
+      stats: {
+        type: [
+          {
+            value: { type: String, default: "" },
+            label: { type: String, default: "" },
+          },
+        ],
+        default: [],
+      },
+      videoUrl: {
+        type: String,
+        default: "",
+      },
     },
 
     sections: {
       type: [sectionSchema],
       default: [],
+    },
+
+    pageData: {
+      type: mongoose.Schema.Types.Mixed,
+      default: {},
     },
 
     isPublished: {
