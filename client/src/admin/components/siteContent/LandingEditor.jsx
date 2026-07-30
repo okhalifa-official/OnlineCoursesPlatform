@@ -9,7 +9,6 @@ import AccordionSection from "./AccordionSection";
 const SECTION_KEYS = [
   { key: "trusted", label: "Trusted By" },
   { key: "about", label: "About" },
-  { key: "tracks", label: "Tracks" },
   { key: "why-us", label: "Why Us" },
   { key: "events", label: "Events" },
   { key: "verify", label: "Verify" },

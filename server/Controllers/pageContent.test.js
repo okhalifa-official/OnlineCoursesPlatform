@@ -77,3 +77,21 @@ test("policies requires a non-empty policies array", () => {
 test("an unrecognized pageKey is not validated (returns null)", () => {
   assert.equal(validatePageData("some-future-page", {}), null);
 });
+
+test("scientific-committee does not deep-validate that each country has a members array (documents why the frontend must guard g.members)", () => {
+  assert.equal(
+    validatePageData("scientific-committee", {
+      countries: [{ name: "Egypt" }],
+    }),
+    null
+  );
+});
+
+test("policies does not deep-validate that each policy has a sections array (documents why the frontend must guard current.sections)", () => {
+  assert.equal(
+    validatePageData("policies", {
+      policies: [{ title: "T", slug: "s" }],
+    }),
+    null
+  );
+});

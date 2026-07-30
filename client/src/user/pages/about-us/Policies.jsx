@@ -19,7 +19,10 @@ export default function Policies({ previewOverride } = {}) {
   const [active, setActive] = useState(null);
 
   useEffect(() => {
-    setActive(policies[0]?.slug ?? null);
+    setActive((current) => {
+      if (current && policies.some((p) => p.slug === current)) return current;
+      return policies[0]?.slug ?? null;
+    });
   }, [policies]);
 
   const current = policies.find((p) => p.slug === active);
@@ -61,7 +64,7 @@ export default function Policies({ previewOverride } = {}) {
                 )}
               </div>
               <div className="flex flex-col gap-7">
-                {current.sections.map((s) => (
+                {(current.sections || []).map((s) => (
                   <div key={s.heading}>
                     <p className="font-semibold text-charcoal text-sm mb-2">{s.heading}</p>
                     <p className="text-gray-500 text-sm leading-relaxed">{s.body}</p>

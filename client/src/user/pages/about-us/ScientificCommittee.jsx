@@ -19,7 +19,10 @@ export default function ScientificCommittee({ previewOverride } = {}) {
   const [active, setActive] = useState(null);
 
   useEffect(() => {
-    setActive(groups[0]?.name ?? null);
+    setActive((current) => {
+      if (current && groups.some((g) => g.name === current)) return current;
+      return groups[0]?.name ?? null;
+    });
   }, [groups]);
 
   const current = groups.find((g) => g.name === active);
@@ -48,7 +51,7 @@ export default function ScientificCommittee({ previewOverride } = {}) {
             >
               {g.name}
               <span className={`ml-2 text-xs font-normal ${active === g.name ? "text-white/70" : "text-gray-400"}`}>
-                {g.members.length}
+                {g.members?.length || 0}
               </span>
             </button>
           ))}
@@ -68,7 +71,7 @@ export default function ScientificCommittee({ previewOverride } = {}) {
                 </tr>
               </thead>
               <tbody>
-                {current.members.map((m, i) => (
+                {(current.members || []).map((m, i) => (
                   <tr
                     key={m.name}
                     className={`border-t border-gray-100 hover:bg-softGrey transition ${i % 2 === 0 ? "bg-white" : "bg-gray-50/40"}`}
