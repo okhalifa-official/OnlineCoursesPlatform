@@ -5,12 +5,16 @@ import RepeatingList from "./RepeatingList";
 import AccordionSection from "./AccordionSection";
 import { ABOUT_PAGE_FIELD_DEFS } from "./aboutPageFieldDefs";
 
+function getDefaultPanel(pageDef) {
+  return pageDef?.kind === "mission-vision" ? "mission" : "main";
+}
+
 export default function AboutPageEditor({ pageKey, pageData, onChange }) {
   const def = ABOUT_PAGE_FIELD_DEFS[pageKey];
-  const [openPanel, setOpenPanel] = useState("main");
+  const [openPanel, setOpenPanel] = useState(() => getDefaultPanel(def));
 
   useEffect(() => {
-    setOpenPanel("main");
+    setOpenPanel(getDefaultPanel(ABOUT_PAGE_FIELD_DEFS[pageKey]));
   }, [pageKey]);
 
   if (!def) {
