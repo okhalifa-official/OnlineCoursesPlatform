@@ -1,27 +1,19 @@
-import { useLandingData } from "../../utils/LandingDataContext";
 import useSiteContent from "../../hooks/useSiteContent";
 
 export default function AboutSection({ previewOverride } = {}) {
-  const data = useLandingData();
-
-  const xmlAbout = data?.about || {};
-
   const { getSection } = useSiteContent("landing");
   const cmsAbout = previewOverride ?? getSection("about");
 
   const eyebrow =
     cmsAbout?.subtitle ||
-    xmlAbout?.eyebrow ||
     "About Us";
 
   const headline =
     cmsAbout?.title ||
-    xmlAbout?.headline ||
     "About Sono School";
 
   const body =
     cmsAbout?.body ||
-    xmlAbout?.body ||
     "Sono School is a professional learning platform built for practical medical education.";
 
   const imageUrl = cmsAbout?.imageUrl || "";
@@ -29,8 +21,6 @@ export default function AboutSection({ previewOverride } = {}) {
   const features =
     Array.isArray(cmsAbout?.items) && cmsAbout.items.length > 0
       ? cmsAbout.items
-      : Array.isArray(xmlAbout?.features)
-      ? xmlAbout.features
       : [];
 
   return (

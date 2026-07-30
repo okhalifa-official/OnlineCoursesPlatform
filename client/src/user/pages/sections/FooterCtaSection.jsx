@@ -1,36 +1,28 @@
 import { useNavigate } from "react-router-dom";
 import { getUserToken } from "../../api/userApi";
-import { useLandingData } from "../../utils/LandingDataContext";
 import useSiteContent from "../../hooks/useSiteContent";
 
 export default function FooterCtaSection({ previewOverride } = {}) {
   const navigate = useNavigate();
   const isLoggedIn = !!getUserToken();
 
-  const data = useLandingData();
-  const xmlCta = data?.footerCta || {};
-
   const { getSection } = useSiteContent("landing");
   const cmsCta = previewOverride ?? getSection("footer-cta");
 
   const eyebrow =
     cmsCta?.subtitle ||
-    xmlCta?.eyebrow ||
     "Start Learning";
 
   const headline =
     cmsCta?.title ||
-    xmlCta?.headline ||
     "Ready to start your learning journey?";
 
   const body =
     cmsCta?.body ||
-    xmlCta?.body ||
     "Create your account and explore professional learning paths with Sono School.";
 
   const buttonLabel =
     cmsCta?.buttonText ||
-    xmlCta?.buttonLabel ||
     "Create Account";
 
   const buttonLink =

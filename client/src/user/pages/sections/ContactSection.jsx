@@ -1,22 +1,15 @@
-import { useLandingData } from "../../utils/LandingDataContext";
 import useSiteContent from "../../hooks/useSiteContent";
 
 export default function ContactSection({ previewOverride } = {}) {
-  const data = useLandingData();
-
-  const xmlContact = data?.contact || {};
-
   const { getSection } = useSiteContent("landing");
   const cmsContact = previewOverride ?? getSection("contact");
 
   const eyebrow =
     cmsContact?.subtitle ||
-    xmlContact?.eyebrow ||
     "Contact";
 
   const headline =
     cmsContact?.title ||
-    xmlContact?.headline ||
     "Get in touch with us";
 
   const body =
@@ -26,19 +19,16 @@ export default function ContactSection({ previewOverride } = {}) {
   const email =
     cmsContact?.items?.find((item) => item.key === "email")?.value ||
     cmsContact?.items?.find((item) => item.title === "Email")?.description ||
-    xmlContact?.email ||
     "support@sonoschool.com";
 
   const phone =
     cmsContact?.items?.find((item) => item.key === "phone")?.value ||
     cmsContact?.items?.find((item) => item.title === "Phone")?.description ||
-    xmlContact?.phone ||
     "+20 100 000 0000";
 
   const location =
     cmsContact?.items?.find((item) => item.key === "location")?.value ||
     cmsContact?.items?.find((item) => item.title === "Location")?.description ||
-    xmlContact?.location ||
     "Egypt";
 
   const buttonText =

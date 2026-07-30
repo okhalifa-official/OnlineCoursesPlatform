@@ -1,22 +1,15 @@
-import { useLandingData } from "../../utils/LandingDataContext";
 import useSiteContent from "../../hooks/useSiteContent";
 
 export default function EventsSection({ previewOverride } = {}) {
-  const data = useLandingData();
-
-  const xmlEvents = data?.events || {};
-
   const { getSection } = useSiteContent("landing");
   const cmsEvents = previewOverride ?? getSection("events");
 
   const eyebrow =
     cmsEvents?.subtitle ||
-    xmlEvents?.eyebrow ||
     "Events";
 
   const headline =
     cmsEvents?.title ||
-    xmlEvents?.headline ||
     "Upcoming Events";
 
   const body =
@@ -26,8 +19,6 @@ export default function EventsSection({ previewOverride } = {}) {
   const eventsList =
     Array.isArray(cmsEvents?.items) && cmsEvents.items.length > 0
       ? cmsEvents.items
-      : Array.isArray(xmlEvents?.items)
-      ? xmlEvents.items
       : [];
 
   return (

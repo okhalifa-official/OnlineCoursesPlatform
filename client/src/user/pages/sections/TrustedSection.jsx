@@ -1,11 +1,6 @@
-import { useLandingData } from "../../utils/LandingDataContext";
 import useSiteContent from "../../hooks/useSiteContent";
 
 export default function TrustedSection({ previewOverride } = {}) {
-  const data = useLandingData();
-
-  const xmlTrusted = Array.isArray(data?.trusted) ? data.trusted : [];
-
   const { getSection } = useSiteContent("landing");
   const cmsTrusted = previewOverride ?? getSection("trusted");
 
@@ -17,7 +12,7 @@ export default function TrustedSection({ previewOverride } = {}) {
   const trustedList =
     Array.isArray(cmsTrusted?.items) && cmsTrusted.items.length > 0
       ? cmsTrusted.items
-      : xmlTrusted;
+      : [];
 
   return (
     <section id="trusted" className="border-y border-gray-100 py-5 bg-white overflow-hidden">

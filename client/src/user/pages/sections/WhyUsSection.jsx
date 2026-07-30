@@ -1,46 +1,33 @@
-import { useLandingData } from "../../utils/LandingDataContext";
 import useSiteContent from "../../hooks/useSiteContent";
 
 export default function WhyUsSection({ previewOverride } = {}) {
-  const data = useLandingData();
-
-  const xmlWhyUs = data?.whyUs || {};
-
   const { getSection } = useSiteContent("landing");
   const cmsWhyUs = previewOverride ?? getSection("why-us");
 
   const eyebrow =
     cmsWhyUs?.subtitle ||
-    xmlWhyUs?.eyebrow ||
     "Why Us";
 
   const headline =
     cmsWhyUs?.title ||
-    xmlWhyUs?.headline ||
     "Why choose Sono School?";
 
   const body =
     cmsWhyUs?.body ||
-    xmlWhyUs?.body ||
     "We provide practical, structured, and clinically focused learning experiences.";
 
   const stats =
     Array.isArray(cmsWhyUs?.items) && cmsWhyUs.items.length > 0
       ? cmsWhyUs.items.filter((item) => item.type === "stat" || item.value)
-      : Array.isArray(xmlWhyUs?.stats)
-      ? xmlWhyUs.stats
       : [];
 
   const pillarsHeading =
     cmsWhyUs?.buttonText ||
-    xmlWhyUs?.pillarsHeading ||
     "Our learning pillars";
 
   const pillars =
     Array.isArray(cmsWhyUs?.items) && cmsWhyUs.items.length > 0
       ? cmsWhyUs.items.filter((item) => item.type === "pillar" || item.description || item.desc)
-      : Array.isArray(xmlWhyUs?.pillars)
-      ? xmlWhyUs.pillars
       : [];
 
   return (

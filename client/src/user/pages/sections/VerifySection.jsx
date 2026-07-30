@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useLandingData } from "../../utils/LandingDataContext";
 import useSiteContent from "../../hooks/useSiteContent";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000/api";
@@ -21,17 +20,15 @@ function formatDate(dateStr) {
 
 export default function VerifySection({ previewOverride } = {}) {
   const navigate = useNavigate();
-  const data = useLandingData();
-  const xmlVerify = data?.verify || {};
   const { getSection } = useSiteContent("landing");
   const cmsVerify = previewOverride ?? getSection("verify");
 
-  const eyebrow    = cmsVerify?.subtitle   || xmlVerify?.eyebrow    || "Verify";
-  const headline   = cmsVerify?.title      || xmlVerify?.headline   || "Verify your certificate";
-  const body       = cmsVerify?.body       || xmlVerify?.body       || "Enter your certificate code to confirm its authenticity through Sono School.";
+  const eyebrow    = cmsVerify?.subtitle   || "Verify";
+  const headline   = cmsVerify?.title      || "Verify your certificate";
+  const body       = cmsVerify?.body       || "Enter your certificate code to confirm its authenticity through Sono School.";
   const placeholder = cmsVerify?.items?.find((i) => i.key === "placeholder")?.value
-    || xmlVerify?.placeholder || "Enter certificate code";
-  const buttonLabel = cmsVerify?.buttonText || xmlVerify?.buttonLabel || "Verify";
+    || "Enter certificate code";
+  const buttonLabel = cmsVerify?.buttonText || "Verify";
 
   const [input,   setInput]   = useState("");
   const [loading, setLoading] = useState(false);
