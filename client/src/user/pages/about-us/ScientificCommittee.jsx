@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import UserNavbar from "../../components/UserNavbar";
+import useSiteContent from "../../hooks/useSiteContent";
 
 const NAV_LINKS = [
   { label: "Home",    to: "/",         section: null      },
@@ -10,34 +11,18 @@ const NAV_LINKS = [
   { label: "Contact", to: "/#contact", section: "contact" },
 ];
 
-async function fetchCommittee() {
-  const res  = await fetch("/data/scientific-committee.xml");
-  const text = await res.text();
-  const doc  = new DOMParser().parseFromString(text, "application/xml");
+export default function ScientificCommittee({ previewOverride } = {}) {
+  const { content } = useSiteContent("scientific-committee");
+  const pageData = previewOverride ?? content?.pageData;
+  const groups = pageData?.countries || [];
 
-  return [...doc.querySelectorAll("country")].map((c) => ({
-    country: c.getAttribute("name"),
-    members: [...c.querySelectorAll("member")].map((m) => ({
-      name:        m.getAttribute("name"),
-      title:       m.getAttribute("title"),
-      institution: m.getAttribute("institution"),
-      specialty:   m.getAttribute("specialty"),
-    })),
-  }));
-}
-
-export default function ScientificCommittee() {
-  const [groups, setGroups]   = useState([]);
-  const [active, setActive]   = useState(null);
+  const [active, setActive] = useState(null);
 
   useEffect(() => {
-    fetchCommittee().then((data) => {
-      setGroups(data);
-      setActive(data[0]?.country ?? null);
-    });
-  }, []);
+    setActive(groups[0]?.name ?? null);
+  }, [groups]);
 
-  const current = groups.find((g) => g.country === active);
+  const current = groups.find((g) => g.name === active);
 
   return (
     <div className="min-h-screen bg-white">
@@ -53,16 +38,16 @@ export default function ScientificCommittee() {
         <div className="flex flex-wrap gap-2 mb-8">
           {groups.map((g) => (
             <button
-              key={g.country}
-              onClick={() => setActive(g.country)}
+              key={g.name}
+              onClick={() => setActive(g.name)}
               className={`px-4 py-2 rounded-xl text-sm font-semibold border transition
-                ${active === g.country
+                ${active === g.name
                   ? "bg-brandRed text-white border-brandRed"
                   : "bg-white text-charcoal border-gray-200 hover:border-brandRed hover:text-brandRed"
                 }`}
             >
-              {g.country}
-              <span className={`ml-2 text-xs font-normal ${active === g.country ? "text-white/70" : "text-gray-400"}`}>
+              {g.name}
+              <span className={`ml-2 text-xs font-normal ${active === g.name ? "text-white/70" : "text-gray-400"}`}>
                 {g.members.length}
               </span>
             </button>
