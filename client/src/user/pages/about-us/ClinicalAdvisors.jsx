@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import UserNavbar from "../../components/UserNavbar";
+import useSiteContent from "../../hooks/useSiteContent";
 
 const NAV_LINKS = [
   { label: "Home",    to: "/",         section: null      },
@@ -10,22 +10,10 @@ const NAV_LINKS = [
   { label: "Contact", to: "/#contact", section: "contact" },
 ];
 
-async function fetchData() {
-  const res  = await fetch("/data/clinical-advisors.xml");
-  const text = await res.text();
-  const doc  = new DOMParser().parseFromString(text, "application/xml");
-  return [...doc.querySelectorAll("advisor")].map((a) => ({
-    name:        a.getAttribute("name"),
-    title:       a.getAttribute("title"),
-    institution: a.getAttribute("institution"),
-    specialty:   a.getAttribute("specialty"),
-    expertise:   a.getAttribute("expertise"),
-  }));
-}
-
-export default function ClinicalAdvisors() {
-  const [advisors, setAdvisors] = useState([]);
-  useEffect(() => { fetchData().then(setAdvisors); }, []);
+export default function ClinicalAdvisors({ previewOverride } = {}) {
+  const { content } = useSiteContent("clinical-advisors");
+  const pageData = previewOverride ?? content?.pageData;
+  const advisors = pageData?.advisors || [];
 
   return (
     <div className="min-h-screen bg-white">
