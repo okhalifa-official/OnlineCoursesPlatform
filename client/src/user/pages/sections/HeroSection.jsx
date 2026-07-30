@@ -1,14 +1,18 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLandingData } from "../../utils/LandingDataContext";
 import useSiteContent from "../../hooks/useSiteContent";
+import HeroVideoModal from "../../components/HeroVideoModal";
 
-export default function HeroSection() {
+export default function HeroSection({ previewOverride } = {}) {
   const navigate = useNavigate();
+  const [videoOpen, setVideoOpen] = useState(false);
 
   const data = useLandingData();
   const xmlHero = data?.hero || {};
 
-  const { hero: cmsHero } = useSiteContent("landing");
+  const { hero: fetchedHero } = useSiteContent("landing");
+  const cmsHero = previewOverride?.hero ?? fetchedHero;
 
   const badge =
     cmsHero?.subtitle ||
@@ -29,6 +33,7 @@ export default function HeroSection() {
 
   const buttonText = cmsHero?.buttonText || "Browse Courses";
   const buttonLink = cmsHero?.buttonLink || "/courses";
+  const videoUrl = cmsHero?.videoUrl || "";
 
   const stats = Array.isArray(xmlHero?.stats) ? xmlHero.stats : [];
 
@@ -115,21 +120,24 @@ export default function HeroSection() {
             </svg>
           </button>
 
-          <button
-            type="button"
-            className="flex items-center gap-2 text-charcoal font-semibold px-4 py-3 hover:text-brandRed transition"
-          >
-            <div className="w-9 h-9 rounded-full border-2 border-charcoal flex items-center justify-center">
-              <svg
-                className="w-3.5 h-3.5 ml-0.5"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M8 5v14l11-7z" />
-              </svg>
-            </div>
-            Watch demo
-          </button>
+          {videoUrl && (
+            <button
+              type="button"
+              onClick={() => setVideoOpen(true)}
+              className="flex items-center gap-2 text-charcoal font-semibold px-4 py-3 hover:text-brandRed transition"
+            >
+              <div className="w-9 h-9 rounded-full border-2 border-charcoal flex items-center justify-center">
+                <svg
+                  className="w-3.5 h-3.5 ml-0.5"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </div>
+              Watch demo
+            </button>
+          )}
         </div>
 
         {stats.length > 0 && (
@@ -182,6 +190,10 @@ export default function HeroSection() {
           <p className="text-gray-400 mt-0.5">{workshopSubtitle}</p>
         </div>
       </div>
+
+      {videoOpen && (
+        <HeroVideoModal url={videoUrl} onClose={() => setVideoOpen(false)} />
+      )}
     </section>
   );
 }
