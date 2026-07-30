@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import UserNavbar from "../../components/UserNavbar";
+import useSiteContent from "../../hooks/useSiteContent";
 
 const NAV_LINKS = [
   { label: "Home",    to: "/",         section: null      },
@@ -10,27 +11,16 @@ const NAV_LINKS = [
   { label: "Contact", to: "/#contact", section: "contact" },
 ];
 
-async function fetchData() {
-  const res  = await fetch("/data/policies.xml");
-  const text = await res.text();
-  const doc  = new DOMParser().parseFromString(text, "application/xml");
-  return [...doc.querySelectorAll("policy")].map((p) => ({
-    title:   p.getAttribute("title"),
-    slug:    p.getAttribute("slug"),
-    updated: p.querySelector("lastUpdated")?.textContent?.trim() ?? "",
-    sections: [...p.querySelectorAll("section")].map((s) => ({
-      heading: s.getAttribute("heading"),
-      body:    s.textContent.trim(),
-    })),
-  }));
-}
+export default function Policies({ previewOverride } = {}) {
+  const { content } = useSiteContent("policies");
+  const pageData = previewOverride ?? content?.pageData;
+  const policies = pageData?.policies || [];
 
-export default function Policies() {
-  const [policies, setPolicies] = useState([]);
-  const [active, setActive]     = useState(null);
+  const [active, setActive] = useState(null);
+
   useEffect(() => {
-    fetchData().then((data) => { setPolicies(data); setActive(data[0]?.slug ?? null); });
-  }, []);
+    setActive(policies[0]?.slug ?? null);
+  }, [policies]);
 
   const current = policies.find((p) => p.slug === active);
 
@@ -66,8 +56,8 @@ export default function Policies() {
             <div className="flex-1 border border-gray-100 rounded-2xl p-8">
               <div className="flex items-start justify-between mb-8">
                 <h2 className="font-heading font-black text-charcoal text-xl">{current.title}</h2>
-                {current.updated && (
-                  <span className="text-xs text-gray-400 shrink-0 ml-4">Last updated: {current.updated}</span>
+                {current.lastUpdated && (
+                  <span className="text-xs text-gray-400 shrink-0 ml-4">Last updated: {current.lastUpdated}</span>
                 )}
               </div>
               <div className="flex flex-col gap-7">
