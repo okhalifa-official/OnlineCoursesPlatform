@@ -40,6 +40,53 @@ async function createSystemLog(data) {
   }
 }
 
+function validatePageData(pageKey, pageData) {
+  const data = pageData || {};
+
+  if (pageKey === "mission-vision") {
+    if (!data.mission) return "Mission is required";
+    if (!data.vision) return "Vision is required";
+    return null;
+  }
+
+  if (pageKey === "board-of-directors" || pageKey === "mena-board") {
+    if (!Array.isArray(data.members) || data.members.length === 0) {
+      return "At least one member is required";
+    }
+    return null;
+  }
+
+  if (pageKey === "scientific-committee") {
+    if (!Array.isArray(data.countries) || data.countries.length === 0) {
+      return "At least one country is required";
+    }
+    return null;
+  }
+
+  if (pageKey === "clinical-advisors") {
+    if (!Array.isArray(data.advisors) || data.advisors.length === 0) {
+      return "At least one advisor is required";
+    }
+    return null;
+  }
+
+  if (pageKey === "business-partners" || pageKey === "scientific-partners") {
+    if (!Array.isArray(data.partners) || data.partners.length === 0) {
+      return "At least one partner is required";
+    }
+    return null;
+  }
+
+  if (pageKey === "policies") {
+    if (!Array.isArray(data.policies) || data.policies.length === 0) {
+      return "At least one policy is required";
+    }
+    return null;
+  }
+
+  return null;
+}
+
 const getPageContentMeta = async function (req, res) {
   try {
     return res.status(200).json(defaultPages);
@@ -110,8 +157,15 @@ const updatePageContent = async function (req, res) {
       description,
       hero,
       sections,
+      pageData,
       isPublished,
     } = req.body;
+
+    const validationError = validatePageData(pageKey, pageData);
+
+    if (validationError) {
+      return res.status(400).json({ message: validationError });
+    }
 
     const admin = getCurrentAdmin(req);
 
@@ -125,6 +179,7 @@ const updatePageContent = async function (req, res) {
           description: description || "",
           hero: hero || {},
           sections: Array.isArray(sections) ? sections : [],
+          pageData: pageData || {},
           isPublished: typeof isPublished === "boolean" ? isPublished : true,
           updatedByName: getAdminName(admin),
         },
@@ -181,4 +236,5 @@ module.exports = {
   getPageContentByKey,
   updatePageContent,
   getPublicPageContentByKey,
+  validatePageData,
 };
